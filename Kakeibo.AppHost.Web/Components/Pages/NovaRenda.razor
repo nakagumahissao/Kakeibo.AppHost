@@ -1,0 +1,135 @@
+﻿@page "/rendas/new"
+@inject IHttpClientFactory HttpFactory
+@using Kakeibo.AppHost.Web.Models
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Net.Http.Json
+@using System.Text.Json
+@inject NavigationManager Navigation
+
+<PageTitle>Nova Renda</PageTitle>
+
+<h1>Nova Renda</h1>
+
+<EditForm Model="novaEntrada" OnValidSubmit="SalvarEntrada" FormName="novaEntradaForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="card p-3 mb-3">
+        <div class="mb-2">
+            <InputHidden id="anoEntrada" @bind-Value="novaEntrada!.Ano"></InputHidden>
+            <InputHidden id="mesEntrada" @bind-Value="novaEntrada.Mes"></InputHidden>
+            <InputHidden id="userIDEntrada" @bind-Value="novaEntrada.UserID"></InputHidden>
+
+            <InputSelect id="tipoEntrada" TValue="int" class="form-select" @bind-Value="novaEntrada.TipoDeEntradaID">
+                <option value="0">Selecione</option>
+                @foreach (var tipo in tiposEntrada ?? Enumerable.Empty<TiposDeEntradas>())
+                {
+                    <option value="@tipo.TipoDeEntradaId">@tipo.TipoDeEntrada</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-2">
+            <label>Descrição</label>
+            <InputText id="descricao" class="form-control" @bind-Value="novaEntrada.Descricao" />
+            <ValidationMessage For="@(() => novaEntrada.Descricao)" />
+        </div>
+
+        <div class="mb-2">
+            <label>Valor</label>
+            <InputNumber id="valorEntrada" TValue="decimal" class="form-control" @bind-Value="novaEntrada.ValorEntrada" />
+            <ValidationMessage For="@(() => novaEntrada.ValorEntrada)" />
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary me-2">
+                Salvar
+            </button>
+            <a href="/rendas" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3" role="alert">
+        @errorMessage
+    </div>
+}
+
+@code {
+    private List<TiposDeEntradas>? tiposEntrada;
+    private string errorMessage = "";
+
+    [SupplyParameterFromForm]
+    private Entradas? novaEntrada { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpClient? apisClient = HttpFactory.CreateClient("apis");
+
+        novaEntrada ??= new()
+        {
+            Ano = DateTime.Today.Year.ToString("0000"),
+            Mes = DateTime.Today.Month.ToString("00"),
+            UserID = "current-user-id"
+        };
+
+        try
+        {
+            tiposEntrada = await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>("tiposentrada");
+            tiposEntrada ??= new List<TiposDeEntradas>();
+        }
+        catch (OperationCanceledException)
+        {
+            // ... existing code ...
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = $"Falha ao carregar tipos de entrada: {ex.Message}";
+            tiposEntrada = new List<TiposDeEntradas>();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro inesperado ao carregar dados: {ex.Message}";
+            tiposEntrada = new List<TiposDeEntradas>();
+        }
+    }
+
+    private async Task SalvarEntrada()
+    {
+        errorMessage = "";
+
+        if (novaEntrada != null)
+        {
+            novaEntrada.Ano = DateTime.Today.Year.ToString("0000");
+            novaEntrada.Mes = DateTime.Today.Month.ToString("00");
+            novaEntrada.UserID = "current-user-id";
+        }
+
+
+        HttpClient? apisClient = HttpFactory.CreateClient("apis");
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "entradas")
+        {
+            Content = JsonContent.Create(novaEntrada)
+        };
+
+        try
+        {
+            using var response = await apisClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);            
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = $"Erro ao salvar: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao salvar: {ex.GetType().Name} {ex.Message}";
+        }
+        finally
+        {
+            Navigation.NavigateTo("/rendas", forceLoad: true);
+        }
+    }
+}

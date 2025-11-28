@@ -1,0 +1,140 @@
+﻿@page "/calendar"
+@rendermode InteractiveServer
+
+<PageTitle>Calendário</PageTitle>
+
+<h3>Calendário</h3>
+
+<div class="d-flex align-items-center mb-3">
+    <label for="yearSelect" class="me-2">Selecione o ano:</label>
+    <select id="yearSelect" class="form-select w-auto"
+            @bind="SelectedYear" @bind:after="OnYearChanged">
+        @foreach (var year in Years)
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+</div>
+
+@if (CalendarMonths is not null)
+{
+    <div class="container">
+
+        @foreach (var row in CalendarMonths.Chunk(3))
+        {
+            <div class="row mb-4">
+
+                @foreach (var month in row)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="calendar-month border p-2 rounded">
+
+                            <div class="month-header text-center p-1 mb-2"
+                                 style="background-color: #fff9cc; font-weight: bold;">
+                                @month.MonthName
+                            </div>
+
+                            <table class="table table-bordered table-sm text-center">
+                                <thead style="background-color: #e8ffe8;">
+                                    <tr>
+                                        @foreach (var day in DayNames)
+                                        {
+                                            <th style="background-color: #e8ffe8;">@day</th>
+                                        }
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var week in month.Weeks)
+                                    {
+                                        <tr>
+                                            @foreach (var day in week)
+                                            {
+                                                <td style="height: 32px;">
+                                                    @(day.HasValue? day.Value.Day.ToString() : "")
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+}
+
+@code {
+    public int SelectedYear { get; set; } = DateTime.Now.Year;
+
+    public List<int> Years = Enumerable.Range(2025, 60).ToList();
+
+    public List<CalendarMonth>? CalendarMonths;
+
+    private readonly string[] DayNames = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+    protected override void OnInitialized()
+    {
+        GenerateCalendar(SelectedYear);
+    }
+
+    private void OnYearChanged()
+    {
+        GenerateCalendar(SelectedYear);
+    }
+
+    private void GenerateCalendar(int year)
+    {
+        CalendarMonths = new();
+
+        for (int month = 1; month <= 12; month++)
+        {
+            var firstDay = new DateTime(year, month, 1);
+            var daysInMonth = DateTime.DaysInMonth(year, month);
+
+            var monthObj = new CalendarMonth
+            {
+                MonthName = firstDay.ToString("MMMM yyyy")
+            };
+
+            var weeks = new List<List<DateTime?>>();
+            var currentWeek = new List<DateTime?>();
+
+            for (int i = 0; i < (int)firstDay.DayOfWeek; i++)
+                currentWeek.Add(null);
+
+            for (int day = 1; day <= daysInMonth; day++)
+            {
+                currentWeek.Add(new DateTime(year, month, day));
+
+                if (currentWeek.Count == 7)
+                {
+                    weeks.Add(currentWeek);
+                    currentWeek = new();
+                }
+            }
+
+            if (currentWeek.Count > 0)
+            {
+                while (currentWeek.Count < 7)
+                    currentWeek.Add(null);
+
+                weeks.Add(currentWeek);
+            }
+
+            monthObj.Weeks = weeks;
+            CalendarMonths.Add(monthObj);
+        }
+    }
+
+    public class CalendarMonth
+    {
+        public string MonthName { get; set; } = "";
+        public List<List<DateTime?>> Weeks { get; set; } = new();
+    }
+}

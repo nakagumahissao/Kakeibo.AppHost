@@ -1,0 +1,201 @@
+﻿@page "/saidas"
+@page "/saidas/{Day:int}/{Month:int}/{Year:int}"
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager NavManager
+@using Kakeibo.AppHost.Web.Models
+
+<PageTitle>Saídas</PageTitle>
+
+<h1>Saídas do Mês</h1>
+
+<div class="d-flex" style="gap:20px; padding-top:30px;">
+
+    <!-- Calendar on the left -->
+    <div style="width:35%;">
+        @CalendarHtml()
+    </div>
+
+    <!-- Entries table on the right -->
+    <div style="flex:1;">
+        <h5>Saídas do Dia: @selectedDayDisplay</h5>
+
+        @if (saidasDoDia == null)
+        {
+            <p>Selecione um dia no calendário.</p>
+        }
+        else if (!saidasDoDia.Any())
+        {
+            <p>Nenhuma Saída encontrada.</p>
+
+            <div class="mb-2" style="padding-top: 20px;">
+                <a href="/saidas/new" class="btn btn-success">Nova Saída</a>
+            </div>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Nome Despesa</th>
+                        <th style="text-align:right;">Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in saidasDoDia)
+                    {
+                        <tr>
+                            <td>@s.Descricao</td>
+                            <td>@s.NomeDespesa</td>
+                            <td class="text-end">@s.ValorDespesa.ToString("N2")</td>
+                            <td>
+                                <a href="/saidas/new" class="btn btn-sm btn-primary me-1">Novo</a>
+                                <a href="/saidas/edit/@s.SaidaID" class="btn btn-sm btn-primary me-1">Editar</a>
+                                <a href="/saidas/delete/@s.SaidaID" class="btn btn-sm btn-danger">Excluir</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int Month { get; set; }
+    [Parameter] public int Year { get; set; }
+
+    private List<Saida>? saidasDoDia;
+    private string selectedDayDisplay = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // default to today if parameters are not provided
+        var dt = (Day > 0 && Month > 0 && Year > 0)
+            ? new DateTime(Year, Month, Day)
+            : DateTime.Today;
+
+        Day = dt.Day;
+        Month = dt.Month;
+        Year = dt.Year;
+
+        selectedDayDisplay = dt.ToString("dd/MM/yyyy");
+
+        var client = HttpFactory.CreateClient("apis");
+        saidasDoDia = await client.GetFromJsonAsync<List<Saida>>(
+            $"saidas/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
+        );
+    }
+
+    private void PrevMonth()
+    {
+        int newMonth = Month - 1;
+        int newYear = Year;
+        if (newMonth < 1) { newMonth = 12; newYear--; }
+        NavManager.NavigateTo($"/saidas/1/{newMonth}/{newYear}", forceLoad: true);
+    }
+
+    private void NextMonth()
+    {
+        int newMonth = Month + 1;
+        int newYear = Year;
+        if (newMonth > 12) { newMonth = 1; newYear++; }
+        NavManager.NavigateTo($"/saidas/1/{newMonth}/{newYear}", forceLoad: true);
+    }
+
+    private RenderFragment CalendarHtml() => builder =>
+    {
+        int seq = 0;
+
+        // Month navigation
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex justify-content-between align-items-center mb-2");
+
+        // Prev button as link
+        builder.OpenElement(seq++, "a");
+        builder.AddAttribute(seq++, "class", "btn btn-sm btn-primary");
+        int prevMonth = Month - 1;
+        int prevYear = Year;
+        if (prevMonth < 1) { prevMonth = 12; prevYear--; }
+        builder.AddAttribute(seq++, "href", $"/saidas/1/{prevMonth}/{prevYear}");
+        builder.AddContent(seq++, "< Prev");
+        builder.CloseElement();
+
+        // Month title
+        builder.OpenElement(seq++, "div");
+        builder.AddContent(seq++, new DateTime(Year, Month, 1).ToString("MMMM yyyy"));
+        builder.CloseElement();
+
+        // Next button as link
+        builder.OpenElement(seq++, "a");
+        builder.AddAttribute(seq++, "class", "btn btn-sm btn-primary");
+        int nextMonth = Month + 1;
+        int nextYear = Year;
+        if (nextMonth > 12) { nextMonth = 1; nextYear++; }
+        builder.AddAttribute(seq++, "href", $"/saidas/1/{nextMonth}/{nextYear}");
+        builder.AddContent(seq++, "Next >");
+        builder.CloseElement();
+
+        builder.CloseElement(); // month navigation
+
+        // Weekday headers
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex");
+        string[] weekdays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        foreach (var day in weekdays)
+        {
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "text-center p-1 border");
+            builder.AddAttribute(seq++, "style", "background-color: lightgreen; flex:1;");
+            builder.AddContent(seq++, day);
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+
+        // Calendar grid
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
+
+        int daysInMonth = DateTime.DaysInMonth(Year, Month);
+        int firstDayOfWeek = (int)new DateTime(Year, Month, 1).DayOfWeek;
+        int dayCounter = 1;
+        int totalCells = ((firstDayOfWeek + daysInMonth) <= 35 ? 35 : 42);
+
+        for (int i = 0; i < totalCells; i++)
+        {
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "border text-center p-1");
+            builder.AddAttribute(seq++, "style", "width:14.28%; height:40px;");
+
+            if (i >= firstDayOfWeek && dayCounter <= daysInMonth)
+            {
+                int currentDay = dayCounter;
+                var dt = new DateTime(Year, Month, currentDay);
+
+                builder.OpenElement(seq++, "a");
+                string style = "display:inline-block; width:100%; height:100%; text-decoration:none; color:black; cursor:pointer;";
+
+                // Selected day highlight
+                if (currentDay == Day) style += " background-color: lightblue; font-weight:bold;";
+
+                // Today's date highlight if the month/year is current month/year
+                var today = DateTime.Today;
+                if (currentDay == today.Day && Month == today.Month && Year == today.Year)
+                    style += " color:red; font-weight:bold;";
+
+                builder.AddAttribute(seq++, "style", style);
+                builder.AddAttribute(seq++, "href", $"/saidas/{currentDay}/{Month}/{Year}");
+                builder.AddContent(seq++, currentDay);
+                builder.CloseElement(); // a
+
+                dayCounter++;
+            }
+
+            builder.CloseElement(); // cell
+        }
+
+        builder.CloseElement(); // grid container
+    };
+}

@@ -1,0 +1,47 @@
+﻿@page "/tiposrendas"
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@inject IHttpClientFactory HttpFactory
+
+@using Kakeibo.AppHost.Web.Models
+
+<PageTitle>Tipos de Rendas</PageTitle>
+
+<h1>Tipos de Rendas</h1>
+
+@if (entradas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo de Renda</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entrada in entradas)
+            {
+                <tr>
+                    <td>@entrada.TipoDeEntradaId</td>
+                    <td>@entrada.TipoDeEntrada</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TiposDeEntradas>? entradas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        entradas = await client.GetFromJsonAsync<List<TiposDeEntradas>>(
+            "tiposentrada"
+        );
+    }
+}

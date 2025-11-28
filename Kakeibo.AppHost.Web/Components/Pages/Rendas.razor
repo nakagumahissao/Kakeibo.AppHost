@@ -1,0 +1,150 @@
+﻿@page "/rendas"
+
+@inject IHttpClientFactory HttpFactory
+@using Kakeibo.AppHost.Web.Models
+@using Microsoft.AspNetCore.Components.Forms
+
+<PageTitle>Rendas</PageTitle>
+
+<h1>Rendas do Mês</h1>
+
+<div class="d-flex" style="gap:20px; padding-top:30px;">
+
+    <!-- Calendar on the left -->
+    <div style="width:35%;">
+        @CalendarHtml()
+    </div>
+
+    <!-- Entries table on the right -->
+    <div style="flex:1;">
+        <h5>Rendas do Mês: @selectedMonthDisplay</h5>        
+
+        @if (entradasDoMes == null)
+        {
+            <p>Carregando Rendas...</p>
+        }
+        else if (!entradasDoMes.Any())
+        {
+            <p>Nenhuma Renda encontrada.</p>
+
+            <div class="mb-2" style="padding-top: 20px;">
+                <a href="/rendas/new" class="btn btn-success">Nova Renda</a>
+            </div>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th style="text-align:right;">Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in entradasDoMes)
+                    {
+                        <tr>
+                            <td>@e.Descricao</td>
+                            <td class="text-end">@e.ValorEntrada.ToString("N2")</td>
+                            <td>
+                                <a href="/rendas/new" class="btn btn-sm btn-primary me-1">Novo</a>
+                                <a href="/rendas/edit/@e.EntradaID" class="btn btn-sm btn-primary me-1">Editar</a>
+                                <a href="/rendas/delete/@e.EntradaID" class="btn btn-sm btn-danger">Excluir</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Entradas>? entradasDoMes;
+    private string selectedMonthDisplay = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEntradasDoMesAsync(DateTime.Today);
+    }
+
+    private async Task LoadEntradasDoMesAsync(DateTime dt)
+    {
+        selectedMonthDisplay = dt.ToString("MM/yyyy");
+
+        var client = HttpFactory.CreateClient("apis");
+        entradasDoMes = await client.GetFromJsonAsync<List<Entradas>>(
+            $"entradas/{dt.Month:00}-{dt.Year:0000}"
+        );
+    }
+
+    private RenderFragment CalendarHtml() => __builder =>
+    {
+        var today = DateTime.Today;
+        var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+        var daysInMonth = DateTime.DaysInMonth(today.Year, today.Month);
+
+        int seq = 0;
+
+        // Title
+        __builder.OpenElement(seq++, "div");
+        __builder.AddAttribute(seq++, "class", "text-center mb-1 p-1");
+        __builder.AddAttribute(seq++, "style", "background-color: lightyellow; font-weight:bold;");
+        __builder.AddContent(seq++, today.ToString("MMMM yyyy"));
+        __builder.CloseElement();
+
+        // Weekday headers
+        __builder.OpenElement(seq++, "div");
+        __builder.AddAttribute(seq++, "class", "d-flex");
+
+        string[] weekdays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+        foreach (var day in weekdays)
+        {
+            __builder.OpenElement(seq++, "div");
+            __builder.AddAttribute(seq++, "class", "text-center p-1 border");
+            __builder.AddAttribute(seq++, "style", "background-color: lightgreen; flex:1;");
+            __builder.AddContent(seq++, day);
+            __builder.CloseElement();
+        }
+
+        __builder.CloseElement(); // weekdays row
+
+        // Calendar grid (non-clickable)
+        int dayOfWeek = (int)firstDayOfMonth.DayOfWeek;
+        int totalCells = ((dayOfWeek + daysInMonth) <= 35 ? 35 : 42);
+        int dayCounter = 1;
+
+        __builder.OpenElement(seq++, "div");
+        __builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
+
+        for (int i = 0; i < totalCells; i++)
+        {
+            __builder.OpenElement(seq++, "div");
+            __builder.AddAttribute(seq++, "class", "border text-center p-1");
+            __builder.AddAttribute(seq++, "style", "width:14.28%; height:40px;");
+
+            if (i >= dayOfWeek && dayCounter <= daysInMonth)
+            {
+                if (dayCounter == today.Day)
+                {
+                    __builder.OpenElement(seq++, "span");
+                    __builder.AddAttribute(seq++, "style", "color:red; font-weight:bold;");
+                    __builder.AddContent(seq++, dayCounter);
+                    __builder.CloseElement();
+                }
+                else
+                {
+                    __builder.AddContent(seq++, dayCounter);
+                }
+
+                dayCounter++;
+            }
+
+            __builder.CloseElement();
+        }
+
+        __builder.CloseElement(); // grid
+    };
+}

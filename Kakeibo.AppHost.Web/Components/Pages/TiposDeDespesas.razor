@@ -1,0 +1,47 @@
+﻿@page "/tiposdespesas"
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@inject IHttpClientFactory HttpFactory
+
+@using Kakeibo.AppHost.Web.Models
+
+<PageTitle>Tipos de Despesas</PageTitle>
+
+<h1>Tipos de Despesas</h1>
+
+@if (despesas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo de Despesa</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var despesa in despesas)
+            {
+                <tr>
+                    <td>@despesa.TipoDespesaId</td>
+                    <td>@despesa.TipoDeDespesa</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TiposDeDespesa>? despesas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        despesas = await client.GetFromJsonAsync<List<TiposDeDespesa>>(
+            "tiposdespesa"
+        );
+    }
+}
