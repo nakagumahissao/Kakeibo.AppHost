@@ -11,20 +11,20 @@ namespace kakeibo.api
             {
                 var all = await db.tiposDeDespesas.ToListAsync();
                 return Results.Ok(all);
-            });
+            }).RequireAuthorization();
 
             app.MapGet("/tiposdespesa/{id}", async (int id, KakeiboDBContext db) =>
             {
                 var item = await db.tiposDeDespesas.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
             app.MapPost("/tiposdespesa", async (TiposDeDespesa tipo, KakeiboDBContext db) =>
             {
                 db.tiposDeDespesas.Add(tipo);
                 await db.SaveChangesAsync();
                 return Results.Created($"/tiposdespesa/{tipo.TipoDespesaID}", tipo);
-            });
+            }).RequireAuthorization();
 
             app.MapPut("/tiposdespesa/{id}", async (int id, TiposDeDespesa updatedTipo, KakeiboDBContext db) =>
             {
@@ -35,7 +35,7 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.Ok(tipo);
-            });
+            }).RequireAuthorization();
 
             app.MapDelete("/tiposdespesa/{id}", async (int id, KakeiboDBContext db) =>
             {
@@ -46,7 +46,7 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         }
     }
 }

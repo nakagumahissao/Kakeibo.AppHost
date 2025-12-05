@@ -1,5 +1,6 @@
 ﻿@page "/rendas"
-
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject IHttpClientFactory HttpFactory
 @using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
@@ -25,9 +26,9 @@
         }
         else if (!entradasDoMes.Any())
         {
-            <p>Nenhuma Renda encontrada.</p>
-
-            <div class="mb-2" style="padding-top: 20px;">
+            <p>Nenhuma Renda encontrada.</p>   
+            
+            <div class="mb-2" style="padding-top: 10px;">
                 <a href="/rendas/new" class="btn btn-success">Nova Renda</a>
             </div>
         }
@@ -44,18 +45,29 @@
                 <tbody>
                     @foreach (var e in entradasDoMes)
                     {
+                        totalEntradas += e.ValorEntrada;
+
                         <tr>
                             <td>@e.Descricao</td>
                             <td class="text-end">@e.ValorEntrada.ToString("N2")</td>
                             <td>
-                                <a href="/rendas/new" class="btn btn-sm btn-primary me-1">Novo</a>
                                 <a href="/rendas/edit/@e.EntradaID" class="btn btn-sm btn-primary me-1">Editar</a>
                                 <a href="/rendas/delete/@e.EntradaID" class="btn btn-sm btn-danger">Excluir</a>
                             </td>
                         </tr>
                     }
+
+                    <tr>
+                        <td class="text-end" style="color:navy"><strong>TOTAL:</strong></td>
+                        <td class="text-end" style="color:navy"><strong>@totalEntradas.ToString("N2")</strong></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
+
+            <div class="mb-2" style="padding-top: 10px;">
+                <a href="/rendas/new" class="btn btn-success">Nova Renda</a>
+            </div>
         }
     </div>
 </div>
@@ -63,10 +75,13 @@
 @code {
     private List<Entradas>? entradasDoMes;
     private string selectedMonthDisplay = "";
+    private decimal totalEntradas = 0m;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadEntradasDoMesAsync(DateTime.Today);
+
+        totalEntradas = 0m;
     }
 
     private async Task LoadEntradasDoMesAsync(DateTime dt)
@@ -98,7 +113,7 @@
         __builder.OpenElement(seq++, "div");
         __builder.AddAttribute(seq++, "class", "d-flex");
 
-        string[] weekdays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        string[] weekdays = { "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" };
 
         foreach (var day in weekdays)
         {

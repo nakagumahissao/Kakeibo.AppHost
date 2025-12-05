@@ -1,8 +1,11 @@
 ﻿@page "/saidas"
 @page "/saidas/{Day:int}/{Month:int}/{Year:int}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
 @using Kakeibo.AppHost.Web.Models
+@inject IJSRuntime JS
 
 <PageTitle>Saídas</PageTitle>
 
@@ -25,18 +28,19 @@
         }
         else if (!saidasDoDia.Any())
         {
-            <p>Nenhuma Saída encontrada.</p>
-
-            <div class="mb-2" style="padding-top: 20px;">
-                <a href="/saidas/new" class="btn btn-success">Nova Saída</a>
+            <p>Nenhuma Saída encontrada.</p>      
+            
+            <div class="mb-2" style="padding-top: 10px;">
+                <a href="/saidas/new/@Day/@Month/@Year" class="btn btn-success">Nova Saída</a>
             </div>
         }
         else
         {
-            <table class="table table-striped">
+            <table class="table table-striped align-middle">
                 <thead>
                     <tr>
-                        <th>Descrição</th>
+                        <th>ID</th>
+                        <th>Descricao</th>
                         <th>Nome Despesa</th>
                         <th style="text-align:right;">Valor</th>
                         <th>Ações</th>
@@ -45,20 +49,36 @@
                 <tbody>
                     @foreach (var s in saidasDoDia)
                     {
+                        totalSaidas += s.ValorDespesa;
+
                         <tr>
+                            <td>@s.DespesaID</td>
                             <td>@s.Descricao</td>
                             <td>@s.NomeDespesa</td>
                             <td class="text-end">@s.ValorDespesa.ToString("N2")</td>
-                            <td>
-                                <a href="/saidas/new" class="btn btn-sm btn-primary me-1">Novo</a>
-                                <a href="/saidas/edit/@s.SaidaID" class="btn btn-sm btn-primary me-1">Editar</a>
-                                <a href="/saidas/delete/@s.SaidaID" class="btn btn-sm btn-danger">Excluir</a>
+                            <td>                                
+                                <a href="/saidas/edit/@s.SaidaID/@Day/@Month/@Year" class="btn btn-sm btn-primary me-1">Editar</a>
+                                <a href="/saidas/delete/@s.SaidaID/@Day/@Month/@Year" class="btn btn-sm btn-danger me-1">Excluir</a>
                             </td>
                         </tr>
                     }
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end" style="color:crimson"><strong>TOTAL:</strong></td>
+                        <td class="text-end" style="color:crimson"><strong>@totalSaidas.ToString("N2")</strong></td>
+                        <td></td>
+                    </tr>
+
                 </tbody>
             </table>
+
+            <div class="mb-2" style="padding-top: 10px;">
+                <a href="/saidas/new/@Day/@Month/@Year" class="btn btn-success">Nova Saída</a>
+            </div>
         }
+        
     </div>
 </div>
 
@@ -67,11 +87,14 @@
     [Parameter] public int Month { get; set; }
     [Parameter] public int Year { get; set; }
 
-    private List<Saida>? saidasDoDia;
+    private List<Kakeibo.AppHost.Web.Models.Saidas>? saidasDoDia;
     private string selectedDayDisplay = "";
+    private decimal totalSaidas = 0;
 
     protected override async Task OnParametersSetAsync()
     {
+        totalSaidas = 0m;
+
         // default to today if parameters are not provided
         var dt = (Day > 0 && Month > 0 && Year > 0)
             ? new DateTime(Year, Month, Day)
@@ -84,7 +107,7 @@
         selectedDayDisplay = dt.ToString("dd/MM/yyyy");
 
         var client = HttpFactory.CreateClient("apis");
-        saidasDoDia = await client.GetFromJsonAsync<List<Saida>>(
+        saidasDoDia = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.Saidas>>(
             $"saidas/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
         );
     }
@@ -143,7 +166,7 @@
         // Weekday headers
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex");
-        string[] weekdays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        string[] weekdays = { "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" };
         foreach (var day in weekdays)
         {
             builder.OpenElement(seq++, "div");

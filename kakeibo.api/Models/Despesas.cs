@@ -29,6 +29,6 @@ namespace kakeibo.api
         // dbo.Despesas.TipoDespesaID -> dbo.TiposDeDespesa.TipoDespesaID (FK_Despesas_TiposDeDespesa)
         [JsonIgnore]
         [ForeignKey("TipoDespesaID")]
-        public TiposDeDespesa TiposDeDespesa { get; set; }
+        public TiposDeDespesa? TiposDeDespesa { get; set; }
     }
 }

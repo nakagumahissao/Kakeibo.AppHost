@@ -1,0 +1,65 @@
+﻿@page "/rendas/edit/{EntradaId:int}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
+
+<h3>Editar Renda</h3>
+
+@if (entrada == null && !saved)
+{
+    <p>Carregando dados...</p>
+}
+else if (saved)
+{
+    <div class="alert alert-success mt-3">Renda atualizada com sucesso ✔</div>
+
+    <a class="btn btn-primary mt-3" href="/rendas">
+        ⬅ Voltar
+    </a>
+}
+else
+{
+    <EditForm Model="entrada" OnValidSubmit="Update">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label>Descrição:</label>
+            <InputText class="form-control" @bind-Value="entrada!.Descricao" />
+        </div>
+
+        <div class="mb-3">
+            <label>Valor:</label>
+            <InputNumber class="form-control" @bind-Value="entrada.ValorEntrada" step="0.01" />
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-success btn-sm" type="submit">💾 Salvar</button>
+            <a class="btn btn-secondary btn-sm" href="/rendas">⬅ Cancelar</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int EntradaId { get; set; }
+    private Entradas? entrada;
+    private bool saved = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        entrada = await client.GetFromJsonAsync<Entradas>($"entradas/{EntradaId}");
+    }
+
+    private async Task Update()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        var result = await client.PutAsJsonAsync($"entradas/{EntradaId}", entrada);
+
+        if (result.IsSuccessStatusCode)
+        {
+            saved = true;
+            StateHasChanged();
+        }
+    }
+}

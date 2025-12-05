@@ -1,0 +1,65 @@
+﻿@page "/saidas/delete/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
+
+<h3>Excluir Saída</h3>
+
+@if (saida == null && !deleted)
+{
+    <p>Carregando registro...</p>
+}
+else if (deleted)
+{
+    <div class="alert alert-success mt-3">
+        Registro excluído com sucesso ✔
+    </div>
+
+    <a class="btn btn-primary mt-3" href="/saidas/@Day/@Month/@Year">
+        ⬅ Voltar para lista
+    </a>
+}
+else
+{
+    <div class="card p-3 mb-3">
+        <p><strong>ID:</strong> @saida!.SaidaID</p>
+        <p><strong>Descrição:</strong> @saida.Descricao</p>
+        <p><strong>Nome Despesa:</strong> @saida.NomeDespesa</p>
+        <p><strong>Valor:</strong> @saida.ValorDespesa.ToString("N2")</p>
+    </div>
+
+    <!-- MUST include type="button" to avoid form submit refresh -->
+    <button class="btn btn-danger" type="button" @onclick="ConfirmDelete">
+        🗑 Excluir
+    </button>
+}
+
+@code {
+    [Parameter] public decimal SaidaId { get; set; }
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int Month { get; set; }
+    [Parameter] public int Year { get; set; }
+
+    private Kakeibo.AppHost.Web.Models.Saidas? saida;
+    private bool deleted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
+    }
+
+    private async Task ConfirmDelete()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        var response = await client.DeleteAsync($"saidas/{SaidaId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            deleted = true;
+            saida = null;
+            StateHasChanged();
+        }
+    }
+}

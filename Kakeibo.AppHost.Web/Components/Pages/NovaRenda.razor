@@ -1,4 +1,6 @@
 ﻿@page "/rendas/new"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject IHttpClientFactory HttpFactory
 @using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms

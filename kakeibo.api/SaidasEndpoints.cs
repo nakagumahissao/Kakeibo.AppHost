@@ -11,29 +11,29 @@ namespace kakeibo.api
             {
                 var all = await db.saidas.ToListAsync();
                 return Results.Ok(all);
-            });
+            }).RequireAuthorization();
 
-            app.MapGet("/saidas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapGet("/saidas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
-                var item = await db.saidas.FindAsync(id);
+                var item = await db.saidas.Where(s => s.SaidaID == id).FirstOrDefaultAsync();
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
-            app.MapGet("/saidas/{dia}-{mes}-{ano}", async (int dia, int mes, int ano, KakeiboDBContext db) =>
+            app.MapGet("/saidas/{dia:int}-{mes:int}-{ano:int}", async (int dia, int mes, int ano, KakeiboDBContext db) =>
             {
                 DateTime dt = new DateTime(ano, mes, dia, 0, 0, 0);
                 var item = await db.saidas.Where(w => w.DataSaida == dt).ToListAsync();
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
             app.MapPost("/saidas", async (Saidas saida, KakeiboDBContext db) =>
             {
                 db.saidas.Add(saida);
                 await db.SaveChangesAsync();
                 return Results.Created($"/saidas/{saida.SaidaID}", saida);
-            });
+            }).RequireAuthorization();
 
-            app.MapPut("/saidas/{id}", async (int id, Saidas saida, KakeiboDBContext db) =>
+            app.MapPut("/saidas/{id:decimal}", async (decimal id, Saidas saida, KakeiboDBContext db) =>
             {
                 var existing = await db.saidas.FindAsync(id);
                 if (existing is null) return Results.NotFound();
@@ -50,19 +50,19 @@ namespace kakeibo.api
 
                 await db.SaveChangesAsync();
                 return Results.Ok(existing);
-            });
+            }).RequireAuthorization();
 
 
-            app.MapDelete("/saidas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapDelete("/saidas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
-                var s = await db.saidas.FindAsync(id);
+                var s = await db.saidas.Where(s => s.SaidaID == id).FirstOrDefaultAsync();
                 if (s is null) return Results.NotFound();
 
                 db.saidas.Remove(s);
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         }
     }
 }

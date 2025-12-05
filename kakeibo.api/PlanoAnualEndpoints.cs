@@ -11,20 +11,20 @@ namespace kakeibo.api
             {
                 var all = await db.planoAnuals.ToListAsync();
                 return Results.Ok(all);
-            });
+            }).RequireAuthorization();
 
             app.MapGet("/panual/{id}", async (int id, KakeiboDBContext db) =>
             {
                 var item = await db.planoAnuals.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
             app.MapPost("/panual", async (PlanoAnual pa, KakeiboDBContext db) =>
             {
                 db.planoAnuals.Add(pa);
                 await db.SaveChangesAsync();
                 return Results.Created($"/panual/{pa.PlanoAnualID}", pa);
-            });
+            }).RequireAuthorization();
 
             app.MapPut("/panual/{id}", async (int id, PlanoAnual pa, KakeiboDBContext db) =>
             {
@@ -42,7 +42,7 @@ namespace kakeibo.api
 
                 await db.SaveChangesAsync();
                 return Results.Ok(existing);
-            });
+            }).RequireAuthorization();
 
 
             app.MapDelete("/panual/{id}", async (int id, KakeiboDBContext db) =>
@@ -54,7 +54,7 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         }
     }
 }

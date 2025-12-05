@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Kakeibo.AppHost.Web.Models;
 
-public class Saida
+public class Saidas
 {
-    [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Required(ErrorMessage = "Saida ID is required")]
     [Display(Name = "Saida ID")]
     public decimal SaidaID { get; set; } // numeric(18,0), not null
 
@@ -52,4 +51,7 @@ public class Saida
     [Required(ErrorMessage = "Valor Despesa is required")]
     [Display(Name = "Valor Despesa")]
     public required decimal ValorDespesa { get; set; } // numeric(19,2), not null
+
+    [JsonIgnore]
+    public string? DataSaidaString { get; set; }
 }

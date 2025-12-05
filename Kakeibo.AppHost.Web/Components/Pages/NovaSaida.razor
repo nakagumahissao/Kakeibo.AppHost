@@ -1,0 +1,170 @@
+﻿@page "/saidas/new/{day:int}/{month:int}/{year:int}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager NavManager
+@inject Microsoft.Extensions.Logging.ILogger<Kakeibo.AppHost.Web.Components.Pages.NovaSaida> Logger
+@using Kakeibo.AppHost.Web.Models
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Net.Http.Json
+
+<PageTitle>Registro de Nova Despesa</PageTitle>
+
+<h1>Registro de Nova Despesa</h1>
+
+<EditForm Model="novaSaida" OnValidSubmit="SalvarDespesa" FormName="novaSaida">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="card p-3 mb-3">
+        <!-- Hidden fields -->
+        <InputHidden @bind-Value="novaSaida!.DataSaidaString" />
+        <InputHidden @bind-Value="novaSaida.Ano" />
+        <InputHidden @bind-Value="novaSaida.Mes" />
+        <InputHidden @bind-Value="novaSaida.UserID" />
+
+        <!-- Tipo de Despesa -->
+        <div class="mb-2">
+            <label>Tipo de Despesa</label>
+            <InputSelect id="tipoDespesaID" class="form-select" @bind-Value="novaSaida.DespesaID">
+                <option value="0">Selecione</option>
+                @foreach (var tipo in tiposDeDespesa ?? Enumerable.Empty<Kakeibo.AppHost.Web.Models.TiposDeDespesa>())
+                {
+                    <option value="@tipo.TipoDespesaId">@tipo.TipoDeDespesa</option>
+                }
+            </InputSelect>
+        </div>
+
+        <!-- Descrição -->
+        <div class="mb-2">
+            <label>Nome da Despesa</label>
+            <InputText class="form-control" @bind-Value="novaSaida.NomeDespesa" />
+            <ValidationMessage For="@(() => novaSaida.NomeDespesa)" />
+        </div>
+
+        <!-- Descrição -->
+        <div class="mb-2">
+            <label>Descrição</label>
+            <InputText class="form-control" @bind-Value="novaSaida.Descricao" />
+            <ValidationMessage For="@(() => novaSaida.Descricao)" />
+        </div>
+
+        <!-- Valor -->
+        <div class="mb-2">
+            <label>Valor</label>
+            <InputNumber class="form-control" @bind-Value="novaSaida.ValorDespesa" />
+            <ValidationMessage For="@(() => novaSaida.ValorDespesa)" />
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary me-2">Salvar</button>
+            <a href="/saidas" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success mt-3">
+        @((MarkupString)successMessage)
+    </div>
+}
+
+@code {
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int Month { get; set; }
+    [Parameter] public int Year { get; set; }
+
+    [SupplyParameterFromForm]
+    private Kakeibo.AppHost.Web.Models.Saidas? novaSaida { get; set; }
+
+    private List<Kakeibo.AppHost.Web.Models.TiposDeDespesa> tiposDeDespesa = new();
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        novaSaida ??= new Kakeibo.AppHost.Web.Models.Saidas
+        {
+            DataSaida = DateTime.Today,
+            Ano = DateTime.Today.Year.ToString("0000"),
+            Mes = DateTime.Today.Month.ToString("00"),
+            UserID = "current-user-id",
+            DespesaID = 0,
+            NomeDespesa = "",
+            Descricao = "",
+            ValorDespesa = 0m,
+            DataSaidaString = DateTime.Today.ToString("yyyy-MM-dd")
+        };
+
+        await CarregarTiposDespesa();
+    }
+
+    private async Task CarregarTiposDespesa()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        tiposDeDespesa = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>>("tiposdespesa") ?? new List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var dt = (Day > 0 && Month > 0 && Year > 0)
+            ? new DateTime(Year, Month, Day)
+            : DateTime.Today;
+
+        novaSaida ??= new Kakeibo.AppHost.Web.Models.Saidas
+        {
+            DataSaida = dt,
+            Ano = dt.Year.ToString("0000"),
+            Mes = dt.Month.ToString("00"),
+            UserID = "current-user-id",
+            DespesaID = 0,
+            NomeDespesa = "",
+            Descricao = "",
+            ValorDespesa = 0m,
+            DataSaidaString = dt.ToString("yyyy-MM-dd")
+        };
+
+        if (Year > 0 && Month > 0 && Day > 0)
+            novaSaida.DataSaida = new DateTime(Year, Month, Day);
+        else
+            novaSaida.DataSaida = DateTime.Today;
+
+        await CarregarTiposDespesa();
+    }
+
+    private async Task SalvarDespesa()
+    {
+        errorMessage = "";
+        try
+        {
+            var dt = (Day > 0 && Month > 0 && Year > 0)
+            ? new DateTime(Year, Month, Day)
+            : DateTime.Today;
+
+            novaSaida!.DataSaida = dt;
+
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.PostAsJsonAsync("saidas", novaSaida);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = $"Erro ao salvar: {response.StatusCode}";
+                return;
+            }
+
+            var targetUrl = $"/saidas/{Day}/{Month}/{Year}";
+            successMessage = $"Suas informacoes foram gravadas com sucesso. Clique <a href='{targetUrl}'>aqui</a> para retornar.";
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "SalvarDespesa failed");
+            errorMessage = ex.ToString();
+        }
+    }
+}
