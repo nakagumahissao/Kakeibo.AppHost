@@ -84,12 +84,12 @@ public static class UsersEndpoints
         }).RequireAuthorization();
 
         // Remove role from user
-        app.MapDelete("/users/{userId}/roles", async (string userId, RemoveUserRoleRequest request, UserManager<IdentityUser> userManager) =>
+        app.MapDelete("/users/{userId}/roles", async (string userId, string roleName, UserManager<IdentityUser> userManager) =>
         {
             var user = await userManager.FindByIdAsync(userId);
             if (user == null) return Results.NotFound();
 
-            var result = await userManager.RemoveFromRoleAsync(user, request.RoleName);
+            var result = await userManager.RemoveFromRoleAsync(user, roleName);
             if (!result.Succeeded) return Results.BadRequest(result.Errors);
 
             return Results.Ok();
@@ -123,12 +123,12 @@ public static class UsersEndpoints
         }).RequireAuthorization();
 
         // Remove claim from user
-        app.MapDelete("/users/{userId}/claims", async (string userId, RemoveClaimRequest request, UserManager<IdentityUser> userManager) =>
+        app.MapDelete("/users/{userId}/claims", async (string userId, string type, string value, UserManager<IdentityUser> userManager) =>
         {
             var user = await userManager.FindByIdAsync(userId);
             if (user == null) return Results.NotFound();
 
-            var claim = new Claim(request.Type, request.Value);
+            var claim = new Claim(type, value);
             var result = await userManager.RemoveClaimAsync(user, claim);
             if (!result.Succeeded) return Results.BadRequest(result.Errors);
 
