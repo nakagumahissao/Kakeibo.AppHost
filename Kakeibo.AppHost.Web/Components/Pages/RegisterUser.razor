@@ -1,0 +1,83 @@
+﻿@page "/register-user"
+@using System.Net.Http.Json
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+
+<h3 style="padding-bottom:10px;">Registro de Usuário</h3>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="alert @AlertClass">@Message</div>
+}
+
+<EditForm Model="newUser" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="newUser.Email" />
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="newUser.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</EditForm>
+
+@code {
+    private UserRegistrationModel newUser = new();
+    private string Message = string.Empty;
+    private string AlertClass = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/users", newUser);
+            if (response.IsSuccessStatusCode)
+            {
+                var createdUser = await response.Content.ReadFromJsonAsync<CreatedUserResponse>();
+                Message = $"Usuário registrado com sucesso! ID: {createdUser?.Id}";
+                AlertClass = "alert-success";
+                newUser = new UserRegistrationModel(); // limpa o formulário
+            }
+            else
+            {
+                var errors = await response.Content.ReadFromJsonAsync<List<ApiError>>();
+                Message = "Erro ao registrar usuário: " + string.Join(", ", errors?.Select(e => e.Description) ?? new string[0]);
+                AlertClass = "alert-danger";
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = "Erro inesperado: " + ex.Message;
+            AlertClass = "alert-danger";
+        }
+    }
+
+    public class UserRegistrationModel
+    {
+        [Required(ErrorMessage = "O email é obrigatório")]
+        [EmailAddress(ErrorMessage = "Email inválido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "A senha é obrigatória")]
+        [MinLength(6, ErrorMessage = "A senha deve ter ao menos 6 caracteres")]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class CreatedUserResponse
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class ApiError
+    {
+        public string Code { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+    }
+}
