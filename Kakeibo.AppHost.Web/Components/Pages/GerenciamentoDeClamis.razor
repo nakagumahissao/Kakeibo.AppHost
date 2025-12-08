@@ -1,0 +1,25 @@
+﻿@page "/claims"
+@inject IJSRuntime JS
+
+<h3>Gerenciamento de Claims</h3>
+
+<p>Lista de Claims do usuário (exemplo de frontend):</p>
+
+<ul>
+    @foreach (var claim in userClaims)
+    {
+        <li>@claim</li>
+    }
+</ul>
+
+<button class="btn btn-primary" @onclick="AddClaim">Adicionar Claim</button>
+
+@code {
+    private List<string> userClaims = new() { "Admin", "Editor" };
+
+    private async Task AddClaim()
+    {
+        userClaims.Add("NovoClaim");
+        await JS.InvokeVoidAsync("alert", "Claim adicionada!");
+    }
+}

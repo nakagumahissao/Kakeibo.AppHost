@@ -7,9 +7,9 @@ namespace kakeibo.api
     {
         public static void MapSaidasEndpoints(this WebApplication app)
         {
-            app.MapGet("/saidas", async (KakeiboDBContext db) =>
+            app.MapGet("/saidas/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
-                var all = await db.saidas.ToListAsync();
+                var all = await db.saidas.Where(w => w.UserID == UserID).ToListAsync();
                 return Results.Ok(all);
             }).RequireAuthorization();
 

@@ -25,5 +25,10 @@ namespace kakeibo.api
         [Required(ErrorMessage = "Tipo De Despesa is required")]
         [Display(Name = "Tipo De Despesa")]
         public required string TipoDeDespesa { get; set; } // nvarchar(30), not null
+
+        [MaxLength(128)]
+        [StringLength(128)]
+        [Display(Name = "User ID")]
+        public string? UserID { get; set; }
     }
 }

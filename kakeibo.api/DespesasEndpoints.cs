@@ -7,7 +7,7 @@ namespace kakeibo.api
     {
         public static void MapDespesasEndpoints(this WebApplication app)
         {
-            app.MapGet("/despesas", async (KakeiboDBContext db) =>
+            app.MapGet("/despesas/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
                 var all = await db.despesas
                     .Include(d => d.TiposDeDespesa)
@@ -16,8 +16,10 @@ namespace kakeibo.api
                         d.DespesaID,
                         d.TipoDespesaID,
                         TipoDespesaNome = d.TiposDeDespesa!.TipoDeDespesa,
+                        d.UserID,
                         d.NomeDespesa
                     })
+                    .Where(u => u.UserID == UserID)
                     .OrderBy(u => u.TipoDespesaNome)
                     .OrderBy(v =>  v.TipoDespesaNome)
                     .ToListAsync();
@@ -25,7 +27,7 @@ namespace kakeibo.api
                 return Results.Ok(all);
             }).RequireAuthorization();
 
-            app.MapGet("/despesas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapGet("/despesas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var item = await db.despesas.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
@@ -38,7 +40,7 @@ namespace kakeibo.api
                 return Results.Created($"/despesas/{desp.DespesaID}", desp);
             }).RequireAuthorization();
 
-            app.MapPut("/despesas/{id}", async (int id, Despesas desp, KakeiboDBContext db) =>
+            app.MapPut("/despesas/{id:decimal}", async (decimal id, Despesas desp, KakeiboDBContext db) =>
             {
                 var existing = await db.despesas.FindAsync(id);
                 if (existing is null) return Results.NotFound();
@@ -52,7 +54,7 @@ namespace kakeibo.api
             }).RequireAuthorization();
 
 
-            app.MapDelete("/despesas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapDelete("/despesas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var r = await db.despesas.FindAsync(id);
                 if (r is null) return Results.NotFound();

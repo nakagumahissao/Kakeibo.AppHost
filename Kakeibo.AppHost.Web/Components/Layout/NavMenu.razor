@@ -1,4 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Kakeibo</a>
     </div>
@@ -50,6 +55,44 @@
                 </NavLink>
             </div>
         </div>
+
+        <!-- ================= USERS / ACCOUNT MENU ================= -->
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+                        <span class="bi bi-list-nested" aria-hidden="true"></span>@(context.User.Identity?.Name ?? "Usuário")
+                    </a>
+                    <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
+                        <NavLink class="nav-link" href="/profile">Perfil</NavLink>
+                        <NavLink class="nav-link" href="/alterar-senha">Alterar Senha</NavLink>
+                        <NavLink class="nav-link" href="/resetar-senha">Resetar Senha</NavLink>
+
+                        @if (context.User.IsInRole("Admin"))
+                        {
+                            <NavLink class="nav-link" href="/claims">Claims</NavLink>
+                            <NavLink class="nav-link" href="/roles">Roles</NavLink>
+                        }
+
+                        <button class="nav-link btn btn-link text-start" @onclick="Logout">Sair</button>
+                    </div>
+                </div>
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+                        <span class="bi bi-list-nested" aria-hidden="true"></span>
+                        Usuários
+                    </a>
+                    <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
+                        <NavLink class="nav-link" href="/login">Entrar</NavLink>
+                        <NavLink class="nav-link" href="/register-user">Registrar</NavLink>
+                    </div>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
     </nav>
 </div>
 
@@ -64,3 +107,27 @@
         }
     }
 </script>
+
+@code {
+    private bool showUserMenu = false;
+
+    void ToggleUserMenu()
+    {
+        showUserMenu = !showUserMenu;
+    }
+
+    async Task Logout()
+    {
+        // Clear token
+        await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
+
+        // Reset auth state
+        if (AuthProvider is IHostEnvironmentAuthenticationStateProvider envAuth)
+        {
+            envAuth.SetAuthenticationState(Task.FromResult(
+                new AuthenticationState(new System.Security.Claims.ClaimsPrincipal())));
+        }
+
+        Nav.NavigateTo("/login", forceLoad: true);
+    }
+}

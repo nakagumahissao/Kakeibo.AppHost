@@ -1,0 +1,33 @@
+﻿@page "/resetar-senha"
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+
+<h3>Resetar Senha</h3>
+
+<EditForm Model="@resetPasswordModel" OnValidSubmit="HandleResetPassword" FormName="ResetsPassword">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <InputText id="email" type="email" class="form-control" @bind-Value="resetPasswordModel.Email" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enviar Link de Reset</button>
+</EditForm>
+
+@code {
+    private ResetPasswordModel resetPasswordModel = new();
+
+    private async Task HandleResetPassword()
+    {
+        // Aqui você chamaria seu serviço de reset de senha
+        await JS.InvokeVoidAsync("alert", $"Link de reset enviado para {resetPasswordModel.Email}");
+        Nav.NavigateTo("/login");
+    }
+
+    public class ResetPasswordModel
+    {
+        public string Email { get; set; } = string.Empty;
+    }
+}

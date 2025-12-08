@@ -35,11 +35,10 @@ namespace kakeibo.api
         [Display(Name = "Mes")]
         public required string Mes { get; set; } // nvarchar(2), not null
 
-        [MaxLength(450)]
-        [StringLength(450)]
-        [Required(ErrorMessage = "User ID is required")]
+        [MaxLength(128)]
+        [StringLength(128)]
         [Display(Name = "User ID")]
-        public required string UserID { get; set; } // nvarchar(450), not null
+        public string? UserID { get; set; }
 
         [Required(ErrorMessage = "Despesa ID is required")]
         [Display(Name = "Despesa ID")]

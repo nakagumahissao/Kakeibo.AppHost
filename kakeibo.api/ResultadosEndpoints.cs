@@ -7,13 +7,13 @@ namespace kakeibo.api
     {
         public static void MapResultadosEndpoints(this WebApplication app)
         {
-            app.MapGet("/resultados", async (KakeiboDBContext db) =>
+            app.MapGet("/resultados{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
-                var all = await db.resultados.ToListAsync();
+                var all = await db.resultados.Where(w => w.UserID == UserID).ToListAsync();
                 return Results.Ok(all);
             }).RequireAuthorization();
 
-            app.MapGet("/resultados/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapGet("/resultados/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var item = await db.saidas.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
@@ -26,7 +26,7 @@ namespace kakeibo.api
                 return Results.Created($"/resultados/{results.ResultadoID}", results);
             }).RequireAuthorization();
 
-            app.MapPut("/resultados/{id}", async (int id, Resultados results, KakeiboDBContext db) =>
+            app.MapPut("/resultados/{id:decimal}", async (decimal id, Resultados results, KakeiboDBContext db) =>
             {
                 var existing = await db.resultados.FindAsync(id);
                 if (existing is null) return Results.NotFound();
@@ -47,7 +47,7 @@ namespace kakeibo.api
             }).RequireAuthorization();
 
 
-            app.MapDelete("/saidas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapDelete("/saidas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var r = await db.resultados.FindAsync(id);
                 if (r is null) return Results.NotFound();

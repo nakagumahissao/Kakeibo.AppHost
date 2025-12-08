@@ -25,5 +25,10 @@ namespace kakeibo.api
         [Required(ErrorMessage = "Tipo De Entrada is required")]
         [Display(Name = "Tipo De Entrada")]
         public required string TipoDeEntrada { get; set; } // nvarchar(80), not null
+
+        [MaxLength(128)]
+        [StringLength(128)]
+        [Display(Name = "User ID")]
+        public string? UserID { get; set; }
     }
 }

@@ -7,11 +7,11 @@ namespace kakeibo.api
     {
         public static void MapEntradasEndpoints(this WebApplication app)
         {
-            app.MapGet("/entradas/{month}-{year}", async (string month, string year, KakeiboDBContext db) =>
+            app.MapGet("/entradas/{UserID}/{month}-{year}", async (string UserID, string month, string year, KakeiboDBContext db) =>
             {
                 DateTime dt = new DateTime(Convert.ToInt16(year), Convert.ToInt16(month), 1, 0, 0, 0);
 
-                var all = await db.entradas.Where(w => w.Ano == dt.Year.ToString("0000") && w.Mes == dt.Month.ToString("00")).ToListAsync();
+                var all = await db.entradas.Where(w => w.Ano == dt.Year.ToString("0000") && w.Mes == dt.Month.ToString("00") && w.UserID == UserID).ToListAsync();
 
                 return Results.Ok(all);
             }).RequireAuthorization();

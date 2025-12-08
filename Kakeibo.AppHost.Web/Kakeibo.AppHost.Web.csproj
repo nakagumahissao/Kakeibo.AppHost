@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="CustomAuthorizationMessageHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Kakeibo.AppHost.ServiceDefaults\Kakeibo.AppHost.ServiceDefaults.csproj" />
   </ItemGroup>
 
