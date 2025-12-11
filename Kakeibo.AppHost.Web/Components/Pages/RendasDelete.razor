@@ -1,8 +1,9 @@
 ﻿@page "/rendas/delete/{EntradaId:int}"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
 @rendermode InteractiveServer
 @inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <h3 style="padding-bottom:10px;">Excluir Renda</h3>
 
@@ -44,6 +45,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis");
         entrada = await client.GetFromJsonAsync<Entradas>($"entradas/{EntradaId}");
     }

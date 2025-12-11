@@ -1,64 +1,68 @@
 ﻿@page "/login"
-@using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Components.Forms
-@using Kakeibo.AppHost.Web.Services
 @using Kakeibo.AppHost.Web.Models
-
-@inject TokenService TokenService
-@inject NavigationManager Nav
 @rendermode InteractiveServer
+@inject HttpClient Http
+@inject NavigationManager Nav
 
 <PageTitle>Login</PageTitle>
 
-<h1 class="mb-3">Login</h1>
+<h1>Login</h1>
 
-@if (context is not null) 
+@if (editContext is not null)
 {
-    <EditForm EditContext="context" OnValidSubmit="SubmitLogin" FormName="logindata">
+    <EditForm EditContext="editContext" OnValidSubmit="SubmitLogin" FormName="LoginInput">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="mb-3">
             <label>Email</label>
             <InputText @bind-Value="loginModel.Email" class="form-control" />
-            <ValidationMessage For="@(() => loginModel.Email)" />
         </div>
 
         <div class="mb-3">
-            <label>Senha</label>
+            <label>Password</label>
             <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
-            <ValidationMessage For="@(() => loginModel.Password)" />
         </div>
 
-        <button class="btn btn-primary">Entrar</button>
+        <button type="submit" class="btn btn-primary">Entrar</button>
     </EditForm>
 }
 
-@if (error is not null)
+@if (!string.IsNullOrEmpty(error))
 {
     <p style="color:red">@error</p>
 }
 
 @code {
-    private LoginModel loginModel = new();  
-    private EditContext? context; 
+    private LoginModel? loginModel;
+    private EditContext? editContext;
     private string? error;
 
     protected override void OnInitialized()
     {
-        context = new EditContext(loginModel);
+        loginModel = new();
+        editContext = new EditContext(loginModel);
     }
 
     private async Task SubmitLogin()
     {
-        bool ok = await TokenService.BlazorLogin(loginModel);
-
-        if (!ok)
+        try
         {
-            error = "Email ou senha inválidos.";
-            return;
-        }
+            var loginUrl = $"{Nav.BaseUri}blazor-login";
+            var response = await Http.PostAsJsonAsync(loginUrl, loginModel);
 
-        Nav.NavigateTo("/");
+            if (!response.IsSuccessStatusCode)
+            {
+                error = "Email ou senha inválidos.";
+                return;
+            }
+
+            // Successful login → navigate to home
+            Nav.NavigateTo("/", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            error = $"Erro ao fazer login: {ex.Message}";
+        }
     }
 }

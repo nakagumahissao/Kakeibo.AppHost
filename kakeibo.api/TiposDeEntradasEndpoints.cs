@@ -7,7 +7,7 @@ namespace kakeibo.api
     {
         public static void MapTiposDeEntradasEndpoints(this WebApplication app)
         {
-            app.MapGet("/tiposentrada{UserID}", async (string UserID, KakeiboDBContext db) =>
+            app.MapGet("/tiposentrada/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
                 var all = await db.tiposDeEntradas.Where(w => w.UserID == UserID).ToListAsync();
                 return Results.Ok(all);

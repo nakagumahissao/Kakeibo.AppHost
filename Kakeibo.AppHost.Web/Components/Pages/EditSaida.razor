@@ -1,8 +1,9 @@
 ﻿@page "/saidas/edit/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
 @rendermode InteractiveServer
 @inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <h3 style="padding-bottom:10px;">Editar Saída</h3>
 
@@ -61,6 +62,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis");
         saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
     }

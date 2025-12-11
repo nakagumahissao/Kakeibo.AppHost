@@ -1,11 +1,11 @@
 ﻿@page "/tiposdespesas"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
+@using Kakeibo.AppHost.Web.Models
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
-
-@using Kakeibo.AppHost.Web.Models
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Tipos de Despesas</PageTitle>
 
@@ -13,7 +13,7 @@
 
 @if (despesas == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Carregando...</em></p>
 }
 else
 {
@@ -41,9 +41,18 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis");
         despesas = await client.GetFromJsonAsync<List<TiposDeDespesa>>(
-            "tiposdespesa"
+            $"tiposdespesa/{userId}"
         );
     }
 }

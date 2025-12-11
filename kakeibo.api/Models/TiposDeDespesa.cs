@@ -18,7 +18,7 @@ namespace kakeibo.api
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required(ErrorMessage = "Tipo Despesa ID is required")]
         [Display(Name = "Tipo Despesa ID")]
-        public required int TipoDespesaID { get; set; } // int, not null
+        public required decimal TipoDespesaID { get; set; } // int, not null
 
         [MaxLength(30)]
         [StringLength(30)]

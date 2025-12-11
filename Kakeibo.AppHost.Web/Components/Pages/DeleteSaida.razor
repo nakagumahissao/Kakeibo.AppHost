@@ -1,9 +1,10 @@
 ﻿@page "/saidas/delete/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
 @using Microsoft.AspNetCore.Components.Authorization
-@attribute [Authorize]
 @rendermode InteractiveServer
 @inject IHttpClientFactory HttpFactory
 @inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <h3>Excluir Saída</h3>
 
@@ -37,6 +38,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis"); // cookie auth works automatically
         saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
     }

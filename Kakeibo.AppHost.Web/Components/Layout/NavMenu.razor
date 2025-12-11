@@ -3,6 +3,8 @@
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Nav
 
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Kakeibo</a>
@@ -50,49 +52,53 @@
             </a>
             <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
                 <NavLink class="nav-link" href="rendas">Entradas</NavLink>
-                <NavLink class="nav-link" href="@($"/saidas/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                    Saidas
-                </NavLink>
+
+                @if (tokenUserId is not null && tokenUserId != "")
+                {
+                    <NavLink class="nav-link" href="@($"/saidas/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+                        Despesas
+                    </NavLink>
+                }
+                else
+                {
+                    <NavLink class="nav-link" href="@($"/saidas/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+                        Despesas
+                    </NavLink>
+                }
             </div>
         </div>
 
         <!-- ================= USERS / ACCOUNT MENU ================= -->
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                        <span class="bi bi-list-nested" aria-hidden="true"></span>@(context.User.Identity?.Name ?? "Usuário")
-                    </a>
-                    <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                        <NavLink class="nav-link" href="/profile">Perfil</NavLink>
-                        <NavLink class="nav-link" href="/alterar-senha">Alterar Senha</NavLink>
-                        <NavLink class="nav-link" href="/resetar-senha">Resetar Senha</NavLink>
+        @if (tokenUserId is not null && tokenUserId != "")
+        {
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+                    <span class="bi bi bi-list-nested"></span> Profile
+                </a>
 
-                        @if (context.User.IsInRole("Admin"))
-                        {
-                            <NavLink class="nav-link" href="/claims">Claims</NavLink>
-                            <NavLink class="nav-link" href="/roles">Roles</NavLink>
-                        }
+                <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
+                    <NavLink class="nav-link" href="/profile">Perfil</NavLink>
+                    <NavLink class="nav-link" href="/alterar-senha">Alterar Senha</NavLink>
+                    <NavLink class="nav-link" href="/resetar-senha">Resetar Senha</NavLink>
 
-                        <button class="nav-link btn btn-link text-start" @onclick="Logout">Sair</button>
-                    </div>
+                    <button class="nav-link btn btn-link text-start" @onclick="Logout">Sair</button>
                 </div>
-            </Authorized>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+                    <span class="bi bi-list-nested" aria-hidden="true"></span>
+                    Usuários
+                </a>
 
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                        <span class="bi bi-list-nested" aria-hidden="true"></span>
-                        Usuários
-                    </a>
-                    <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                        <NavLink class="nav-link" href="/login">Entrar</NavLink>
-                        <NavLink class="nav-link" href="/register-user">Registrar</NavLink>
-                    </div>
+                <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
+                    <NavLink class="nav-link" href="/login">Entrar</NavLink>
+                    <NavLink class="nav-link" href="/register-user">Registrar</NavLink>
                 </div>
-            </NotAuthorized>
-        </AuthorizeView>
-
+            </div>
+        }
     </nav>
 </div>
 
@@ -110,6 +116,14 @@
 
 @code {
     private bool showUserMenu = false;
+    private string? token;
+    private string? tokenUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        token = TokenService.GetToken();
+        tokenUserId = TokenService.GetUserIdFromToken();
+    }
 
     void ToggleUserMenu()
     {

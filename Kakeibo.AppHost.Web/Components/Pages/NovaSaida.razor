@@ -1,12 +1,12 @@
 ﻿@page "/saidas/new/{day:int}/{month:int}/{year:int}"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
-@inject IHttpClientFactory HttpFactory
-@inject NavigationManager NavManager
-@inject Microsoft.Extensions.Logging.ILogger<Kakeibo.AppHost.Web.Components.Pages.NovaSaida> Logger
 @using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Net.Http.Json
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager NavManager
+@inject Microsoft.Extensions.Logging.ILogger<Kakeibo.AppHost.Web.Components.Pages.NovaSaida> Logger
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Registro de Nova Despesa</PageTitle>
 
@@ -89,6 +89,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            NavManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         novaSaida ??= new Kakeibo.AppHost.Web.Models.Saidas
         {
             DataSaida = DateTime.Today,

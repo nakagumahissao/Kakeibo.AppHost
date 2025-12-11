@@ -42,7 +42,7 @@ namespace kakeibo.api
 
         [Required(ErrorMessage = "Despesa ID is required")]
         [Display(Name = "Despesa ID")]
-        public required int DespesaID { get; set; } // int, not null
+        public required decimal DespesaID { get; set; } // int, not null
 
         [MaxLength(50)]
         [StringLength(50)]

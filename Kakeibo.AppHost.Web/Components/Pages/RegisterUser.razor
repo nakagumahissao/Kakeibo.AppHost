@@ -1,12 +1,11 @@
 ﻿@page "/register-user"
 @using System.Net.Http.Json
 @using System.ComponentModel.DataAnnotations
-@using Kakeibo.AppHost.Web.Services
 @using Kakeibo.AppHost.Web.Models
 @rendermode InteractiveServer
 
-@inject IHttpClientFactory HttpFactory
-@inject TokenService TokenService
+@inject IHttpClientFactory HttpFactory // Keep this injection
+@inject NavigationManager Nav // Add NavigationManager to redirect on success
 
 <PageTitle>Registro de Usuário</PageTitle>
 
@@ -42,23 +41,46 @@
 
     private async Task HandleValidSubmit()
     {
-        // usa o TokenService para criar client já com JWT
-        var client = TokenService.CreateClient();
+        // ❌ REMOVED: @using Kakeibo.AppHost.Web.Services (No longer needed)
+        // ❌ REMOVED: @inject TokenService TokenService (No longer needed)
 
-        var response = await client.PostAsJsonAsync("/users", newUser);
+        // 🎯 FIX: Use the injected IHttpClientFactory to create the client named "apis"
+        var client = HttpFactory.CreateClient("apis");
+
+        // The API endpoint for registration is correct: POST to /register
+        var response = await client.PostAsJsonAsync("/register", newUser);
+
+        // Assuming your ApiResponse DTO is defined in a way that ReadFromJsonAsync can handle
+        // and that the API returns the ApiResponse<object> structure for registration.
         var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
 
-        if (apiResponse?.Success == true)
+        if (response.IsSuccessStatusCode)
         {
-            Message = $"✔ Usuário criado — ID = {apiResponse.Data}";
+            // The API returns 200 OK on success
+            // Optional: Check apiResponse?.Success if your API always wraps success in ApiResponse
+
+            Message = $"✔ Usuário criado com sucesso! Redirecionando para o login...";
             AlertClass = "alert-success";
+
+            // Redirect the user to the login page after successful registration
+            await Task.Delay(2000);
+            Nav.NavigateTo("/login");
         }
         else
         {
-            Message = "❌ Erro: " + string.Join(", ", apiResponse?.Errors ?? []);
+            // Handle registration failure (e.g., email already taken, weak password)
+            var errorDetails = apiResponse?.Errors != null && apiResponse.Errors.Length > 0
+                ? string.Join(", ", apiResponse.Errors)
+                : "Falha na comunicação com o servidor ou dados inválidos.";
+
+            Message = "❌ Erro ao registrar: " + errorDetails;
             AlertClass = "alert-danger";
         }
     }
+
+    // Your DTOs need to be accessible, either defined here or via a using statement.
+    // Ensure this model is accessible or defined within your shared models namespace.
+    public record ApiResponse<T>(bool Success, T? Data, string[] Errors);
 
     public class UserRegistrationModel
     {

@@ -1,11 +1,10 @@
-﻿@page "/saidas"
-@page "/saidas/{Day:int}/{Month:int}/{Year:int}"
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
+﻿@page "/saidas/{userId}/{Day:int}/{Month:int}/{Year:int}"
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
 @using Kakeibo.AppHost.Web.Models
 @inject IJSRuntime JS
+
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Saídas</PageTitle>
 
@@ -86,6 +85,7 @@
     [Parameter] public int Day { get; set; }
     [Parameter] public int Month { get; set; }
     [Parameter] public int Year { get; set; }
+    [Parameter] public string userId { get; set; }
 
     private List<Kakeibo.AppHost.Web.Models.Saidas>? saidasDoDia;
     private string selectedDayDisplay = "";
@@ -94,6 +94,18 @@
     protected override async Task OnParametersSetAsync()
     {
         totalSaidas = 0m;
+
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            NavManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        if (userId is null || userId == "")
+            userId = tokenUserId;
 
         // default to today if parameters are not provided
         var dt = (Day > 0 && Month > 0 && Year > 0)
@@ -108,28 +120,37 @@
 
         var client = HttpFactory.CreateClient("apis");
         saidasDoDia = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.Saidas>>(
-            $"saidas/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
+            $"saidas/{userId}/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
         );
     }
 
     private void PrevMonth()
     {
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
         int newMonth = Month - 1;
         int newYear = Year;
         if (newMonth < 1) { newMonth = 12; newYear--; }
-        NavManager.NavigateTo($"/saidas/1/{newMonth}/{newYear}", forceLoad: true);
+        NavManager.NavigateTo($"/saidas/{tokenUserId}/1/{newMonth}/{newYear}", forceLoad: true);
     }
 
     private void NextMonth()
     {
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
         int newMonth = Month + 1;
         int newYear = Year;
         if (newMonth > 12) { newMonth = 1; newYear++; }
-        NavManager.NavigateTo($"/saidas/1/{newMonth}/{newYear}", forceLoad: true);
+        NavManager.NavigateTo($"/saidas/{tokenUserId}/1/{newMonth}/{newYear}", forceLoad: true);
     }
 
     private RenderFragment CalendarHtml() => builder =>
     {
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
         int seq = 0;
 
         // Month navigation
@@ -142,7 +163,7 @@
         int prevMonth = Month - 1;
         int prevYear = Year;
         if (prevMonth < 1) { prevMonth = 12; prevYear--; }
-        builder.AddAttribute(seq++, "href", $"/saidas/1/{prevMonth}/{prevYear}");
+        builder.AddAttribute(seq++, "href", $"/saidas/{tokenUserId}/1/{prevMonth}/{prevYear}");
         builder.AddContent(seq++, "< Prev");
         builder.CloseElement();
 
@@ -157,7 +178,7 @@
         int nextMonth = Month + 1;
         int nextYear = Year;
         if (nextMonth > 12) { nextMonth = 1; nextYear++; }
-        builder.AddAttribute(seq++, "href", $"/saidas/1/{nextMonth}/{nextYear}");
+        builder.AddAttribute(seq++, "href", $"/saidas/{tokenUserId}/1/{nextMonth}/{nextYear}");
         builder.AddContent(seq++, "Next >");
         builder.CloseElement();
 
@@ -209,7 +230,7 @@
                     style += " color:red; font-weight:bold;";
 
                 builder.AddAttribute(seq++, "style", style);
-                builder.AddAttribute(seq++, "href", $"/saidas/{currentDay}/{Month}/{Year}");
+                builder.AddAttribute(seq++, "href", $"/saidas/{tokenUserId}/{currentDay}/{Month}/{Year}");
                 builder.AddContent(seq++, currentDay);
                 builder.CloseElement(); // a
 

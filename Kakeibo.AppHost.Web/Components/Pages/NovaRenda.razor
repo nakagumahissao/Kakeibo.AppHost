@@ -1,12 +1,12 @@
 ﻿@page "/rendas/new"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
 @inject IHttpClientFactory HttpFactory
 @using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Net.Http.Json
 @using System.Text.Json
 @inject NavigationManager Navigation
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Nova Renda</PageTitle>
 
@@ -67,6 +67,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Navigation.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         HttpClient? apisClient = HttpFactory.CreateClient("apis");
 
         novaEntrada ??= new()

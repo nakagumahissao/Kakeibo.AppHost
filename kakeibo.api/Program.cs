@@ -2,7 +2,6 @@ using kakeibo.api.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using System.Text;
 
 namespace kakeibo.api;
@@ -13,6 +12,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.AddServiceDefaults();
+
+        // 1. SERVICE CONFIGURATION PHASE (MUST BE BEFORE builder.Build())
+        // ----------------------------------------------------------------
 
         // Connection string
         var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
@@ -25,7 +27,6 @@ public class Program
             .AddEntityFrameworkStores<KakeiboDBContext>()
             .AddDefaultTokenProviders();
 
-        // JWT configuration
         var jwtKey = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
 
         builder.Services.AddAuthentication(options =>
@@ -37,10 +38,7 @@ public class Program
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
+                // ... (your existing TokenValidationParameters)
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(jwtKey),
@@ -48,18 +46,34 @@ public class Program
             };
         });
 
+        // Add Authorization service once
         builder.Services.AddAuthorization();
 
         // OpenAPI / Swagger
         builder.Services.AddOpenApi();
 
+        // ----------------------------------------------------------------
+        // 2. BUILD THE APPLICATION
+        // ----------------------------------------------------------------
         var app = builder.Build();
 
+        // 3. MIDDLEWARE CONFIGURATION PHASE (MUST BE AFTER builder.Build())
+        // ----------------------------------------------------------------
         app.UseHttpsRedirection();
+
+        // Use Authentication and Authorization middleware once
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // Map your endpoints
+        // OpenAPI
+        if (app.Environment.IsDevelopment())
+        {
+            // Swagger UI should generally be run first for easy debugging
+            app.MapOpenApi();
+        }
+
+        // 4. ENDPOINT MAPPING PHASE
+        // ----------------------------------------------------------------
         app.MapUsersEndpoints();
         app.MapDefaultEndpoints();
         app.MapTiposDeDespesaEndpoints();
@@ -70,14 +84,8 @@ public class Program
         app.MapEntradasEndpoints();
         app.MapDespesasEndpoints();
 
-        
-
-        // OpenAPI
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
-
+        // 5. RUN THE APPLICATION
+        // ----------------------------------------------------------------
         app.Run();
     }
 }

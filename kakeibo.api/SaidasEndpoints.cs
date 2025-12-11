@@ -7,22 +7,16 @@ namespace kakeibo.api
     {
         public static void MapSaidasEndpoints(this WebApplication app)
         {
-            app.MapGet("/saidas/{UserID}", async (string UserID, KakeiboDBContext db) =>
-            {
-                var all = await db.saidas.Where(w => w.UserID == UserID).ToListAsync();
-                return Results.Ok(all);
-            }).RequireAuthorization();
-
             app.MapGet("/saidas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var item = await db.saidas.Where(s => s.SaidaID == id).FirstOrDefaultAsync();
                 return item is not null ? Results.Ok(item) : Results.NotFound();
             }).RequireAuthorization();
 
-            app.MapGet("/saidas/{dia:int}-{mes:int}-{ano:int}", async (int dia, int mes, int ano, KakeiboDBContext db) =>
+            app.MapGet("/saidas/{UserID}/{dia:int}-{mes:int}-{ano:int}", async (string UserID, int dia, int mes, int ano, KakeiboDBContext db) =>
             {
                 DateTime dt = new DateTime(ano, mes, dia, 0, 0, 0);
-                var item = await db.saidas.Where(w => w.DataSaida == dt).ToListAsync();
+                var item = await db.saidas.Where(w => w.DataSaida == dt && w.UserID == UserID).ToListAsync();
                 return item is not null ? Results.Ok(item) : Results.NotFound();
             }).RequireAuthorization();
 

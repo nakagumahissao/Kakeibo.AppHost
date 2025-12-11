@@ -10,6 +10,7 @@ namespace kakeibo.api
             app.MapGet("/despesas/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
                 var all = await db.despesas
+                    .Where(u => u.UserID == UserID)
                     .Include(d => d.TiposDeDespesa)
                     .Select(d => new
                     {
@@ -18,10 +19,8 @@ namespace kakeibo.api
                         TipoDespesaNome = d.TiposDeDespesa!.TipoDeDespesa,
                         d.UserID,
                         d.NomeDespesa
-                    })
-                    .Where(u => u.UserID == UserID)
+                    })                    
                     .OrderBy(u => u.TipoDespesaNome)
-                    .OrderBy(v =>  v.TipoDespesaNome)
                     .ToListAsync();
 
                 return Results.Ok(all);

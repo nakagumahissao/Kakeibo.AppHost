@@ -1,9 +1,10 @@
 ﻿@page "/tiposrendas"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 @using Kakeibo.AppHost.Web.Models
 
@@ -41,9 +42,18 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis");
         entradas = await client.GetFromJsonAsync<List<TiposDeEntradas>>(
-            "tiposentrada"
+            $"tiposentrada/{userId}"
         );
     }
 }

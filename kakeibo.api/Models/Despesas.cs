@@ -11,11 +11,11 @@ namespace kakeibo.api
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required(ErrorMessage = "Despesa ID is required")]
         [Display(Name = "Despesa ID")]
-        public required int DespesaID { get; set; } // int, not null
+        public required decimal DespesaID { get; set; } // int, not null
 
         [Required(ErrorMessage = "Tipo Despesa ID is required")]
         [Display(Name = "Tipo Despesa ID")]
-        public required int TipoDespesaID { get; set; } // int, not null
+        public required decimal TipoDespesaID { get; set; } // int, not null
 
         [MaxLength(80)]
         [StringLength(80)]

@@ -1,10 +1,11 @@
 ﻿@page "/alterar-senha"
-@attribute [Authorize]
+@using Kakeibo.AppHost.Web.Services
 @rendermode InteractiveServer
 
 @inject IHttpClientFactory HttpFactory
 @inject IJSRuntime JS
 @inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <h3>Alterar Senha</h3>
 
@@ -32,6 +33,16 @@
 
 @code {
     ChangePasswordModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+    }
 
     private async Task HandleChangePassword()
     {

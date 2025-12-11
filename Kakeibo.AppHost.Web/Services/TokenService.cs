@@ -1,54 +1,25 @@
-﻿using Kakeibo.AppHost.Web.Models;
-using System.Net.Http.Headers;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
-namespace Kakeibo.AppHost.Web.Services;
-
-public class TokenService
+namespace Kakeibo.AppHost.Web.Services
 {
-    private readonly IHttpClientFactory _clientFactory;
-    private static string? _jwtToken;
-
-    public TokenService(IHttpClientFactory clientFactory)
+    public class TokenService
     {
-        _clientFactory = clientFactory;
-    }
+        private string? _token;
 
-    // Login usado pela API
-    public async Task<bool> LoginAsync(string email, string password)
-    {
-        var client = _clientFactory.CreateClient("apis");
+        public void SetToken(string token) => _token = token;
+        public string? GetToken() => _token;
 
-        var response = await client.PostAsJsonAsync("/auth/login", new LoginModel
+        public string? GetUserIdFromToken()
         {
-            Email = email,
-            Password = password
-        });
+            if (_token == null) return null;
 
-        if (!response.IsSuccessStatusCode) return false;
-
-        var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-
-        _jwtToken = result?.Token;
-        return !string.IsNullOrEmpty(_jwtToken);
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_token);
+            return jwt.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier ||  // GUID
+                c.Type == "sub"                         // common fallback
+            )?.Value;
+        }
     }
 
-    // 🔥 MÉTODO QUE VOCÊ ESTÁ TENTANDO USAR
-    public Task<bool> BlazorLogin(LoginModel model)
-        => LoginAsync(model.Email, model.Password);
-
-    // Adiciona token no header
-    public static void AddJwtHeader(HttpClient client)
-    {
-        if (!string.IsNullOrEmpty(_jwtToken))
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _jwtToken);
-    }
-
-    // Cria HttpClient já autenticado
-    public HttpClient CreateClient()
-    {
-        var client = _clientFactory.CreateClient("apis");
-        AddJwtHeader(client);
-        return client;
-    }
 }

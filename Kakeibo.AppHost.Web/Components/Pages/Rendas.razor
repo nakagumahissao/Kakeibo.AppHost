@@ -1,9 +1,10 @@
 ﻿@page "/rendas"
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
 @inject IHttpClientFactory HttpFactory
 @using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Rendas</PageTitle>
 
@@ -79,6 +80,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         await LoadEntradasDoMesAsync(DateTime.Today);
 
         totalEntradas = 0m;
@@ -86,11 +95,14 @@
 
     private async Task LoadEntradasDoMesAsync(DateTime dt)
     {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
         selectedMonthDisplay = dt.ToString("MM/yyyy");
 
         var client = HttpFactory.CreateClient("apis");
         entradasDoMes = await client.GetFromJsonAsync<List<Entradas>>(
-            $"entradas/{dt.Month:00}-{dt.Year:0000}"
+            $"entradas/{userId}/{dt.Month:00}-{dt.Year:0000}"
         );
     }
 

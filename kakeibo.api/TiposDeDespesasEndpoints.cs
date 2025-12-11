@@ -9,7 +9,10 @@ namespace kakeibo.api
         {
             app.MapGet("/tiposdespesa/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
-                var all = await db.tiposDeDespesas.Where(w => w.UserID == UserID).ToListAsync();
+                var all = await db.tiposDeDespesas
+                    .AsNoTracking()
+                    .Where(w => w.UserID == UserID)
+                    .ToListAsync();
                 return Results.Ok(all);
             }).RequireAuthorization();
 

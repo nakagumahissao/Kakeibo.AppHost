@@ -34,7 +34,7 @@ namespace kakeibo.api
 
         [Required(ErrorMessage = "Tipo De Entrada ID is required")]
         [Display(Name = "Tipo De Entrada ID")]
-        public int TipoDeEntradaID { get; set; } // int, not null
+        public decimal TipoDeEntradaID { get; set; } // int, not null
 
         [MaxLength(50)]
         [StringLength(50)]
