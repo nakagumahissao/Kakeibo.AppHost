@@ -58,7 +58,9 @@
 
         <div class="d-flex justify-content-end mt-3">
             <button type="submit" class="btn btn-primary me-2">Salvar</button>
-            <a href="/saidas" class="btn btn-secondary">Cancelar</a>
+            <a class="btn btn-secondary" href="@($"/saidas/{UserID}/{Day}/{Month}/{Year}")">
+                Cancelar
+            </a>
         </div>
     </div>
 </EditForm>
@@ -86,6 +88,7 @@
     private List<Kakeibo.AppHost.Web.Models.TiposDeDespesa> tiposDeDespesa = new();
     private string errorMessage = "";
     private string successMessage = "";
+    private string? UserID = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,12 +99,14 @@
             return;
         }
 
+        UserID = TokenService.GetUserIdFromToken();
+
         novaSaida ??= new Kakeibo.AppHost.Web.Models.Saidas
         {
             DataSaida = DateTime.Today,
             Ano = DateTime.Today.Year.ToString("0000"),
             Mes = DateTime.Today.Month.ToString("00"),
-            UserID = "current-user-id",
+            UserID = UserID!,
             DespesaID = 0,
             NomeDespesa = "",
             Descricao = "",
@@ -115,7 +120,7 @@
     private async Task CarregarTiposDespesa()
     {
         var client = HttpFactory.CreateClient("apis");
-        tiposDeDespesa = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>>("tiposdespesa") ?? new List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>();
+        tiposDeDespesa = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>>($"tiposdespesa/{UserID}") ?? new List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -129,7 +134,7 @@
             DataSaida = dt,
             Ano = dt.Year.ToString("0000"),
             Mes = dt.Month.ToString("00"),
-            UserID = "current-user-id",
+            UserID = UserID!,
             DespesaID = 0,
             NomeDespesa = "",
             Descricao = "",

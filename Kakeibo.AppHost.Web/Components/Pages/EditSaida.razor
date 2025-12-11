@@ -44,7 +44,7 @@ else
                 💾 Salvar
             </button>
 
-            <a class="btn btn-secondary btn-sm" href="/saidas/@Day/@Month/@Year">
+            <a class="btn btn-secondary btn-sm" href="/saidas/@UserID/@Day/@Month/@Year">
                 ⬅ Cancelar
             </a>
         </div>
@@ -60,6 +60,8 @@ else
     private Kakeibo.AppHost.Web.Models.Saidas? saida;
     private bool updated = false;
 
+    private string? UserID = "";
+
     protected override async Task OnInitializedAsync()
     {
         var token = TokenService.GetToken();
@@ -68,6 +70,8 @@ else
             Nav.NavigateTo("/login", forceLoad: true);
             return;
         }
+
+        UserID = TokenService.GetUserIdFromToken();
 
         var client = HttpFactory.CreateClient("apis");
         saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");

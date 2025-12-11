@@ -85,7 +85,7 @@
     [Parameter] public int Day { get; set; }
     [Parameter] public int Month { get; set; }
     [Parameter] public int Year { get; set; }
-    [Parameter] public string userId { get; set; }
+    [Parameter] public string userId { get; set; } = "";
 
     private List<Kakeibo.AppHost.Web.Models.Saidas>? saidasDoDia;
     private string selectedDayDisplay = "";
@@ -105,7 +105,7 @@
         }
 
         if (userId is null || userId == "")
-            userId = tokenUserId;
+            userId = tokenUserId!;
 
         // default to today if parameters are not provided
         var dt = (Day > 0 && Month > 0 && Year > 0)

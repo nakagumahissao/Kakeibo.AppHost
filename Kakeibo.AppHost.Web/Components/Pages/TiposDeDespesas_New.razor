@@ -1,0 +1,86 @@
+﻿@page "/tiposdespesas/adicionar"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Tipos de Despesa - Novo</PageTitle>
+
+<h3 style="padding-bottom:10px;">Nova Tipo de Despesa</h3>
+
+@if (isSaving)
+{
+    <p>Salvando...</p>
+}
+
+<div class="form-group">
+    <label>Nome do Tipo de Despesa</label>
+    <input class="form-control" @bind="tipo.TipoDeDespesa" />
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="text-danger mt-1">@errorMessage</p>
+    }
+</div>
+
+<div class="d-flex align-items-center mt-2 gap-2">
+    <button class="btn btn-primary" @onclick="Salvar">Salvar</button>
+    <a class="btn btn-primary" href="/tiposdespesas">Cancelar</a>
+</div>
+
+@code {
+    private TiposDeDespesa tipo = new TiposDeDespesa { TipoDeDespesa = "" };
+    private bool isSaving = false;
+    private string errorMessage = string.Empty;
+    private string? userId;
+
+    protected override void OnInitialized()
+    {
+        var token = TokenService.GetToken();
+        userId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+    }
+
+    private async Task Salvar()
+    {
+        try
+        {
+            isSaving = true;
+            errorMessage = "";
+
+            if (string.IsNullOrWhiteSpace(tipo.TipoDeDespesa))
+            {
+                errorMessage = "O nome do tipo de despesa é obrigatório.";
+                return;
+            }
+
+            tipo.UserId = userId;
+
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.PostAsJsonAsync("tiposdespesa", tipo);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/tiposdespesas");
+            }
+            else
+            {
+                errorMessage = "Erro ao salvar. Código: " + response.StatusCode;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

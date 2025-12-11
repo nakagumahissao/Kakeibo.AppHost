@@ -34,13 +34,18 @@
 }
 
 @code {
-    private LoginModel? loginModel;
+    private LoginModel loginModel = new ();
     private EditContext? editContext;
     private string? error;
 
     protected override void OnInitialized()
     {
-        loginModel = new();
+        loginModel = new LoginModel
+        {
+            Email = "",
+            Password = ""
+        };
+
         editContext = new EditContext(loginModel);
     }
 

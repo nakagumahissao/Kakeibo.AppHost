@@ -18,13 +18,13 @@ namespace kakeibo.api
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required(ErrorMessage = "Tipo De Entrada ID is required")]
         [Display(Name = "Tipo De Entrada ID")]
-        public required decimal TipoDeEntradaID { get; set; } // int, not null
+        public required decimal TipoDeEntradaID { get; set; } 
 
         [MaxLength(80)]
         [StringLength(80)]
         [Required(ErrorMessage = "Tipo De Entrada is required")]
         [Display(Name = "Tipo De Entrada")]
-        public required string TipoDeEntrada { get; set; } // nvarchar(80), not null
+        public required string TipoDeEntrada { get; set; } 
 
         [MaxLength(128)]
         [StringLength(128)]

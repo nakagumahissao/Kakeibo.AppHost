@@ -22,6 +22,7 @@ else
             <tr>
                 <th>ID</th>
                 <th>Tipo de Despesa</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -30,10 +31,23 @@ else
                 <tr>
                     <td>@despesa.TipoDespesaId</td>
                     <td>@despesa.TipoDeDespesa</td>
+                    <td>
+                        <a href="/tiposdespesas/editar/@despesa.TipoDespesaId"
+                           class="btn btn-sm btn-primary">
+                            Editar
+                        </a>
+
+                        <a href="/tiposdespesas/excluir/@despesa.TipoDespesaId"
+                           class="btn btn-sm btn-danger ms-2">
+                            Excluir
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <a href="/tiposdespesas/adicionar" class="btn btn-success">Adicionar</a>
 }
 
 @code {

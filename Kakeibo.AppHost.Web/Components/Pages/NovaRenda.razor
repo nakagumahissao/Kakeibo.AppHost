@@ -62,6 +62,8 @@
     private List<TiposDeEntradas>? tiposEntrada;
     private string errorMessage = "";
 
+    private string? UserID = "";
+
     [SupplyParameterFromForm]
     private Entradas? novaEntrada { get; set; }
 
@@ -74,18 +76,20 @@
             return;
         }
 
+        UserID = TokenService.GetUserIdFromToken();
+
         HttpClient? apisClient = HttpFactory.CreateClient("apis");
 
         novaEntrada ??= new()
         {
             Ano = DateTime.Today.Year.ToString("0000"),
             Mes = DateTime.Today.Month.ToString("00"),
-            UserID = "current-user-id"
+            UserID = UserID!
         };
 
         try
         {
-            tiposEntrada = await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>("tiposentrada");
+            tiposEntrada = await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>($"tiposentrada/{UserID}");
             tiposEntrada ??= new List<TiposDeEntradas>();
         }
         catch (OperationCanceledException)
@@ -112,7 +116,7 @@
         {
             novaEntrada.Ano = DateTime.Today.Year.ToString("0000");
             novaEntrada.Mes = DateTime.Today.Month.ToString("00");
-            novaEntrada.UserID = "current-user-id";
+            novaEntrada.UserID = UserID!;
         }
 
 

@@ -6,7 +6,7 @@
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
-<h3>Excluir Saída</h3>
+<h3 style="padding-bottom:10px;">Excluir Saída</h3>
 
 @if (saida == null && !deleted)
 {
@@ -23,8 +23,11 @@ else
         <p><b>Descrição:</b> @saida?.Descricao</p>
         <p><b>Valor:</b> @saida?.ValorDespesa.ToString("N2")</p>
     </div>
-
-    <button class="btn btn-danger" @onclick="ConfirmDelete">🗑 Excluir</button>
+    
+    <div class="d-flex align-items-center mt-2 gap-2">
+        <button class="btn btn-danger" @onclick="ConfirmDelete">🗑 Excluir</button>
+        <a class="btn btn-primary" href="/saidas/@UserId/@Day/@Month/@Year">Cancelar</a>
+    </div>
 }
 
 @code {
@@ -36,6 +39,8 @@ else
     private Kakeibo.AppHost.Web.Models.Saidas? saida;
     private bool deleted;
 
+    public string? UserId = "";
+
     protected override async Task OnInitializedAsync()
     {
         var token = TokenService.GetToken();
@@ -45,13 +50,15 @@ else
             return;
         }
 
-        var client = HttpFactory.CreateClient("apis"); // cookie auth works automatically
+        UserId = TokenService.GetUserIdFromToken();
+
+        var client = HttpFactory.CreateClient("apis");
         saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
     }
 
     private async Task ConfirmDelete()
     {
-        var client = HttpFactory.CreateClient("apis"); // again, no token header needed
+        var client = HttpFactory.CreateClient("apis"); 
         var resp = await client.DeleteAsync($"saidas/{SaidaId}");
 
         if (resp.IsSuccessStatusCode)

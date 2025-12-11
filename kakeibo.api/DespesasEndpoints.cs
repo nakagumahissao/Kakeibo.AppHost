@@ -28,7 +28,19 @@ namespace kakeibo.api
 
             app.MapGet("/despesas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
-                var item = await db.despesas.FindAsync(id);
+                var item = await db.despesas
+                    .Where(u => u.DespesaID == id)
+                    .Include(d => d.TiposDeDespesa)
+                    .Select(d => new
+                    {
+                        d.DespesaID,
+                        d.TipoDespesaID,
+                        TipoDespesaNome = d.TiposDeDespesa!.TipoDeDespesa,
+                        d.UserID,
+                        d.NomeDespesa
+                    })
+                    .FirstOrDefaultAsync();
+
                 return item is not null ? Results.Ok(item) : Results.NotFound();
             }).RequireAuthorization();
 

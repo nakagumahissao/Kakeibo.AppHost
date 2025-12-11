@@ -1,0 +1,90 @@
+﻿@page "/tiposrendas/editar/{id:int}"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Tipos de Rendas - Editar</PageTitle>
+
+<h3 style="padding-bottom:10px;">Editar Tipo de Renda</h3>
+
+@if (entrada == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else
+{
+    <EditForm Model="entrada" OnValidSubmit="SalvarAlteracoes" FormName="EditarTiposRenda">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">ID</label>
+            <input class="form-control" value="@entrada.TipoDeEntradaId" disabled />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tipo de Renda</label>
+            <InputText class="form-control" @bind-Value="entrada.TipoDeEntrada" />
+        </div>
+
+        <div class="d-flex align-items-center mt-2 gap-2">
+            <button class="btn btn-primary" type="submit">Salvar</button>
+            <a class="btn btn-primary" href="/tiposrendas">Cancelar</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private TiposDeEntradas? entrada;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+
+        entrada = await client.GetFromJsonAsync<TiposDeEntradas>($"tiposentrada/{id}");
+
+        if (entrada is null)
+        {
+            // Caso não exista, volta para listagem
+            Nav.NavigateTo("/tiposrendas");
+        }
+    }
+
+    private async Task SalvarAlteracoes()
+    {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
+        entrada!.UserId = userId; // garante que o user está setado
+
+        var client = HttpFactory.CreateClient("apis");
+
+        var response = await client.PutAsJsonAsync($"tiposentrada/{id}", entrada);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Nav.NavigateTo("/tiposrendas", forceLoad: true);
+        }
+        else
+        {
+            Console.WriteLine("Erro ao salvar o tipo de renda");
+        }
+    }
+
+    private void Voltar()
+    {
+        Nav.NavigateTo("/tiposrendas");
+    }
+}

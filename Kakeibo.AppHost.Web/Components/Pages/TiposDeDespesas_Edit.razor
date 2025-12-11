@@ -1,0 +1,72 @@
+﻿@page "/tiposdespesas/editar/{id:decimal}"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Tipos de Despesa - Editar</PageTitle>
+
+<h3 style="padding-bottom:10px;">Editar Tipo de Despesa</h3>
+
+@if (tipo == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else
+{
+    <EditForm Model="tipo" OnValidSubmit="SalvarAlteracoes" FormName="EditarTiposDespesa">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">ID</label>
+            <input class="form-control" value="@tipo.TipoDespesaId" disabled />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tipo de Despesa</label>
+            <InputText class="form-control" @bind-Value="tipo.TipoDeDespesa" />
+        </div>
+
+        <div class="d-flex align-items-center mt-2 gap-2">
+            <button class="btn btn-primary" type="submit">Salvar</button>
+            <a class="btn btn-secondary" href="/tiposdespesas">Cancelar</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public decimal id { get; set; }
+    private TiposDeDespesa? tipo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+        tipo = await client.GetFromJsonAsync<TiposDeDespesa>($"tiposdespesa/{id}");
+
+        if (tipo == null)
+        {
+            Nav.NavigateTo("/tiposdespesas");
+        }
+    }
+
+    private async Task SalvarAlteracoes()
+    {
+        if (tipo == null) return;
+
+        var client = HttpFactory.CreateClient("apis");
+        var response = await client.PutAsJsonAsync($"tiposdespesa/{id}", tipo);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Nav.NavigateTo("/tiposdespesas", forceLoad: true);
+        }
+    }
+}
