@@ -1,0 +1,70 @@
+﻿@page "/saidas/delete/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
+<h3 style="padding-bottom:10px;">Excluir Saída</h3>
+
+@if (saida == null && !deleted)
+{
+    <p>Carregando registro...</p>
+}
+else if (deleted)
+{
+    <div class="alert alert-success">Registro excluído ✔</div>
+    <a class="btn btn-primary" href="/saidas/@Day/@Month/@Year">Voltar</a>
+}
+else
+{
+    <div class="card p-3">
+        <p><b>Descrição:</b> @saida?.Descricao</p>
+        <p><b>Valor:</b> @saida?.ValorDespesa.ToString("N2")</p>
+    </div>
+    
+    <div class="d-flex align-items-center mt-2 gap-2">
+        <button class="btn btn-danger" @onclick="ConfirmDelete">🗑 Excluir</button>
+        <a class="btn btn-primary" href="/saidas/@UserId/@Day/@Month/@Year">Cancelar</a>
+    </div>
+}
+
+@code {
+    [Parameter] public decimal SaidaId { get; set; }
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int Month { get; set; }
+    [Parameter] public int Year { get; set; }
+
+    private Kakeibo.AppHost.Web.Models.Saidas? saida;
+    private bool deleted;
+
+    public string? UserId = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        UserId = TokenService.GetUserIdFromToken();
+
+        var client = HttpFactory.CreateClient("apis");
+        saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
+    }
+
+    private async Task ConfirmDelete()
+    {
+        var client = HttpFactory.CreateClient("apis"); 
+        var resp = await client.DeleteAsync($"saidas/{SaidaId}");
+
+        if (resp.IsSuccessStatusCode)
+        {
+            deleted = true;
+            saida = null;
+        }
+    }
+}

@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddRedis("cache");
+// var cache = builder.AddRedis("redis");
 
 var apiService = builder.AddProject<Projects.kakeibo_api>("kakeibo-api")
     .WithHttpHealthCheck("/health");
@@ -8,8 +8,8 @@ var apiService = builder.AddProject<Projects.kakeibo_api>("kakeibo-api")
 builder.AddProject<Projects.Kakeibo_AppHost_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
-    .WithReference(cache)
-    .WaitFor(cache)
+    //.WithReference(cache)
+    //.WaitFor(cache)
     .WithReference(apiService)
     .WaitFor(apiService);
 

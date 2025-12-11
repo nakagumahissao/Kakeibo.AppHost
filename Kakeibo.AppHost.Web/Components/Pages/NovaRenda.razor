@@ -1,10 +1,12 @@
 ﻿@page "/rendas/new"
+@using Microsoft.AspNetCore.Authorization
 @inject IHttpClientFactory HttpFactory
 @using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Net.Http.Json
 @using System.Text.Json
 @inject NavigationManager Navigation
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Nova Renda</PageTitle>
 
@@ -60,23 +62,34 @@
     private List<TiposDeEntradas>? tiposEntrada;
     private string errorMessage = "";
 
+    private string? UserID = "";
+
     [SupplyParameterFromForm]
     private Entradas? novaEntrada { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Navigation.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        UserID = TokenService.GetUserIdFromToken();
+
         HttpClient? apisClient = HttpFactory.CreateClient("apis");
 
         novaEntrada ??= new()
         {
             Ano = DateTime.Today.Year.ToString("0000"),
             Mes = DateTime.Today.Month.ToString("00"),
-            UserID = "current-user-id"
+            UserID = UserID!
         };
 
         try
         {
-            tiposEntrada = await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>("tiposentrada");
+            tiposEntrada = await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>($"tiposentrada/{UserID}");
             tiposEntrada ??= new List<TiposDeEntradas>();
         }
         catch (OperationCanceledException)
@@ -103,7 +116,7 @@
         {
             novaEntrada.Ano = DateTime.Today.Year.ToString("0000");
             novaEntrada.Mes = DateTime.Today.Month.ToString("00");
-            novaEntrada.UserID = "current-user-id";
+            novaEntrada.UserID = UserID!;
         }
 
 

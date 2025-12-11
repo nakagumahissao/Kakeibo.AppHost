@@ -1,0 +1,97 @@
+﻿@page "/listadespesas/adicionar"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Lista de Despesas - Novo</PageTitle>
+
+<h3 style="padding-bottom:10px;">Nova Despesa</h3>
+
+@if (isSaving)
+{
+    <p>Salvando...</p>
+}
+
+<div class="form-group">
+    <label>Tipo de Despesa</label>
+    <select class="form-control" @bind="despesa.TipoDespesaId">
+        @if (tiposDeDespesa != null)
+        {
+            @foreach (var tipo in tiposDeDespesa)
+            {
+                <option value="@tipo.TipoDespesaId">@tipo.TipoDeDespesa</option>
+            }
+        }
+    </select>
+</div>
+
+<div class="form-group mt-2">
+    <label>Nome da Despesa</label>
+    <input class="form-control" @bind="despesa.NomeDespesa" />
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p class="text-danger mt-1">@errorMessage</p>
+}
+
+<div class="d-flex align-items-center mt-2 gap-2">
+    <button class="btn btn-primary" @onclick="Salvar">Salvar</button>
+    <a class="btn btn-secondary" href="/listadespesas">Cancelar</a>
+</div>
+
+@code {
+    private Despesa despesa = new();
+    private List<TiposDeDespesa>? tiposDeDespesa;
+    private bool isSaving = false;
+    private string errorMessage = string.Empty;
+    private string? userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        userId = TokenService.GetUserIdFromToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+        tiposDeDespesa = await client.GetFromJsonAsync<List<TiposDeDespesa>>($"tiposdespesa/{userId}");
+        despesa.UserId = userId;
+    }
+
+    private async Task Salvar()
+    {
+        try
+        {
+            isSaving = true;
+            errorMessage = "";
+
+            if (despesa.TipoDespesaId == 0 || string.IsNullOrWhiteSpace(despesa.NomeDespesa))
+            {
+                errorMessage = "Todos os campos são obrigatórios.";
+                return;
+            }
+
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.PostAsJsonAsync("despesas", despesa);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/listadespesas");
+            }
+            else
+            {
+                errorMessage = $"Erro ao salvar. Código: {response.StatusCode}";
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

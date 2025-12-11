@@ -1,7 +1,10 @@
 ﻿@page "/tiposrendas"
+@using Microsoft.AspNetCore.Authorization
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 @using Kakeibo.AppHost.Web.Models
 
@@ -20,6 +23,7 @@ else
             <tr>
                 <th>ID</th>
                 <th>Tipo de Renda</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -28,20 +32,43 @@ else
                 <tr>
                     <td>@entrada.TipoDeEntradaId</td>
                     <td>@entrada.TipoDeEntrada</td>
+                    <td>
+                        <a href="/tiposrendas/editar/@entrada.TipoDeEntradaId"
+                           class="btn btn-sm btn-primary">
+                            Editar
+                        </a>
+
+                        <a href="/tiposrendas/excluir/@entrada.TipoDeEntradaId"
+                           class="btn btn-sm btn-danger ms-2">
+                            Excluir
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <a href="/tiposrendas/adicionar" class="btn btn-success">Adicionar</a>
 }
+
 
 @code {
     private List<TiposDeEntradas>? entradas;
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis");
         entradas = await client.GetFromJsonAsync<List<TiposDeEntradas>>(
-            "tiposentrada"
+            $"tiposentrada/{userId}"
         );
     }
 }

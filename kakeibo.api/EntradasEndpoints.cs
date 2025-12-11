@@ -7,29 +7,29 @@ namespace kakeibo.api
     {
         public static void MapEntradasEndpoints(this WebApplication app)
         {
-            app.MapGet("/entradas/{month}-{year}", async (string month, string year, KakeiboDBContext db) =>
+            app.MapGet("/entradas/{UserID}/{month}-{year}", async (string UserID, string month, string year, KakeiboDBContext db) =>
             {
                 DateTime dt = new DateTime(Convert.ToInt16(year), Convert.ToInt16(month), 1, 0, 0, 0);
 
-                var all = await db.entradas.Where(w => w.Ano == dt.Year.ToString("0000") && w.Mes == dt.Month.ToString("00")).ToListAsync();
+                var all = await db.entradas.Where(w => w.Ano == dt.Year.ToString("0000") && w.Mes == dt.Month.ToString("00") && w.UserID == UserID).ToListAsync();
 
                 return Results.Ok(all);
-            });
+            }).RequireAuthorization();
 
-            app.MapGet("/entradas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapGet("/entradas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var item = await db.entradas.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
             app.MapPost("/entradas", async (Entradas entries, KakeiboDBContext db) =>
             {
                 db.entradas.Add(entries);
                 await db.SaveChangesAsync();
                 return Results.Created($"/entradas/{entries.EntradaID}", entries);
-            });
+            }).RequireAuthorization();
 
-            app.MapPut("/entradas/{id}", async (int id, Entradas entries, KakeiboDBContext db) =>
+            app.MapPut("/entradas/{id:decimal}", async (decimal id, Entradas entries, KakeiboDBContext db) =>
             {
                 var existing = await db.entradas.FindAsync(id);
                 if (existing is null) return Results.NotFound();
@@ -43,10 +43,10 @@ namespace kakeibo.api
 
                 await db.SaveChangesAsync();
                 return Results.Ok(existing);
-            });
+            }).RequireAuthorization();
 
 
-            app.MapDelete("/entradas/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapDelete("/entradas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var r = await db.entradas.FindAsync(id);
                 if (r is null) return Results.NotFound();
@@ -55,7 +55,7 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         }
     }
 }

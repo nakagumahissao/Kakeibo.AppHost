@@ -1,0 +1,82 @@
+﻿@page "/listadespesas/excluir/{id:int}"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Lista de Despesas - Excluir</PageTitle>
+
+<h3 style="padding-bottom:10px;">Excluir Despesa</h3>
+
+@if (despesa == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <div class="form-group">
+        <label>Tipo de Despesa</label>
+        <input class="form-control" value="@despesa.TipoDespesaNome" disabled />
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Nome da Despesa</label>
+        <input class="form-control" value="@despesa.NomeDespesa" disabled />
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="text-danger mt-1">@errorMessage</p>
+    }
+
+    <div class="d-flex align-items-center mt-2 gap-2">
+        <button class="btn btn-danger" @onclick="ConfirmarExclusao">Excluir</button>
+        <a class="btn btn-secondary" href="/listadespesas">Cancelar</a>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Despesa? despesa;
+    private string? errorMessage;
+    private string? userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userId = TokenService.GetUserIdFromToken();
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+        despesa = await client.GetFromJsonAsync<Despesa>($"despesas/{id}");
+    }
+
+    private async Task ConfirmarExclusao()
+    {
+        if (despesa == null) return;
+
+        try
+        {
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.DeleteAsync($"despesas/{despesa.DespesaId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/listadespesas");
+            }
+            else
+            {
+                errorMessage = $"Erro ao excluir. Código: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

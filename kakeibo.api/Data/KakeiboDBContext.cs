@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace kakeibo.api.Data
 {
-    public class KakeiboDBContext : DbContext
+    public class KakeiboDBContext : IdentityDbContext<IdentityUser>
     {
         public KakeiboDBContext(DbContextOptions<KakeiboDBContext> options) : base(options)
         {

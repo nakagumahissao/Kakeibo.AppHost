@@ -1,0 +1,73 @@
+﻿@page "/login"
+@using Kakeibo.AppHost.Web.Models
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject NavigationManager Nav
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+@if (editContext is not null)
+{
+    <EditForm EditContext="editContext" OnValidSubmit="SubmitLogin" FormName="LoginInput">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Email</label>
+            <InputText @bind-Value="loginModel.Email" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Password</label>
+            <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </EditForm>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <p style="color:red">@error</p>
+}
+
+@code {
+    private LoginModel loginModel = new ();
+    private EditContext? editContext;
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        loginModel = new LoginModel
+        {
+            Email = "",
+            Password = ""
+        };
+
+        editContext = new EditContext(loginModel);
+    }
+
+    private async Task SubmitLogin()
+    {
+        try
+        {
+            var loginUrl = $"{Nav.BaseUri}blazor-login";
+            var response = await Http.PostAsJsonAsync(loginUrl, loginModel);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                error = "Email ou senha inválidos.";
+                return;
+            }
+
+            // Successful login → navigate to home
+            Nav.NavigateTo("/", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            error = $"Erro ao fazer login: {ex.Message}";
+        }
+    }
+}

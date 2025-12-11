@@ -31,10 +31,10 @@ namespace kakeibo.api
         [Display(Name = "Mes")]
         public required string Mes { get; set; } // nvarchar(2), not null
 
-        [MaxLength(450)]
-        [StringLength(450)]
+        [MaxLength(128)]
+        [StringLength(128)]
         [Display(Name = "User ID")]
-        public string? UserID { get; set; } // nvarchar(450), null
+        public string? UserID { get; set; }
 
         [Required(ErrorMessage = "A Total Entradas is required")]
         [Display(Name = "A Total Entradas")]

@@ -7,26 +7,29 @@ namespace kakeibo.api
     {
         public static void MapTiposDeDespesaEndpoints(this WebApplication app)
         {
-            app.MapGet("/tiposdespesa", async (KakeiboDBContext db) =>
+            app.MapGet("/tiposdespesa/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
-                var all = await db.tiposDeDespesas.ToListAsync();
+                var all = await db.tiposDeDespesas
+                    .AsNoTracking()
+                    .Where(w => w.UserID == UserID)
+                    .ToListAsync();
                 return Results.Ok(all);
-            });
+            }).RequireAuthorization();
 
-            app.MapGet("/tiposdespesa/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapGet("/tiposdespesa/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var item = await db.tiposDeDespesas.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
             app.MapPost("/tiposdespesa", async (TiposDeDespesa tipo, KakeiboDBContext db) =>
             {
                 db.tiposDeDespesas.Add(tipo);
                 await db.SaveChangesAsync();
                 return Results.Created($"/tiposdespesa/{tipo.TipoDespesaID}", tipo);
-            });
+            }).RequireAuthorization();
 
-            app.MapPut("/tiposdespesa/{id}", async (int id, TiposDeDespesa updatedTipo, KakeiboDBContext db) =>
+            app.MapPut("/tiposdespesa/{id:decimal}", async (decimal id, TiposDeDespesa updatedTipo, KakeiboDBContext db) =>
             {
                 var tipo = await db.tiposDeDespesas.FindAsync(id);
                 if (tipo is null) return Results.NotFound();
@@ -35,9 +38,9 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.Ok(tipo);
-            });
+            }).RequireAuthorization();
 
-            app.MapDelete("/tiposdespesa/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapDelete("/tiposdespesa/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var tipo = await db.tiposDeDespesas.FindAsync(id);
                 if (tipo is null) return Results.NotFound();
@@ -46,7 +49,7 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         }
     }
 }

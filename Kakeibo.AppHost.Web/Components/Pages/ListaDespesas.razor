@@ -1,9 +1,11 @@
 ﻿@page "/listadespesas"
+@using Microsoft.AspNetCore.Authorization
+@using Kakeibo.AppHost.Web.Models
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
-
-@using Kakeibo.AppHost.Web.Models
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Lista de Despesas</PageTitle>
 
@@ -21,6 +23,7 @@ else
                 <th>ID</th>
                 <th>Tipo de Despesa</th>
                 <th>Despesa</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -30,20 +33,46 @@ else
                     <td>@despesa.DespesaId</td>
                     <td>@despesa.TipoDespesaNome</td>
                     <td>@despesa.NomeDespesa</td>
+                    <td>
+                        <a href="/listadespesas/editar/@despesa.DespesaId"
+                           class="btn btn-sm btn-primary">
+                            Editar
+                        </a>
+
+                        <a href="/listadespesas/excluir/@despesa.DespesaId"
+                           class="btn btn-sm btn-danger ms-2">
+                            Excluir
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <button class="btn btn-success"
+            @onclick="@(() => Nav.NavigateTo("/listadespesas/adicionar"))">
+        Adicionar
+    </button>
 }
+
 
 @code {
     private List<Despesa>? despesas;
 
     protected override async Task OnInitializedAsync()
     {
+        var token = TokenService.GetToken();
+        var userId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         var client = HttpFactory.CreateClient("apis");
         despesas = await client.GetFromJsonAsync<List<Despesa>>(
-            "despesas"
+            $"despesas/{userId}"
         );
     }
 }

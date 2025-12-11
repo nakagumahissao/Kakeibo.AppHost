@@ -19,23 +19,22 @@ namespace kakeibo.api
         [StringLength(4)]
         [Required(ErrorMessage = "Ano is required")]
         [Display(Name = "Ano")]
-        public string Ano { get; set; } // nvarchar(4), not null
+        public required string Ano { get; set; } // nvarchar(4), not null
 
         [MaxLength(2)]
         [StringLength(2)]
         [Required(ErrorMessage = "Mes is required")]
         [Display(Name = "Mes")]
-        public string Mes { get; set; } // nvarchar(2), not null
+        public required string Mes { get; set; } // nvarchar(2), not null
 
-        [MaxLength(450)]
-        [StringLength(450)]
-        [Required(ErrorMessage = "User ID is required")]
+        [MaxLength(128)]
+        [StringLength(128)]
         [Display(Name = "User ID")]
-        public string UserID { get; set; } // nvarchar(450), not null
+        public string? UserID { get; set; }
 
         [Required(ErrorMessage = "Tipo De Entrada ID is required")]
         [Display(Name = "Tipo De Entrada ID")]
-        public int TipoDeEntradaID { get; set; } // int, not null
+        public decimal TipoDeEntradaID { get; set; } // int, not null
 
         [MaxLength(50)]
         [StringLength(50)]
@@ -48,6 +47,6 @@ namespace kakeibo.api
 
         // dbo.Entradas.TipoDeEntradaID -> dbo.TiposDeEntradas.TipoDeEntradaID (FK_Entradas_TiposDeEntradas)
         [ForeignKey("TipoDeEntradaID")]
-        public TiposDeEntradas TiposDeEntrada { get; set; }
+        public TiposDeEntradas? TiposDeEntrada { get; set; }
     }
 }

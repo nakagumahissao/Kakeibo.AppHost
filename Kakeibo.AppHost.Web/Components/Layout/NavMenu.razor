@@ -1,4 +1,11 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Kakeibo</a>
     </div>
@@ -45,11 +52,52 @@
             </a>
             <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
                 <NavLink class="nav-link" href="rendas">Entradas</NavLink>
-                <NavLink class="nav-link" href="@($"/saidas/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                    <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Saidas
-                </NavLink>
+
+                @if (tokenUserId is not null && tokenUserId != "")
+                {
+                    <NavLink class="nav-link" href="@($"/saidas/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+                        Despesas
+                    </NavLink>
+                }
+                else
+                {
+                    <NavLink class="nav-link" href="@($"/saidas/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+                        Despesas
+                    </NavLink>
+                }
             </div>
         </div>
+
+        <!-- ================= USERS / ACCOUNT MENU ================= -->
+        @if (tokenUserId is not null && tokenUserId != "")
+        {
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+                    <span class="bi bi bi-list-nested"></span> Profile
+                </a>
+
+                <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
+                    <NavLink class="nav-link" href="/alterar-senha">Alterar Senha</NavLink>
+                    <NavLink class="nav-link" href="/resetar-senha">Resetar Senha</NavLink>
+
+                    <button class="nav-link btn btn-link text-start" @onclick="Logout">Sair</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+                    <span class="bi bi-list-nested" aria-hidden="true"></span>
+                    Usuários
+                </a>
+
+                <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
+                    <NavLink class="nav-link" href="/login">Entrar</NavLink>
+                    <NavLink class="nav-link" href="/register-user">Registrar</NavLink>
+                </div>
+            </div>
+        }
     </nav>
 </div>
 
@@ -64,3 +112,35 @@
         }
     }
 </script>
+
+@code {
+    private bool showUserMenu = false;
+    private string? token;
+    private string? tokenUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        token = TokenService.GetToken();
+        tokenUserId = TokenService.GetUserIdFromToken();
+    }
+
+    void ToggleUserMenu()
+    {
+        showUserMenu = !showUserMenu;
+    }
+
+    async Task Logout()
+    {
+        // Clear token
+        await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
+
+        // Reset auth state
+        if (AuthProvider is IHostEnvironmentAuthenticationStateProvider envAuth)
+        {
+            envAuth.SetAuthenticationState(Task.FromResult(
+                new AuthenticationState(new System.Security.Claims.ClaimsPrincipal())));
+        }
+
+        Nav.NavigateTo("/login", forceLoad: true);
+    }
+}

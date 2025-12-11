@@ -1,0 +1,71 @@
+﻿@page "/rendas/delete/{EntradaId:int}"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
+<h3 style="padding-bottom:10px;">Excluir Renda</h3>
+
+@if (entrada == null && !deleted)
+{
+    <p>Carregando dados...</p>
+}
+else if (deleted)
+{
+    <div class="alert alert-success mt-3">Renda excluída com sucesso ✔</div>
+
+    <a class="btn btn-primary mt-3" href="/rendas">
+        ⬅ Voltar
+    </a>
+}
+else
+{
+    <div class="card p-3 mb-3">
+        <p><strong>ID:</strong> @entrada!.EntradaID</p>
+        <p><strong>Descrição:</strong> @entrada.Descricao</p>
+        <p><strong>Valor:</strong> @entrada.ValorEntrada.ToString("N2")</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-danger btn-sm" @onclick="ConfirmDelete">
+            🗑 Excluir
+        </button>
+
+        <a class="btn btn-secondary btn-sm" href="/rendas">
+            ⬅ Cancelar
+        </a>
+    </div>
+}
+
+@code {
+    [Parameter] public int EntradaId { get; set; }
+    private Entradas? entrada;
+    private bool deleted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+        entrada = await client.GetFromJsonAsync<Entradas>($"entradas/{EntradaId}");
+    }
+
+    private async Task ConfirmDelete()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        var result = await client.DeleteAsync($"entradas/{EntradaId}");
+
+        if (result.IsSuccessStatusCode)
+        {
+            deleted = true;
+            entrada = null;
+            StateHasChanged();
+        }
+    }
+}

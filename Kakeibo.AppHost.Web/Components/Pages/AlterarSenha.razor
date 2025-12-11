@@ -1,0 +1,77 @@
+﻿@page "/alterar-senha"
+@using Kakeibo.AppHost.Web.Services
+@rendermode InteractiveServer
+
+@inject IHttpClientFactory HttpFactory
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
+<h3 style="padding-bottom:10px;">Alterar Senha</h3>
+
+<EditForm Model="@model" OnValidSubmit="HandleChangePassword">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="currentPassword" class="form-label">Senha Atual</label>
+        <InputText id="currentPassword" type="password" class="form-control" @bind-Value="model.CurrentPassword" />
+    </div>
+
+    <div class="mb-3">
+        <label for="newPassword" class="form-label">Nova Senha</label>
+        <InputText id="newPassword" type="password" class="form-control" @bind-Value="model.NewPassword" />
+    </div>
+
+    <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirmar Nova Senha</label>
+        <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="model.ConfirmPassword" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Salvar</button>
+</EditForm>
+
+@code {
+    ChangePasswordModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+    }
+
+    private async Task HandleChangePassword()
+    {
+        if (model.NewPassword != model.ConfirmPassword)
+        {
+            await JS.InvokeVoidAsync("alert", "❌ As senhas não coincidem.");
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis"); 
+
+        var response = await client.PostAsJsonAsync("/users/change-password", model);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("alert", "Senha alterada com sucesso!");
+            Nav.NavigateTo("/");
+            return;
+        }
+
+        // Se algo falhar, exibe mensagem vinda do backend
+        var error = await response.Content.ReadAsStringAsync();
+        await JS.InvokeVoidAsync("alert", $"Erro: {error}");
+    }
+
+    public class ChangePasswordModel
+    {
+        public string CurrentPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

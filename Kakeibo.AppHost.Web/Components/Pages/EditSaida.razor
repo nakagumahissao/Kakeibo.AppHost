@@ -1,0 +1,91 @@
+﻿@page "/saidas/edit/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
+<h3 style="padding-bottom:10px;">Editar Saída</h3>
+
+@if (saida == null && !updated)
+{
+    <p>Carregando registro...</p>
+}
+else if (updated)
+{
+    <div class="alert alert-success mt-3">
+        Registro atualizado com sucesso ✔
+    </div>
+
+    <a class="btn btn-primary mt-3" href="/saidas/@Day/@Month/@Year">
+        ⬅ Voltar para lista
+    </a>
+}
+else
+{
+    <div class="card p-3">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Descrição</label>
+            <input class="form-control" @bind="saida!.Descricao" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Nome Despesa</label>
+            <input class="form-control" @bind="saida.NomeDespesa" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Valor</label>
+            <input type="number" step="0.01" class="form-control" @bind="saida.ValorDespesa" />
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-success btn-sm" @onclick="Update">
+                💾 Salvar
+            </button>
+
+            <a class="btn btn-secondary btn-sm" href="/saidas/@UserID/@Day/@Month/@Year">
+                ⬅ Cancelar
+            </a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public decimal SaidaId { get; set; }
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int Month { get; set; }
+    [Parameter] public int Year { get; set; }
+
+    private Kakeibo.AppHost.Web.Models.Saidas? saida;
+    private bool updated = false;
+
+    private string? UserID = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        UserID = TokenService.GetUserIdFromToken();
+
+        var client = HttpFactory.CreateClient("apis");
+        saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
+    }
+
+    private async Task Update()
+    {
+        var client = HttpFactory.CreateClient("apis");
+        var response = await client.PutAsJsonAsync($"saidas/{SaidaId}", saida);
+
+        if (response.IsSuccessStatusCode)
+        {
+            updated = true;
+            StateHasChanged();
+        }
+    }
+}

@@ -1,0 +1,96 @@
+﻿@page "/listadespesas/editar/{id:int}"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Lista de Despesas - Editar</PageTitle>
+
+<h3 style="padding-bottom:10px;">Editar Despesa</h3>
+
+@if (despesa == null || tiposDeDespesa == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <div class="form-group">
+        <label>Tipo de Despesa</label>
+        <select class="form-control" @bind="despesa.TipoDespesaId">
+            @foreach (var tipo in tiposDeDespesa)
+            {
+                <option value="@tipo.TipoDespesaId">@tipo.TipoDeDespesa</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Nome da Despesa</label>
+        <input class="form-control" @bind="despesa.NomeDespesa" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="text-danger mt-1">@errorMessage</p>
+    }
+
+    <div class="d-flex align-items-center mt-2 gap-2">
+        <button class="btn btn-primary" @onclick="SalvarAlteracoes">Salvar</button>
+        <a class="btn btn-secondary" href="/listadespesas">Cancelar</a>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Despesa? despesa;
+    private List<TiposDeDespesa>? tiposDeDespesa;
+    private string errorMessage = string.Empty;
+    private string? userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userId = TokenService.GetUserIdFromToken();
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+        despesa = await client.GetFromJsonAsync<Despesa>($"despesas/{id}");
+        tiposDeDespesa = await client.GetFromJsonAsync<List<TiposDeDespesa>>($"tiposdespesa/{userId}");
+
+        if (despesa != null)
+        {
+            despesa.UserId = userId;
+        }
+        else
+        {
+            Nav.NavigateTo("/listadespesas");
+        }
+    }
+
+    private async Task SalvarAlteracoes()
+    {
+        try
+        {
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.PutAsJsonAsync($"despesas/{id}", despesa);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/listadespesas");
+            }
+            else
+            {
+                errorMessage = $"Erro ao salvar. Código: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

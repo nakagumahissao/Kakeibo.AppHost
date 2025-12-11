@@ -1,0 +1,87 @@
+﻿@page "/tiposdespesas/excluir/{id:decimal}"
+@using Kakeibo.AppHost.Web.Models
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@rendermode InteractiveServer
+
+<PageTitle>Tipos de Despesa - Excluir</PageTitle>
+
+<h3 style="padding-bottom:10px;">Excluir Tipo de Despesa</h3>
+
+@if (tipo == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <EditForm EditContext="editContext" FormName="ExcluirTiposDespesaForm" OnValidSubmit="ConfirmarExclusao">
+        <div class="mb-3">
+            <label>Nome do Tipo de Despesa</label>
+            <InputText class="form-control" @bind-Value="tipo.TipoDeDespesa" Disabled="true" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p class="text-danger mt-1">@errorMessage</p>
+        }
+
+        <div class="d-flex align-items-center mt-2 gap-2">
+            <button class="btn btn-danger" type="submit">Excluir</button>
+            <a class="btn btn-secondary" href="/tiposdespesas">Cancelar</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public decimal id { get; set; }
+    private TiposDeDespesa? tipo;
+    private EditContext? editContext;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var client = HttpFactory.CreateClient("apis");
+        tipo = await client.GetFromJsonAsync<TiposDeDespesa>($"tiposdespesa/{id}");
+
+        if (tipo != null)
+        {
+            editContext = new EditContext(tipo);
+        }
+        else
+        {
+            errorMessage = "Tipo de Despesa não encontrado.";
+        }
+    }
+
+    private async Task ConfirmarExclusao()
+    {
+        if (tipo == null) return;
+
+        try
+        {
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.DeleteAsync($"tiposdespesa/{tipo.TipoDespesaId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/tiposdespesas");
+            }
+            else
+            {
+                errorMessage = $"Erro ao excluir. Código: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro: {ex.Message}";
+        }
+    }
+}

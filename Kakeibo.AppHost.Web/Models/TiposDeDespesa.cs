@@ -8,4 +8,6 @@ public class TiposDeDespesa
     public int TipoDespesaId { get; set; }
 
     public string TipoDeDespesa { get; set; } = null!;
+
+    public string? UserId { get; set; }
 }

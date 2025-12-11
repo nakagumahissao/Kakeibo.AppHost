@@ -1,0 +1,26 @@
+﻿@page "/logout"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+
+<h3 style="padding-bottom:10px;">Logout</h3>
+<p>Você será desconectado.</p>
+
+<button class="btn btn-danger" @onclick="DoLogout">Sair</button>
+
+@code {
+    private async Task DoLogout()
+    {
+        await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
+
+        if (AuthProvider is IHostEnvironmentAuthenticationStateProvider envAuth)
+        {
+            envAuth.SetAuthenticationState(Task.FromResult(
+                new Microsoft.AspNetCore.Components.Authorization.AuthenticationState(
+                    new System.Security.Claims.ClaimsPrincipal())));
+        }
+
+        Nav.NavigateTo("/login", forceLoad: true);
+    }
+}

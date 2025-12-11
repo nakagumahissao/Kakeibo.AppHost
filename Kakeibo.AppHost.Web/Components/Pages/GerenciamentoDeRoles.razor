@@ -1,0 +1,25 @@
+﻿@page "/roles"
+@inject IJSRuntime JS
+
+<h3 style="padding-bottom:10px;">Gerenciamento de Roles</h3>
+
+<p>Lista de Roles do usuário:</p>
+
+<ul>
+    @foreach (var role in userRoles)
+    {
+        <li>@role</li>
+    }
+</ul>
+
+<button class="btn btn-primary" @onclick="AddRole">Adicionar Role</button>
+
+@code {
+    private List<string> userRoles = new() { "Admin", "User" };
+
+    private async Task AddRole()
+    {
+        userRoles.Add("NovoRole");
+        await JS.InvokeVoidAsync("alert", "Role adicionada!");
+    }
+}

@@ -7,26 +7,26 @@ namespace kakeibo.api
     {
         public static void MapTiposDeEntradasEndpoints(this WebApplication app)
         {
-            app.MapGet("/tiposentrada", async (KakeiboDBContext db) =>
+            app.MapGet("/tiposentrada/{UserID}", async (string UserID, KakeiboDBContext db) =>
             {
-                var all = await db.tiposDeEntradas.ToListAsync();
+                var all = await db.tiposDeEntradas.Where(w => w.UserID == UserID).ToListAsync();
                 return Results.Ok(all);
-            });
+            }).RequireAuthorization();
 
-            app.MapGet("/tiposentrada/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapGet("/tiposentrada/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var item = await db.tiposDeEntradas.FindAsync(id);
                 return item is not null ? Results.Ok(item) : Results.NotFound();
-            });
+            }).RequireAuthorization();
 
             app.MapPost("/tiposentrada", async (TiposDeEntradas tipo, KakeiboDBContext db) =>
             {
                 db.tiposDeEntradas.Add(tipo);
                 await db.SaveChangesAsync();
                 return Results.Created($"/tiposentrada/{tipo.TipoDeEntradaID}", tipo);
-            });
+            }).RequireAuthorization();
 
-            app.MapPut("/tiposentrada/{id}", async (int id, TiposDeEntradas updatedTipo, KakeiboDBContext db) =>
+            app.MapPut("/tiposentrada/{id:decimal}", async (decimal id, TiposDeEntradas updatedTipo, KakeiboDBContext db) =>
             {
                 var tipo = await db.tiposDeEntradas.FindAsync(id);
                 if (tipo is null) return Results.NotFound();
@@ -35,9 +35,9 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.Ok(tipo);
-            });
+            }).RequireAuthorization();
 
-            app.MapDelete("/tiposentrada/{id}", async (int id, KakeiboDBContext db) =>
+            app.MapDelete("/tiposentrada/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {
                 var tipo = await db.tiposDeEntradas.FindAsync(id);
                 if (tipo is null) return Results.NotFound();
@@ -46,7 +46,7 @@ namespace kakeibo.api
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         }
     }
 }

@@ -1,0 +1,195 @@
+﻿@page "/profile"
+@inject IHttpClientFactory HttpFactory
+
+<div class="profile-container">
+    <h3 style="padding-bottom:10px;">Minha Conta</h3>
+
+    @if (loading)
+    {
+        <p>Carregando informações...</p>
+    }
+    else if (errorMessage != null)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+    else
+    {
+        <EditForm Model="@profile" OnValidSubmit="SaveProfile" class="mb-4" FormName="SavingProfile">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Email</label>
+                <InputText class="form-control" @bind-Value="profile.Email" />
+            </div>
+
+            <div class="mb-3">
+                <label>Username</label>
+                <InputText class="form-control" @bind-Value="profile.UserName" />
+            </div>
+
+            <button class="btn btn-primary" disabled="@isBusy">Salvar alterações</button>
+
+            @if (!string.IsNullOrEmpty(messageSaved))
+            {
+                <div class="alert alert-success mt-2">@messageSaved</div>
+            }
+        </EditForm>
+
+        <hr />
+
+        <h5>Alterar Senha</h5>
+
+        <EditForm Model="@passwordModel" OnValidSubmit="ChangePassword" FormName="ChangesPassword">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Senha Atual</label>
+                <InputText type="password" class="form-control" @bind-Value="passwordModel.CurrentPassword" />
+            </div>
+
+            <div class="mb-3">
+                <label>Nova Senha</label>
+                <InputText type="password" class="form-control" @bind-Value="passwordModel.NewPassword" />
+            </div>
+
+            <button class="btn btn-warning" disabled="@isBusy">Atualizar Senha</button>
+
+            @if (!string.IsNullOrEmpty(passwordSuccess))
+            {
+                <div class="alert alert-success mt-2">@passwordSuccess</div>
+            }
+            @if (!string.IsNullOrEmpty(passwordError))
+            {
+                <div class="alert alert-danger mt-2">@passwordError</div>
+            }
+        </EditForm>
+    }
+</div>
+
+@code {
+    bool loading = true;
+    bool isBusy = false;
+    string? errorMessage;
+    string? messageSaved;
+
+    string? passwordSuccess;
+    string? passwordError;
+
+    ProfileModel profile = new();
+    ChangePasswordRequest passwordModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var client = HttpFactory.CreateClient("ApiSecureClient"); // usa client com handler (JWT)
+            // Endpoint da API que retorna o perfil do usuário baseado no token
+            var result = await client.GetFromJsonAsync<ProfileModel>("users/profile");
+
+            if (result != null)
+                profile = result;
+            else
+                errorMessage = "Não foi possível carregar perfil!";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Erro ao carregar dados: " + ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    async Task SaveProfile()
+    {
+        isBusy = true;
+        messageSaved = null;
+        errorMessage = null;
+
+        try
+        {
+            var client = HttpFactory.CreateClient("ApiSecureClient");
+            var response = await client.PutAsJsonAsync("users/profile", profile);
+
+            if (response.IsSuccessStatusCode)
+            {
+                messageSaved = "Dados atualizados com sucesso!";
+            }
+            else
+            {
+                var text = await SafeReadError(response);
+                errorMessage = $"Erro ao salvar as alterações: {text}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Erro ao atualizar perfil: " + ex.Message;
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    async Task ChangePassword()
+    {
+        isBusy = true;
+        passwordSuccess = null;
+        passwordError = null;
+
+        try
+        {
+            var client = HttpFactory.CreateClient("ApiSecureClient");
+            var response = await client.PostAsJsonAsync("users/change-password", passwordModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                passwordSuccess = "Senha alterada com sucesso!";
+                passwordModel = new ChangePasswordRequest(); // limpa campos
+            }
+            else
+            {
+                var text = await SafeReadError(response);
+                passwordError = $"Falha ao mudar senha: {text}";
+            }
+        }
+        catch (Exception ex)
+        {
+            passwordError = "Erro: " + ex.Message;
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    // Lê com segurança o corpo de erro (se JSON ou texto)
+    private static async Task<string> SafeReadError(HttpResponseMessage resp)
+    {
+        try
+        {
+            var s = await resp.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(s)) return resp.ReasonPhrase ?? "Erro desconhecido";
+            return s;
+        }
+        catch
+        {
+            return resp.ReasonPhrase ?? "Erro desconhecido";
+        }
+    }
+
+    public class ProfileModel
+    {
+        public string Email { get; set; } = "";
+        public string UserName { get; set; } = "";
+    }
+
+    public class ChangePasswordRequest
+    {
+        public string CurrentPassword { get; set; } = "";
+        public string NewPassword { get; set; } = "";
+    }
+}

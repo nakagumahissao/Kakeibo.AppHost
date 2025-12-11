@@ -15,19 +15,19 @@ public class Entradas
     [StringLength(4)]
     [Required(ErrorMessage = "Ano is required")]
     [Display(Name = "Ano")]
-    public string Ano { get; set; } // nvarchar(4), not null
+    public required string Ano { get; set; } // nvarchar(4), not null
 
     [MaxLength(2)]
     [StringLength(2)]
     [Required(ErrorMessage = "Mes is required")]
     [Display(Name = "Mes")]
-    public string Mes { get; set; } // nvarchar(2), not null
+    public required string Mes { get; set; } // nvarchar(2), not null
 
     [MaxLength(450)]
     [StringLength(450)]
     [Required(ErrorMessage = "User ID is required")]
     [Display(Name = "User ID")]
-    public string UserID { get; set; } // nvarchar(450), not null
+    public required string UserID { get; set; } // nvarchar(450), not null
 
     [Required(ErrorMessage = "Tipo De Entrada ID is required")]
     [Display(Name = "Tipo De Entrada ID")]

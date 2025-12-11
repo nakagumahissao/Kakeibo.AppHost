@@ -1,8 +1,10 @@
-﻿@page "/saidas"
-@page "/saidas/{Day:int}/{Month:int}/{Year:int}"
+﻿@page "/saidas/{userId}/{Day:int}/{Month:int}/{Year:int}"
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
 @using Kakeibo.AppHost.Web.Models
+@inject IJSRuntime JS
+
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
 <PageTitle>Saídas</PageTitle>
 
@@ -25,18 +27,19 @@
         }
         else if (!saidasDoDia.Any())
         {
-            <p>Nenhuma Saída encontrada.</p>
-
-            <div class="mb-2" style="padding-top: 20px;">
-                <a href="/saidas/new" class="btn btn-success">Nova Saída</a>
+            <p>Nenhuma Saída encontrada.</p>      
+            
+            <div class="mb-2" style="padding-top: 10px;">
+                <a href="/saidas/new/@Day/@Month/@Year" class="btn btn-success">Nova Saída</a>
             </div>
         }
         else
         {
-            <table class="table table-striped">
+            <table class="table table-striped align-middle">
                 <thead>
                     <tr>
-                        <th>Descrição</th>
+                        <th>ID</th>
+                        <th>Descricao</th>
                         <th>Nome Despesa</th>
                         <th style="text-align:right;">Valor</th>
                         <th>Ações</th>
@@ -45,20 +48,36 @@
                 <tbody>
                     @foreach (var s in saidasDoDia)
                     {
+                        totalSaidas += s.ValorDespesa;
+
                         <tr>
+                            <td>@s.DespesaID</td>
                             <td>@s.Descricao</td>
                             <td>@s.NomeDespesa</td>
                             <td class="text-end">@s.ValorDespesa.ToString("N2")</td>
-                            <td>
-                                <a href="/saidas/new" class="btn btn-sm btn-primary me-1">Novo</a>
-                                <a href="/saidas/edit/@s.SaidaID" class="btn btn-sm btn-primary me-1">Editar</a>
-                                <a href="/saidas/delete/@s.SaidaID" class="btn btn-sm btn-danger">Excluir</a>
+                            <td>                                
+                                <a href="/saidas/edit/@s.SaidaID/@Day/@Month/@Year" class="btn btn-sm btn-primary me-1">Editar</a>
+                                <a href="/saidas/delete/@s.SaidaID/@Day/@Month/@Year" class="btn btn-sm btn-danger me-1">Excluir</a>
                             </td>
                         </tr>
                     }
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end" style="color:crimson"><strong>TOTAL:</strong></td>
+                        <td class="text-end" style="color:crimson"><strong>@totalSaidas.ToString("N2")</strong></td>
+                        <td></td>
+                    </tr>
+
                 </tbody>
             </table>
+
+            <div class="mb-2" style="padding-top: 10px;">
+                <a href="/saidas/new/@Day/@Month/@Year" class="btn btn-success">Nova Saída</a>
+            </div>
         }
+        
     </div>
 </div>
 
@@ -66,12 +85,28 @@
     [Parameter] public int Day { get; set; }
     [Parameter] public int Month { get; set; }
     [Parameter] public int Year { get; set; }
+    [Parameter] public string userId { get; set; } = "";
 
-    private List<Saida>? saidasDoDia;
+    private List<Kakeibo.AppHost.Web.Models.Saidas>? saidasDoDia;
     private string selectedDayDisplay = "";
+    private decimal totalSaidas = 0;
 
     protected override async Task OnParametersSetAsync()
     {
+        totalSaidas = 0m;
+
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            NavManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        if (userId is null || userId == "")
+            userId = tokenUserId!;
+
         // default to today if parameters are not provided
         var dt = (Day > 0 && Month > 0 && Year > 0)
             ? new DateTime(Year, Month, Day)
@@ -84,29 +119,38 @@
         selectedDayDisplay = dt.ToString("dd/MM/yyyy");
 
         var client = HttpFactory.CreateClient("apis");
-        saidasDoDia = await client.GetFromJsonAsync<List<Saida>>(
-            $"saidas/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
+        saidasDoDia = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.Saidas>>(
+            $"saidas/{userId}/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
         );
     }
 
     private void PrevMonth()
     {
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
         int newMonth = Month - 1;
         int newYear = Year;
         if (newMonth < 1) { newMonth = 12; newYear--; }
-        NavManager.NavigateTo($"/saidas/1/{newMonth}/{newYear}", forceLoad: true);
+        NavManager.NavigateTo($"/saidas/{tokenUserId}/1/{newMonth}/{newYear}", forceLoad: true);
     }
 
     private void NextMonth()
     {
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
         int newMonth = Month + 1;
         int newYear = Year;
         if (newMonth > 12) { newMonth = 1; newYear++; }
-        NavManager.NavigateTo($"/saidas/1/{newMonth}/{newYear}", forceLoad: true);
+        NavManager.NavigateTo($"/saidas/{tokenUserId}/1/{newMonth}/{newYear}", forceLoad: true);
     }
 
     private RenderFragment CalendarHtml() => builder =>
     {
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
         int seq = 0;
 
         // Month navigation
@@ -119,7 +163,7 @@
         int prevMonth = Month - 1;
         int prevYear = Year;
         if (prevMonth < 1) { prevMonth = 12; prevYear--; }
-        builder.AddAttribute(seq++, "href", $"/saidas/1/{prevMonth}/{prevYear}");
+        builder.AddAttribute(seq++, "href", $"/saidas/{tokenUserId}/1/{prevMonth}/{prevYear}");
         builder.AddContent(seq++, "< Prev");
         builder.CloseElement();
 
@@ -134,7 +178,7 @@
         int nextMonth = Month + 1;
         int nextYear = Year;
         if (nextMonth > 12) { nextMonth = 1; nextYear++; }
-        builder.AddAttribute(seq++, "href", $"/saidas/1/{nextMonth}/{nextYear}");
+        builder.AddAttribute(seq++, "href", $"/saidas/{tokenUserId}/1/{nextMonth}/{nextYear}");
         builder.AddContent(seq++, "Next >");
         builder.CloseElement();
 
@@ -143,7 +187,7 @@
         // Weekday headers
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex");
-        string[] weekdays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        string[] weekdays = { "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" };
         foreach (var day in weekdays)
         {
             builder.OpenElement(seq++, "div");
@@ -186,7 +230,7 @@
                     style += " color:red; font-weight:bold;";
 
                 builder.AddAttribute(seq++, "style", style);
-                builder.AddAttribute(seq++, "href", $"/saidas/{currentDay}/{Month}/{Year}");
+                builder.AddAttribute(seq++, "href", $"/saidas/{tokenUserId}/{currentDay}/{Month}/{Year}");
                 builder.AddContent(seq++, currentDay);
                 builder.CloseElement(); // a
 
