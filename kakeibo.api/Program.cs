@@ -1,4 +1,5 @@
 using kakeibo.api.Data;
+using kakeibo.api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +13,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.AddServiceDefaults();
+
+        // EMail
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+        builder.Services.AddSingleton<IEmailService, EmailService>();
+
+        // Client Settings
+        builder.Services.Configure<ClientSettings>( builder.Configuration.GetSection("ClientSettings"));
+        builder.Services.AddSingleton<IClientSettings, ClientSettingsService>();
 
         // 1. SERVICE CONFIGURATION PHASE (MUST BE BEFORE builder.Build())
         // ----------------------------------------------------------------

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace kakeibo.api;
 
@@ -11,6 +10,60 @@ public static class UsersEndpoints
 {
     public static void MapUsersEndpoints(this WebApplication app)
     {
+        // =========================
+        // CONFIRM PASSWORD RESET
+        // =========================
+        app.MapPost("/auth/confirm-reset-password", async ([FromBody] ConfirmResetPasswordRequest request, UserManager<IdentityUser> userManager) =>
+        {
+            if (string.IsNullOrWhiteSpace(request.UserId) ||
+                string.IsNullOrWhiteSpace(request.NewPassword) ||
+                string.IsNullOrWhiteSpace(request.Token))
+            {
+                return Results.Json(
+                    new { error = "UserId, token e nova senha são obrigatórios." },
+                    statusCode: 400
+                );
+            }
+
+            var user = await userManager.FindByIdAsync(request.UserId);
+            if (user == null)
+            {
+                return Results.Json(
+                    new { error = "Usuário não encontrado." },
+                    statusCode: 404
+                );
+            }
+
+            try
+            {
+                // decoder porque o token vem URL-encoded
+                var decodedToken = Uri.UnescapeDataString(request.Token);
+
+                var result = await userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    return Results.Json(
+                        new { error = "Falha ao redefinir a senha.", details = result.Errors },
+                        statusCode: 400
+                    );
+                }
+
+                return Results.Ok(new
+                {
+                    message = "Senha redefinida com sucesso! Agora você deve fazer login novamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Results.Json(
+                    new { error = $"Erro inesperado: {ex.Message}" },
+                    statusCode: 500
+                );
+            }
+        });
+
+
         // =========================
         // REGISTER
         // =========================
@@ -70,7 +123,7 @@ public static class UsersEndpoints
 
             return Results.Json(new { message = "Senha alterada com sucesso!" });
         }).RequireAuthorization();
-        
+
         // =========================
         // USERS CRUD (Admin)
         // =========================
@@ -108,7 +161,41 @@ public static class UsersEndpoints
 
         app.MapDelete("/users/{userId}/claims", async (string userId, [FromBody] RemoveClaimRequest request, UserManager<IdentityUser> userManager) => { var user = await userManager.FindByIdAsync(userId); if (user == null) return Results.NotFound(); var claim = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == request.Type && c.Value == request.Value); if (claim != null) await userManager.RemoveClaimAsync(user, claim); return Results.Ok(); }).RequireAuthorization("Admin");
 
-    } 
+        // =========================
+        // PASSWORD RESET
+        // =========================
+        app.MapPost("/auth/reset-password", async ([FromBody] PasswordResetRequest request, UserManager<IdentityUser> userManager, IEmailService emailService) =>
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return Results.Json(new { error = "O e-mail é obrigatório." }, statusCode: 400);
+
+            var user = await userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+                return Results.Json(new { error = "E-mail não cadastrado." }, statusCode: 404);
+
+            try
+            {
+                // GERA TOKEN VÁLIDO DO IDENTITY
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Envia email com UserId + Token
+                var emailSent = await emailService.SendPasswordResetEmailAsync(
+                    user.Email!,
+                    user.Id,
+                    token
+                );
+
+                if (!emailSent)
+                    return Results.Json(new { error = "Falha ao enviar o e-mail de redefinição." }, statusCode: 500);
+
+                return Results.Ok(new { message = "E-mail de redefinição de senha enviado com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                return Results.Json(new { error = $"Erro inesperado: {ex.Message}" }, statusCode: 500);
+            }
+        });
+    }
 
     // The GenerateJwt helper method must be defined inside the class but outside the MapUsersEndpoints method.
     private static string GenerateJwt(IEnumerable<Claim> claims, IConfiguration config)
@@ -145,5 +232,6 @@ public static class UsersEndpoints
     public record ApiResponse<T>(bool Success, T? Data, string[] Errors);
     public record RegisterRequest(string Email, string Password);
     public record LoginRequest(string Email, string Password);
-
-} 
+    public record PasswordResetRequest(string Email);
+    public record ConfirmResetPasswordRequest(string UserId, string NewPassword, string Token);
+}

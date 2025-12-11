@@ -8,6 +8,7 @@ namespace Kakeibo.AppHost.Web.Services
         private string? _token;
 
         public void SetToken(string token) => _token = token;
+
         public string? GetToken() => _token;
 
         public string? GetUserIdFromToken()
@@ -20,6 +21,13 @@ namespace Kakeibo.AppHost.Web.Services
                 c.Type == "sub"                         // common fallback
             )?.Value;
         }
-    }
 
+        // =========================
+        // LOGOUT
+        // =========================
+        public void Logout()
+        {
+            _token = null;
+        }
+    }
 }

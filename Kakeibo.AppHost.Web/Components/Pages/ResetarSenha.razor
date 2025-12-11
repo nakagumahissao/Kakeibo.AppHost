@@ -1,10 +1,21 @@
 ﻿@page "/resetar-senha"
-@inject IJSRuntime JS
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 
 <h3 style="padding-bottom:10px;">Resetar Senha</h3>
 
-<EditForm Model="@resetPasswordModel" OnValidSubmit="HandleResetPassword" FormName="ResetsPassword">
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<EditForm Model="@resetPasswordModel" OnValidSubmit="HandleResetPassword" FormName="ResetPasswordForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -13,21 +24,56 @@
         <InputText id="email" type="email" class="form-control" @bind-Value="resetPasswordModel.Email" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Enviar Link de Reset</button>
+    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+        @(isSubmitting ? "Enviando..." : "Enviar Link de Reset")
+    </button>
 </EditForm>
 
 @code {
     private ResetPasswordModel resetPasswordModel = new();
+    private bool isSubmitting = false;
+    private string? errorMessage;
+    private string? successMessage;
 
     private async Task HandleResetPassword()
     {
-        // Aqui você chamaria seu serviço de reset de senha
-        await JS.InvokeVoidAsync("alert", $"Link de reset enviado para {resetPasswordModel.Email}");
-        Nav.NavigateTo("/login");
+        isSubmitting = true;
+        errorMessage = null;
+        successMessage = null;
+
+        try
+        {
+            var client = HttpFactory.CreateClient("apis");
+            var response = await client.PostAsJsonAsync("auth/reset-password", resetPasswordModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                successMessage = "E-mail de redefinição de senha enviado com sucesso!";
+            }
+            else
+            {
+                // Lê o erro retornado pelo backend
+                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                errorMessage = errorObj?.error ?? $"Erro ao enviar: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro inesperado: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
     }
 
     public class ResetPasswordModel
     {
         public string Email { get; set; } = string.Empty;
+    }
+
+    public class ErrorResponse
+    {
+        public string? error { get; set; }
     }
 }
