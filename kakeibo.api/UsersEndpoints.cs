@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using Serilog;
 
 namespace kakeibo.api;
 
@@ -109,14 +110,28 @@ public static class UsersEndpoints
             IConfiguration config
         ) =>
         {
+            Log.Information("Login attempt for {Email}", request.Email);
+
             var user = await userManager.FindByEmailAsync(request.Email);
-            if (user == null) return Results.Unauthorized();
+            if (user == null)
+            {
+                Log.Warning("Login failed for {Email}: User not found", request.Email);
+                return Results.Unauthorized();
+            }
+
+            Log.Information("User {Email} found. Checking password.", request.Email);
 
             var result = await signIn.CheckPasswordSignInAsync(user, request.Password, false);
-            if (!result.Succeeded) return Results.Unauthorized();
+            if (!result.Succeeded)
+            {
+                Log.Warning("Login failed for {Email}: Invalid password", request.Email);
+                return Results.Unauthorized();
+            }
 
+            Log.Information("Getting Roles...");
             var roles = await userManager.GetRolesAsync(user);
 
+            Log.Information("Getting Claims...");
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -124,7 +139,11 @@ public static class UsersEndpoints
             };
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
+            Log.Information("Generating JWT...");
             var token = GenerateJwt(claims, config);
+
+            Log.Information("Token generated successfully for {Email}: {Token}", request.Email, token);
+            Log.Information("Login successful for {Email}", request.Email);
 
             return Results.Ok(new LoginResponse(
                 Token: token,

@@ -3,6 +3,9 @@ using kakeibo.api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System.Globalization;
+using System.Net;
 using System.Text;
 
 namespace kakeibo.api;
@@ -12,54 +15,96 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.AddServiceDefaults();
 
-        // Culture
+        // ---------------------------------------------------------
+        // 1. KESTREL HTTPS CONFIG
+        // ---------------------------------------------------------
+        var certPath = builder.Configuration["Kestrel:HttpsCertificate:Path"];
+        var certPassword = builder.Configuration["Kestrel:HttpsCertificate:Password"];
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            // HTTPS on port 447
+            options.Listen(IPAddress.Parse("100.64.1.29"), 447, listenOptions =>
+            {
+                listenOptions.UseHttps(certPath!, certPassword);
+            });
+        });
+
+        // ---------------------------------------------------------
+        // 2. LOCALIZATION
+        // ---------------------------------------------------------
         builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
         builder.Services.AddRequestLocalization(options =>
         {
-            var supported = new[] { "en", "pt-BR", "ja" };
-            options.SetDefaultCulture("pt-BR")
-                .AddSupportedCultures(supported)
-                .AddSupportedUICultures(supported);
-        });
+            var supportedCultures = new[]
+            {
+                new CultureInfo("pt-BR"),
+                new CultureInfo("de"),
+                new CultureInfo("en"),
+                new CultureInfo("es"),
+                new CultureInfo("fr"),
+                new CultureInfo("zh-CN"),
+                new CultureInfo("ja")
+            };
 
-        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+            options.SetDefaultCulture("pt-BR")
+                   .AddSupportedCultures(supportedCultures.Select(c => c.Name).ToArray())
+                   .AddSupportedUICultures(supportedCultures.Select(c => c.Name).ToArray());
+        });
 
         builder.Services.AddMvc()
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();
-        // Culture End
 
+        // ---------------------------------------------------------
+        // 3. WINDOWS SERVICE SUPPORT
+        // ---------------------------------------------------------
+        builder.Host.UseWindowsService();
+
+        // ---------------------------------------------------------
+        // 4. SERILOG
+        // ---------------------------------------------------------
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
+
+        Log.Information("Starting Kakeibo Minimal API Service...");
+
+        // ---------------------------------------------------------
+        // 5. CORS – allow only your Blazor server origin
+        // ---------------------------------------------------------
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowBlazorWithCredentials", policy =>
             {
-                policy.WithOrigins(
-                    "http://192.168.0.10:7030"  // porta do front-end
-                )
-                .AllowCredentials()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+                policy.WithOrigins("https://100.64.1.29:446")
+                      .AllowCredentials()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
             });
         });
 
-        // EMail
+        // ---------------------------------------------------------
+        // 6. SETTINGS & SERVICES
+        // ---------------------------------------------------------
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddSingleton<IEmailService, EmailService>();
 
-        // Client Settings
         builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
         builder.Services.AddSingleton<IClientSettings, ClientSettingsService>();
 
-        // 1. SERVICE CONFIGURATION PHASE (MUST BE BEFORE builder.Build())
-        // ----------------------------------------------------------------
-
-        // Connection string
+        // ---------------------------------------------------------
+        // 7. DATABASE + IDENTITY
+        // ---------------------------------------------------------
         var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 
-        // Register DbContext with Identity
         builder.Services.AddDbContext<KakeiboDBContext>(options =>
             options.UseSqlServer(connectionString));
 
@@ -67,6 +112,9 @@ public class Program
             .AddEntityFrameworkStores<KakeiboDBContext>()
             .AddDefaultTokenProviders();
 
+        // ---------------------------------------------------------
+        // 8. JWT AUTHENTICATION
+        // ---------------------------------------------------------
         var jwtKey = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
 
         builder.Services.AddAuthentication(options =>
@@ -78,7 +126,6 @@ public class Program
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                // ... (your existing TokenValidationParameters)
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(jwtKey),
@@ -86,36 +133,43 @@ public class Program
             };
         });
 
-        // Add Authorization service once
         builder.Services.AddAuthorization();
 
-        // OpenAPI / Swagger
+        // ---------------------------------------------------------
+        // 9. OPENAPI / SWAGGER
+        // ---------------------------------------------------------
+        builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
 
-        // ----------------------------------------------------------------
-        // 2. BUILD THE APPLICATION
-        // ----------------------------------------------------------------
+        // ---------------------------------------------------------
+        // 10. BUILD APP
+        // ---------------------------------------------------------
         var app = builder.Build();
 
-        // 3. MIDDLEWARE CONFIGURATION PHASE (MUST BE AFTER builder.Build())
-        // ----------------------------------------------------------------
+        // ---------------------------------------------------------
+        // 11. MIDDLEWARE PIPELINE
+        // ---------------------------------------------------------
         app.UseHttpsRedirection();
 
-        // Use Authentication and Authorization middleware once
+        app.UseRequestLocalization();
+
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // OpenAPI
-        if (app.Environment.IsDevelopment())
-        {
-            // Swagger UI should generally be run first for easy debugging
-            app.MapOpenApi();
-        }
+        app.UseCors("AllowBlazorWithCredentials");
 
-        // 4. ENDPOINT MAPPING PHASE
-        // ----------------------------------------------------------------
+        // ---- Enable Swagger ALWAYS (your API is internal only) ----
+        app.MapOpenApi();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/openapi/v1.json", "Kakeibo API v1");
+            options.RoutePrefix = "swagger"; // URL = /swagger
+        });
+
+        // ---------------------------------------------------------
+        // 12. ENDPOINTS
+        // ---------------------------------------------------------
         app.MapUsersEndpoints();
-        app.MapDefaultEndpoints();
         app.MapTiposDeDespesaEndpoints();
         app.MapTiposDeEntradasEndpoints();
         app.MapSaidasEndpoints();
@@ -124,8 +178,9 @@ public class Program
         app.MapEntradasEndpoints();
         app.MapDespesasEndpoints();
 
-        // 5. RUN THE APPLICATION
-        // ----------------------------------------------------------------
+        // ---------------------------------------------------------
+        // 13. RUN
+        // ---------------------------------------------------------
         app.Run();
     }
 }

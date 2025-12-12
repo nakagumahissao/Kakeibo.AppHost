@@ -1,8 +1,9 @@
 ﻿@page "/login"
 @using Kakeibo.AppHost.Web.Models
 @rendermode InteractiveServer
-@inject HttpClient Http
+@inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
+@inject ILogger<Login> Logger
 
 <PageTitle>Login</PageTitle>
 
@@ -53,8 +54,10 @@
     {
         try
         {
-            var loginUrl = $"{Nav.BaseUri}blazor-login";
-            var response = await Http.PostAsJsonAsync(loginUrl, loginModel);
+            // var loginUrl = $"{Nav.BaseUri}blazor-login";
+            Logger.LogInformation("Submitting login for {Email}", loginModel.Email);
+            var client = HttpFactory.CreateClient("local"); // local client
+            var response = await client.PostAsJsonAsync("blazor-login", loginModel);
 
             if (!response.IsSuccessStatusCode)
             {

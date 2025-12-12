@@ -4,36 +4,63 @@ using Kakeibo.AppHost.Web.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+using Serilog;
 using StackExchange.Redis;
 using System.Globalization;
+using System.Net;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------- Serviços base ----------------
-builder.AddServiceDefaults();
-// builder.AddRedisOutputCache("redis");
-
 // HttpContext para pegar usuário logado
 builder.Services.AddHttpContextAccessor();
 
-// ---------------- Redis ----------------
-var redisConnectionString = builder.Configuration.GetConnectionString("redis");
-if (string.IsNullOrEmpty(redisConnectionString))
-{
-    // Mensagem de erro fixa, não podemos usar L[] aqui
-    throw new InvalidOperationException("Redis connection string not found.");
-}
+//if (!builder.Environment.IsDevelopment())
+//{
+    // Kestrel configuration
+    var certPath = builder.Configuration["Kestrel:HttpsCertificate:Path"];
+    var certPassword = builder.Configuration["Kestrel:HttpsCertificate:Password"];
 
-var redis = ConnectionMultiplexer.Connect(redisConnectionString);
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        // Listen on all IPs on HTTP port 9001
+        //options.Listen(IPAddress.Any, 9001);
+
+        // Listen specifically on 100.64.1.29 for HTTPS port 446
+        options.Listen(IPAddress.Parse("100.64.1.29"), 446, listenOptions =>
+        {
+            listenOptions.UseHttps(certPath!, certPassword);
+        });
+    });
+//}
 
 // ---------------- Culture ----------------
 var supportedCultures = new[]
 {
+    new CultureInfo("de"),
     new CultureInfo("en"),
-    new CultureInfo("pt-BR"),
+    new CultureInfo("es"),
+    new CultureInfo("fr"),
+    new CultureInfo("zh-CN"),
     new CultureInfo("ja")
 };
+
+// Enable Windows Service support
+builder.Host.UseWindowsService();
+
+// ---------------- SERILOG (Corrected) ----------------
+Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithMachineName()
+                .Enrich.WithProcessId()
+                .Enrich.WithThreadId()
+                .CreateLogger();
+
+Log.Information("Starting Kakeibo Web Site Service...");
+
+builder.Host.UseSerilog();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -50,6 +77,17 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     };
 });
 
+// ---------------- Redis ----------------
+var redisConnectionString = builder.Configuration.GetConnectionString("redis");
+if (string.IsNullOrEmpty(redisConnectionString))
+{
+    string strError = "Redis connection string not found.";
+    Log.Fatal(strError);
+    throw new InvalidOperationException(strError);
+}
+
+var redis = ConnectionMultiplexer.Connect(redisConnectionString);
+
 // ---------------- Data Protection ----------------
 builder.Services.AddDataProtection()
     .SetApplicationName("KakeiboWebFrontend")
@@ -65,32 +103,19 @@ builder.Services.AddHttpClient("apis", c =>
 })
 .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
+// Local Blazor Server endpoints
+builder.Services.AddHttpClient("local", client =>
+{
+    client.BaseAddress = new Uri("https://100.64.1.29:446/");
+});
+
 // ---------------- Blazor Server ----------------
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowBlazorWithCredentials", policy =>
-    {
-        policy.WithOrigins(
-            "http://192.168.0.10:7030"  // porta do front-end
-        )
-        .AllowCredentials()
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-    });
-});
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization();
 
-// ---------------- Output Caching Setup ----------------
 builder.Services.AddOutputCache();
-builder.Services.AddStackExchangeRedisOutputCache(options =>
-{
-    options.Configuration = redisConnectionString;
-    options.InstanceName = "KakeiboOutputCache";
-});
 
 var app = builder.Build();
 
@@ -101,11 +126,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseCors("AllowBlazorWithCredentials");
+// app.UseCors("AllowAPI");
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseAntiforgery();
-app.UseOutputCache();
 app.MapStaticAssets();
 app.UseAuthorization();
 
@@ -122,16 +146,23 @@ app.MapPost("/blazor-login", async (
     IStringLocalizer<SharedResources> L
 ) =>
 {
-    var client = clientFactory.CreateClient("apis");
+    Log.Information("Blazor login attempt for user {Email}.", loginModel.Email);
 
+    var client = clientFactory.CreateClient("apis");
     var response = await client.PostAsJsonAsync("auth/login", loginModel);
 
     if (!response.IsSuccessStatusCode)
+    {
+        Log.Information("Blazor login failed for user {Email}. Status Code: {StatusCode}", loginModel.Email, response.StatusCode);
         return Results.Json(new { error = L["Invalid credentials"] }, statusCode: StatusCodes.Status401Unauthorized);
+    }
 
     var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
     if (loginResponse == null)
+    {
+        Log.Error("Blazor login response deserialization failed for user {Email}.", loginModel.Email);
         return Results.Problem(L["Invalid API response format."]);
+    }
 
     tokenService.SetToken(loginResponse.Token);
 
@@ -146,10 +177,4 @@ app.MapPost("/blazor-login", async (
     return Results.Ok(new { success = true });
 }).AllowAnonymous();
 
-// =======================================================
-// Mensagens fixas adicionais podem ser adaptadas nos endpoints futuros
-// usando IStringLocalizer<SharedResources> injetado via DI
-// =======================================================
-
-app.MapDefaultEndpoints();
 app.Run();
