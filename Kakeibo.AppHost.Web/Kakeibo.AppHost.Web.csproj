@@ -8,16 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="kakeibo_certificate.pfx" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="kakeibo_certificate.pfx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Kakeibo.AppHost.ServiceDefaults\Kakeibo.AppHost.ServiceDefaults.csproj" />
   </ItemGroup>
 
