@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using kakeibo.api.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
@@ -13,14 +15,18 @@ public static class UsersEndpoints
         // =========================
         // CONFIRM PASSWORD RESET
         // =========================
-        app.MapPost("/auth/confirm-reset-password", async ([FromBody] ConfirmResetPasswordRequest request, UserManager<IdentityUser> userManager) =>
+        app.MapPost("/auth/confirm-reset-password", async (
+            [FromBody] ConfirmResetPasswordRequest request,
+            UserManager<IdentityUser> userManager,
+            IStringLocalizer<SharedResources> L
+        ) =>
         {
             if (string.IsNullOrWhiteSpace(request.UserId) ||
                 string.IsNullOrWhiteSpace(request.NewPassword) ||
                 string.IsNullOrWhiteSpace(request.Token))
             {
                 return Results.Json(
-                    new { error = "UserId, token e nova senha são obrigatórios." },
+                    new { error = L["UserId, token e nova senha são obrigatórios."] },
                     statusCode: 400
                 );
             }
@@ -29,60 +35,79 @@ public static class UsersEndpoints
             if (user == null)
             {
                 return Results.Json(
-                    new { error = "Usuário não encontrado." },
+                    new { error = L["Usuário não encontrado."] },
                     statusCode: 404
                 );
             }
 
             try
             {
-                // decoder porque o token vem URL-encoded
                 var decodedToken = Uri.UnescapeDataString(request.Token);
-
                 var result = await userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
 
                 if (!result.Succeeded)
                 {
                     return Results.Json(
-                        new { error = "Falha ao redefinir a senha.", details = result.Errors },
+                        new
+                        {
+                            error = L["Falha ao redefinir a senha."],
+                            details = result.Errors
+                        },
                         statusCode: 400
                     );
                 }
 
                 return Results.Ok(new
                 {
-                    message = "Senha redefinida com sucesso! Agora você deve fazer login novamente."
+                    message = L["Senha redefinida com sucesso! Agora você deve fazer login novamente."]
                 });
             }
             catch (Exception ex)
             {
                 return Results.Json(
-                    new { error = $"Erro inesperado: {ex.Message}" },
+                    new { error = L["Erro inesperado: {0}", ex.Message] },
                     statusCode: 500
                 );
             }
         });
 
-
         // =========================
         // REGISTER
         // =========================
-        app.MapPost("/register", async ([FromBody] RegisterRequest request, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) =>
+        app.MapPost("/register", async (
+            [FromBody] RegisterRequest request,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IStringLocalizer<SharedResources> L
+        ) =>
         {
             var user = new IdentityUser { UserName = request.Email, Email = request.Email };
             var result = await userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded) return Results.BadRequest(result.Errors);
 
-            if (!await roleManager.RoleExistsAsync("User")) await roleManager.CreateAsync(new IdentityRole("User"));
+            if (!result.Succeeded)
+                return Results.BadRequest(result.Errors);
+
+            if (!await roleManager.RoleExistsAsync("User"))
+                await roleManager.CreateAsync(new IdentityRole("User"));
+
             await userManager.AddToRoleAsync(user, "User");
 
-            return Results.Ok(new ApiResponse<object>(true, new { user.Id, user.Email }, Array.Empty<string>()));
+            return Results.Ok(new ApiResponse<object>(
+                true,
+                new { user.Id, user.Email },
+                Array.Empty<string>()
+            ));
         });
 
         // =========================
         // LOGIN
         // =========================
-        app.MapPost("/auth/login", async ([FromBody] LoginRequest request, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signIn, IConfiguration config) =>
+        app.MapPost("/auth/login", async (
+            [FromBody] LoginRequest request,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signIn,
+            IConfiguration config
+        ) =>
         {
             var user = await userManager.FindByEmailAsync(request.Email);
             if (user == null) return Results.Unauthorized();
@@ -91,7 +116,12 @@ public static class UsersEndpoints
             if (!result.Succeeded) return Results.Unauthorized();
 
             var roles = await userManager.GetRolesAsync(user);
-            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id), new Claim(ClaimTypes.Email, user.Email!) };
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email!)
+            };
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
             var token = GenerateJwt(claims, config);
@@ -107,78 +137,211 @@ public static class UsersEndpoints
         // =========================
         // CHANGE PASSWORD
         // =========================
-        app.MapPost("/users/change-password", async ([FromBody] ChangePasswordRequest request, HttpContext ctx, UserManager<IdentityUser> userManager) =>
+        app.MapPost("/users/change-password", async (
+            [FromBody] ChangePasswordRequest request,
+            HttpContext ctx,
+            UserManager<IdentityUser> userManager,
+            IStringLocalizer<SharedResources> L
+        ) =>
         {
             var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return Results.Json(new { message = "Usuário não autenticado." }, statusCode: StatusCodes.Status401Unauthorized);
+            if (userId == null)
+                return Results.Json(new { message = L["Usuário não autenticado."] },
+                    statusCode: StatusCodes.Status401Unauthorized);
 
             var user = await userManager.FindByIdAsync(userId);
-            if (user == null) return Results.Json(new { message = "Usuário não existe." }, statusCode: StatusCodes.Status404NotFound);
+            if (user == null)
+                return Results.Json(new { message = L["Usuário não existe."] },
+                    statusCode: StatusCodes.Status404NotFound);
 
             var passwordCheck = await userManager.CheckPasswordAsync(user, request.CurrentPassword);
-            if (!passwordCheck) return Results.Json(new { message = "Senha atual incorreta." }, statusCode: StatusCodes.Status400BadRequest);
+            if (!passwordCheck)
+                return Results.Json(new { message = L["Senha atual incorreta."] },
+                    statusCode: StatusCodes.Status400BadRequest);
 
-            var change = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
-            if (!change.Succeeded) return Results.Json(new { message = "Erro", errors = change.Errors.Select(e => e.Description) }, statusCode: StatusCodes.Status400BadRequest);
+            var change = await userManager.ChangePasswordAsync(
+                user, request.CurrentPassword, request.NewPassword);
 
-            return Results.Json(new { message = "Senha alterada com sucesso!" });
+            if (!change.Succeeded)
+            {
+                return Results.Json(
+                    new
+                    {
+                        message = L["Erro"],
+                        errors = change.Errors.Select(e => e.Description)
+                    },
+                    statusCode: StatusCodes.Status400BadRequest
+                );
+            }
+
+            return Results.Json(new { message = L["Senha alterada com sucesso!"] });
         }).RequireAuthorization();
 
         // =========================
         // USERS CRUD (Admin)
         // =========================
-        app.MapGet("/users", async (UserManager<IdentityUser> userManager) => Results.Ok(userManager.Users.Select(u => new { u.Id, u.UserName, u.Email }).ToList())).RequireAuthorization("Admin");
-        app.MapGet("/users/{userId}", async (string userId, UserManager<IdentityUser> userManager) => { var user = await userManager.FindByIdAsync(userId); return user == null ? Results.NotFound() : Results.Ok(new { user.Id, user.UserName, user.Email }); }).RequireAuthorization("Admin");
-        app.MapPost("/users", async ([FromBody] CreateUserRequest request, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) => { var user = new IdentityUser { UserName = request.Email, Email = request.Email }; var result = await userManager.CreateAsync(user, request.Password); if (!result.Succeeded) return Results.BadRequest(result.Errors); if (!await roleManager.RoleExistsAsync("User")) await roleManager.CreateAsync(new IdentityRole("User")); await userManager.AddToRoleAsync(user, "User"); return Results.Ok(new { user.Id, user.Email }); }).RequireAuthorization("Admin");
-        app.MapDelete("/users/{userId}", async (string userId, UserManager<IdentityUser> userManager) => { var user = await userManager.FindByIdAsync(userId); if (user == null) return Results.NotFound(); var result = await userManager.DeleteAsync(user); return result.Succeeded ? Results.NoContent() : Results.BadRequest(result.Errors); }).RequireAuthorization("Admin");
+        app.MapGet("/users", async (UserManager<IdentityUser> userManager) =>
+            Results.Ok(userManager.Users.Select(u => new
+            {
+                u.Id,
+                u.UserName,
+                u.Email
+            }).ToList())
+        ).RequireAuthorization("Admin");
+
+        app.MapGet("/users/{userId}", async (string userId, UserManager<IdentityUser> userManager) =>
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            return user == null
+                ? Results.NotFound()
+                : Results.Ok(new { user.Id, user.UserName, user.Email });
+        }).RequireAuthorization("Admin");
+
+        app.MapPost("/users", async (
+            [FromBody] CreateUserRequest request,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager
+        ) =>
+        {
+            var user = new IdentityUser { UserName = request.Email, Email = request.Email };
+            var result = await userManager.CreateAsync(user, request.Password);
+
+            if (!result.Succeeded)
+                return Results.BadRequest(result.Errors);
+
+            if (!await roleManager.RoleExistsAsync("User"))
+                await roleManager.CreateAsync(new IdentityRole("User"));
+
+            await userManager.AddToRoleAsync(user, "User");
+            return Results.Ok(new { user.Id, user.Email });
+        }).RequireAuthorization("Admin");
+
+        app.MapDelete("/users/{userId}", async (string userId, UserManager<IdentityUser> userManager) =>
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null) return Results.NotFound();
+            var result = await userManager.DeleteAsync(user);
+            return result.Succeeded ? Results.NoContent() : Results.BadRequest(result.Errors);
+        }).RequireAuthorization("Admin");
 
         // =========================
         // ROLES CRUD (Admin)
         // =========================
-        app.MapGet("/roles", async (RoleManager<IdentityRole> roleManager) => Results.Ok(roleManager.Roles.Select(r => new { r.Id, r.Name }).ToList())).RequireAuthorization("Admin");
-        app.MapPost("/roles", async ([FromBody] CreateRoleRequest request, RoleManager<IdentityRole> roleManager) => { if (await roleManager.RoleExistsAsync(request.Name)) return Results.BadRequest("Role já existe"); await roleManager.CreateAsync(new IdentityRole(request.Name)); return Results.Ok(); }).RequireAuthorization("Admin");
-        app.MapDelete("/roles/{roleName}", async (string roleName, RoleManager<IdentityRole> roleManager) => { var role = await roleManager.FindByNameAsync(roleName); if (role == null) return Results.NotFound(); var result = await roleManager.DeleteAsync(role); return result.Succeeded ? Results.NoContent() : Results.BadRequest(result.Errors); }).RequireAuthorization("Admin");
+        app.MapGet("/roles", async (RoleManager<IdentityRole> roleManager) =>
+            Results.Ok(roleManager.Roles.Select(r => new { r.Id, r.Name }).ToList())
+        ).RequireAuthorization("Admin");
+
+        app.MapPost("/roles", async (
+            [FromBody] CreateRoleRequest request,
+            RoleManager<IdentityRole> roleManager,
+            IStringLocalizer<SharedResources> L
+        ) =>
+        {
+            if (await roleManager.RoleExistsAsync(request.Name))
+                return Results.BadRequest(L["Role já existe"]);
+
+            await roleManager.CreateAsync(new IdentityRole(request.Name));
+            return Results.Ok();
+        }).RequireAuthorization("Admin");
+
+        app.MapDelete("/roles/{roleName}", async (
+            string roleName,
+            RoleManager<IdentityRole> roleManager
+        ) =>
+        {
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role == null) return Results.NotFound();
+            var result = await roleManager.DeleteAsync(role);
+            return result.Succeeded ? Results.NoContent() : Results.BadRequest(result.Errors);
+        }).RequireAuthorization("Admin");
 
         // =========================
         // USER-ROLE MANAGEMENT
         // =========================
-        app.MapPost("/users/{userId}/roles", async (string userId, [FromBody] AddUserRoleRequest request, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) => { var user = await userManager.FindByIdAsync(userId); if (user == null) return Results.NotFound(); if (!await roleManager.RoleExistsAsync(request.RoleName)) return Results.BadRequest("Role não existe"); await userManager.AddToRoleAsync(user, request.RoleName); return Results.Ok(); }).RequireAuthorization("Admin");
-        app.MapDelete("/users/{userId}/roles", async (string userId, [FromBody] RemoveUserRoleRequest request, UserManager<IdentityUser> userManager) => { var user = await userManager.FindByIdAsync(userId); if (user == null) return Results.NotFound(); await userManager.RemoveFromRoleAsync(user, request.RoleName); return Results.Ok(); }).RequireAuthorization("Admin");
+        app.MapPost("/users/{userId}/roles", async (
+            string userId,
+            [FromBody] AddUserRoleRequest request,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IStringLocalizer<SharedResources> L
+        ) =>
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null) return Results.NotFound();
+
+            if (!await roleManager.RoleExistsAsync(request.RoleName))
+                return Results.BadRequest(L["Role não existe"]);
+
+            await userManager.AddToRoleAsync(user, request.RoleName);
+            return Results.Ok();
+        }).RequireAuthorization("Admin");
+
+        app.MapDelete("/users/{userId}/roles", async (
+            string userId,
+            [FromBody] RemoveUserRoleRequest request,
+            UserManager<IdentityUser> userManager
+        ) =>
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null) return Results.NotFound();
+            await userManager.RemoveFromRoleAsync(user, request.RoleName);
+            return Results.Ok();
+        }).RequireAuthorization("Admin");
 
         // =========================
         // USER-CLAIMS MANAGEMENT
         // =========================
-        app.MapPost("/users/{userId}/claims", async (string userId, [FromBody] AddClaimRequest request, UserManager<IdentityUser> userManager) =>
+        app.MapPost("/users/{userId}/claims", async (
+            string userId,
+            [FromBody] AddClaimRequest request,
+            UserManager<IdentityUser> userManager
+        ) =>
         {
             var user = await userManager.FindByIdAsync(userId);
+            if (user == null) return Results.NotFound();
+            await userManager.AddClaimAsync(user, new Claim(request.Type, request.Value));
+            return Results.Ok();
+        }).RequireAuthorization("Admin");
 
+        app.MapDelete("/users/{userId}/claims", async (
+            string userId,
+            [FromBody] RemoveClaimRequest request,
+            UserManager<IdentityUser> userManager
+        ) =>
+        {
+            var user = await userManager.FindByIdAsync(userId);
             if (user == null) return Results.NotFound();
 
-            await userManager.AddClaimAsync(user, new Claim(request.Type, request.Value));
+            var claim = (await userManager.GetClaimsAsync(user))
+                .FirstOrDefault(c => c.Type == request.Type && c.Value == request.Value);
+
+            if (claim != null)
+                await userManager.RemoveClaimAsync(user, claim);
 
             return Results.Ok();
         }).RequireAuthorization("Admin");
 
-        app.MapDelete("/users/{userId}/claims", async (string userId, [FromBody] RemoveClaimRequest request, UserManager<IdentityUser> userManager) => { var user = await userManager.FindByIdAsync(userId); if (user == null) return Results.NotFound(); var claim = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == request.Type && c.Value == request.Value); if (claim != null) await userManager.RemoveClaimAsync(user, claim); return Results.Ok(); }).RequireAuthorization("Admin");
-
         // =========================
         // PASSWORD RESET
         // =========================
-        app.MapPost("/auth/reset-password", async ([FromBody] PasswordResetRequest request, UserManager<IdentityUser> userManager, IEmailService emailService) =>
+        app.MapPost("/auth/reset-password", async (
+            [FromBody] PasswordResetRequest request,
+            UserManager<IdentityUser> userManager,
+            IEmailService emailService,
+            IStringLocalizer<SharedResources> L
+        ) =>
         {
             if (string.IsNullOrWhiteSpace(request.Email))
-                return Results.Json(new { error = "O e-mail é obrigatório." }, statusCode: 400);
+                return Results.Json(new { error = L["O e-mail é obrigatório."] }, statusCode: 400);
 
             var user = await userManager.FindByEmailAsync(request.Email);
             if (user == null)
-                return Results.Json(new { error = "E-mail não cadastrado." }, statusCode: 404);
+                return Results.Json(new { error = L["E-mail não cadastrado."] }, statusCode: 404);
 
             try
             {
-                // GERA TOKEN VÁLIDO DO IDENTITY
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-                // Envia email com UserId + Token
                 var emailSent = await emailService.SendPasswordResetEmailAsync(
                     user.Email!,
                     user.Id,
@@ -186,39 +349,42 @@ public static class UsersEndpoints
                 );
 
                 if (!emailSent)
-                    return Results.Json(new { error = "Falha ao enviar o e-mail de redefinição." }, statusCode: 500);
+                    return Results.Json(new { error = L["Falha ao enviar o e-mail de redefinição."] },
+                        statusCode: 500);
 
-                return Results.Ok(new { message = "E-mail de redefinição de senha enviado com sucesso." });
+                return Results.Ok(new { message = L["E-mail de redefinição de senha enviado com sucesso."] });
             }
             catch (Exception ex)
             {
-                return Results.Json(new { error = $"Erro inesperado: {ex.Message}" }, statusCode: 500);
+                return Results.Json(
+                    new { error = L["Erro inesperado: {0}", ex.Message] },
+                    statusCode: 500
+                );
             }
         });
     }
 
-    // The GenerateJwt helper method must be defined inside the class but outside the MapUsersEndpoints method.
+    // =========================
+    // JWT Helper
+    // =========================
     private static string GenerateJwt(IEnumerable<Claim> claims, IConfiguration config)
     {
-        // 1. Get the secret key from configuration
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        // 2. Create the JWT Security Token
         var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
             issuer: config["Jwt:Issuer"],
             audience: config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(7), // Token expires in 7 days
+            expires: DateTime.UtcNow.AddDays(7),
             signingCredentials: creds
         );
 
-        // 3. Write the token
         return new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(token);
     }
 
     // =========================
-    // DTOs (Defined inside the class or namespace)
+    // DTOs
     // =========================
     public record LoginResponse(string Token, string Email, string UserID, List<string> Roles);
     public record CreateUserRequest(string Email, string Password);

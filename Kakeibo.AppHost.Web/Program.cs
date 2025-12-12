@@ -1,11 +1,12 @@
 ﻿using Kakeibo.AppHost.Web.Components;
 using Kakeibo.AppHost.Web.Models;
 using Kakeibo.AppHost.Web.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 using StackExchange.Redis;
+using System.Globalization;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,38 +17,56 @@ builder.AddServiceDefaults();
 // HttpContext para pegar usuário logado
 builder.Services.AddHttpContextAccessor();
 
-var redisConnectionString = builder.Configuration.GetConnectionString("redis")
-    ?? throw new InvalidOperationException("Redis connection string 'redis' not found.");
+// ---------------- Redis ----------------
+var redisConnectionString = builder.Configuration.GetConnectionString("redis");
+if (string.IsNullOrEmpty(redisConnectionString))
+{
+    // Mensagem de erro fixa, não podemos usar L[] aqui
+    throw new InvalidOperationException("Redis connection string not found.");
+}
 
 var redis = ConnectionMultiplexer.Connect(redisConnectionString);
 
-// This stabilizes the key used to encrypt the authentication cookie.
+// ---------------- Culture ----------------
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("pt-BR"),
+    new CultureInfo("ja")
+};
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en"); // Fallback
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+
+    // Accept-Language from browser/OS first
+    options.RequestCultureProviders = new IRequestCultureProvider[]
+    {
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
+});
+
+// ---------------- Data Protection ----------------
 builder.Services.AddDataProtection()
     .SetApplicationName("KakeiboWebFrontend")
-    .PersistKeysToStackExchangeRedis(
-        redis
-    );
+    .PersistKeysToStackExchangeRedis(redis);
 
 // ---------------- JWT/Cookie Hybrid Setup ----------------
-
-// 1. Register the services needed for JWT handling
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 
-// Removed the incorrect ForwardedIdentityHttpClientHandler registration
-// and the redundant IAuthenticationService registration.
-
-// 2. Update the HttpClient registration for "apis"
 builder.Services.AddHttpClient("apis", c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
 })
-// Add the JwtAuthorizationHandler to attach the Bearer token
 .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
 // ---------------- Blazor Server ----------------
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services.AddCors(options =>
 {
@@ -61,19 +80,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddCascadingAuthenticationState();
-
 builder.Services.AddAuthorization();
 
 // ---------------- Output Caching Setup ----------------
-// 1. Register the base output cache services
 builder.Services.AddOutputCache();
-
-// 2. Register the Redis store implementation using the existing connection string
 builder.Services.AddStackExchangeRedisOutputCache(options =>
 {
-    // Uses the connection string successfully retrieved above
     options.Configuration = redisConnectionString;
-    options.InstanceName = "KakeiboOutputCache"; // Use a distinct instance name
+    options.InstanceName = "KakeiboOutputCache";
 });
 
 var app = builder.Build();
@@ -86,7 +100,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowBlazorWithCredentials");
-
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseAntiforgery();
@@ -103,26 +116,23 @@ app.MapRazorComponents<App>()
 app.MapPost("/blazor-login", async (
     LoginModel loginModel,
     IHttpClientFactory clientFactory,
-    HttpContext httpContext,
-    TokenService tokenService
+    TokenService tokenService,
+    IStringLocalizer<SharedResources> L
 ) =>
 {
     var client = clientFactory.CreateClient("apis");
 
-    // 1. Call the API to validate credentials
     var response = await client.PostAsJsonAsync("auth/login", loginModel);
 
     if (!response.IsSuccessStatusCode)
-        return Results.Json(new { error = "Credenciais inválidas" }, statusCode: StatusCodes.Status401Unauthorized);
+        return Results.Json(new { error = L["Invalid credentials"] }, statusCode: StatusCodes.Status401Unauthorized);
 
     var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
     if (loginResponse == null)
-        return Results.Problem("Invalid API response format.");
+        return Results.Problem(L["Invalid API response format."]);
 
-    // Store JWT in server-side TokenService (for Blazor Server circuit)
     tokenService.SetToken(loginResponse.Token);
 
-    // 2. Create claims and sign in using cookie auth (visible to browser)
     var claims = new List<Claim>
     {
         new Claim(ClaimTypes.NameIdentifier, loginResponse.UserID),
@@ -131,8 +141,13 @@ app.MapPost("/blazor-login", async (
     };
     claims.AddRange(loginResponse.Roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
-    return Results.Ok(new { success = true }); // client will navigate manually
+    return Results.Ok(new { success = true });
 }).AllowAnonymous();
+
+// =======================================================
+// Mensagens fixas adicionais podem ser adaptadas nos endpoints futuros
+// usando IStringLocalizer<SharedResources> injetado via DI
+// =======================================================
 
 app.MapDefaultEndpoints();
 app.Run();

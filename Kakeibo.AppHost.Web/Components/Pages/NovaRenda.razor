@@ -60,9 +60,9 @@
 
 @code {
     private List<TiposDeEntradas>? tiposEntrada;
-    private string errorMessage = "";
+    private string errorMessage = String.Empty;
 
-    private string? UserID = "";
+    private string? UserID = String.Empty;
 
     [SupplyParameterFromForm]
     private Entradas? novaEntrada { get; set; }
@@ -110,7 +110,7 @@
 
     private async Task SalvarEntrada()
     {
-        errorMessage = "";
+        errorMessage = String.Empty;
 
         if (novaEntrada != null)
         {

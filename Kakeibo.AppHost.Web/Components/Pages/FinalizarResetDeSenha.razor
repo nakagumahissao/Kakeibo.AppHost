@@ -46,7 +46,7 @@
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string Token { get; set; }
+    public string Token { get; set; } = String.Empty;
 
     private ResetPasswordModel resetPasswordModel = new();
     private bool isSubmitting = false;

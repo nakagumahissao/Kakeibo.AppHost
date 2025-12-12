@@ -85,10 +85,10 @@
     [Parameter] public int Day { get; set; }
     [Parameter] public int Month { get; set; }
     [Parameter] public int Year { get; set; }
-    [Parameter] public string userId { get; set; } = "";
+    [Parameter] public string userId { get; set; } = String.Empty;
 
     private List<Kakeibo.AppHost.Web.Models.Saidas>? saidasDoDia;
-    private string selectedDayDisplay = "";
+    private string selectedDayDisplay = String.Empty;
     private decimal totalSaidas = 0;
 
     protected override async Task OnParametersSetAsync()

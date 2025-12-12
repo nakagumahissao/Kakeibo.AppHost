@@ -86,9 +86,9 @@
     private Kakeibo.AppHost.Web.Models.Saidas? novaSaida { get; set; }
 
     private List<Kakeibo.AppHost.Web.Models.TiposDeDespesa> tiposDeDespesa = new();
-    private string errorMessage = "";
-    private string successMessage = "";
-    private string? UserID = "";
+    private string errorMessage = String.Empty;
+    private string successMessage = String.Empty;
+    private string? UserID = String.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,7 +152,7 @@
 
     private async Task SalvarDespesa()
     {
-        errorMessage = "";
+        errorMessage = String.Empty;
         try
         {
             var dt = (Day > 0 && Month > 0 && Year > 0)

@@ -14,12 +14,30 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.AddServiceDefaults();
 
+        // Culture
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+        builder.Services.AddRequestLocalization(options =>
+        {
+            var supported = new[] { "en", "pt-BR", "ja" };
+            options.SetDefaultCulture("pt-BR")
+                .AddSupportedCultures(supported)
+                .AddSupportedUICultures(supported);
+        });
+
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+        builder.Services.AddMvc()
+            .AddViewLocalization()
+            .AddDataAnnotationsLocalization();
+        // Culture End
+
         // EMail
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddSingleton<IEmailService, EmailService>();
 
         // Client Settings
-        builder.Services.Configure<ClientSettings>( builder.Configuration.GetSection("ClientSettings"));
+        builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
         builder.Services.AddSingleton<IClientSettings, ClientSettingsService>();
 
         // 1. SERVICE CONFIGURATION PHASE (MUST BE BEFORE builder.Build())
