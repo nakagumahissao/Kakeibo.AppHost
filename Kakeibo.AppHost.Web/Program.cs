@@ -72,10 +72,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorWithCredentials", policy =>
     {
-        policy.WithOrigins("https://100.64.1.29:7030")
-              .AllowCredentials()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "http://192.168.0.10:7030"  // porta do front-end
+        )
+        .AllowCredentials()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 

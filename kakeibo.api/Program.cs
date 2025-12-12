@@ -32,6 +32,19 @@ public class Program
             .AddDataAnnotationsLocalization();
         // Culture End
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowBlazorWithCredentials", policy =>
+            {
+                policy.WithOrigins(
+                    "http://192.168.0.10:7030"  // porta do front-end
+                )
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            });
+        });
+
         // EMail
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddSingleton<IEmailService, EmailService>();
