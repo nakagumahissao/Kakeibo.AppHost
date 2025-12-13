@@ -2,7 +2,7 @@
 @using Kakeibo.AppHost.Web.Resources
 @using Microsoft.Extensions.Localization
 @rendermode InteractiveServer
-@inject IStringLocalizer<SharedResources> L
+@inject IStringLocalizer<Kakeibo.AppHost.Web.Resources.SharedResources> L
 
 <PageTitle>@L["Home"]</PageTitle>
 
@@ -12,7 +12,7 @@
 <p>Culture: @CultureInfo.CurrentCulture.Name</p>
 
 <h1>
-    @L["Bem-vindo ao Kakeibo — Seu controle financeiro do jeito japonês"]
+    @L["BoasVindas"]
 </h1>
 
 <p>
