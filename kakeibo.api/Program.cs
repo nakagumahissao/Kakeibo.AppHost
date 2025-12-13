@@ -46,7 +46,7 @@ public class Program
                 new CultureInfo("es"),
                 new CultureInfo("fr"),
                 new CultureInfo("zh-CN"),
-                new CultureInfo("ja")
+                new CultureInfo("ja-JP")
             };
 
             options.SetDefaultCulture("pt-BR")

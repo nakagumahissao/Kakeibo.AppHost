@@ -1,0 +1,437 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Credenciais Inválidas" xml:space="preserve">
+    <value>Invalid credentials</value>
+  </data>
+  <data name="Formato Inválido de Resposta de API." xml:space="preserve">
+    <value>Invalid API response format.</value>
+  </data>
+  <data name="Alterar Senha" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="Senha Atual" xml:space="preserve">
+    <value>Current Password</value>
+  </data>
+  <data name="Nova Senha" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="Confirmar Nova Senha" xml:space="preserve">
+    <value>Confirm New Password</value>
+  </data>
+  <data name="Salvar" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="As senhas não coincidem." xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="Senha alterada com sucesso!" xml:space="preserve">
+    <value>Password changed successfully!</value>
+  </data>
+  <data name="Erro:" xml:space="preserve">
+    <value>Error:</value>
+  </data>
+  <data name="Calendário" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Select year:" xml:space="preserve">
+    <value>Select year:</value>
+  </data>
+  <data name="Excluir Saída" xml:space="preserve">
+    <value>Delete Expense</value>
+  </data>
+  <data name="Carregando registro..." xml:space="preserve">
+    <value>Loading record...</value>
+  </data>
+  <data name="Registro excluído ✔" xml:space="preserve">
+    <value>Record deleted ✔</value>
+  </data>
+  <data name="Voltar" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Descrição:" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="Valor:" xml:space="preserve">
+    <value>Value:</value>
+  </data>
+  <data name="Excluir" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Cancelar" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Editar Saída" xml:space="preserve">
+    <value>Edit Expense</value>
+  </data>
+  <data name="Registro atualizado com sucesso ✔" xml:space="preserve">
+    <value>Record updated successfully ✔</value>
+  </data>
+  <data name="Voltar para lista" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="Descrição" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Nome Despesa" xml:space="preserve">
+    <value>Expense Name</value>
+  </data>
+  <data name="Valor" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="Resetar Senha - Finalizacao" xml:space="preserve">
+    <value>Password Reset - Finalization</value>
+  </data>
+  <data name="Redefinir Senha" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="Confirme a Senha" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="Enviando..." xml:space="preserve">
+    <value>Sending...</value>
+  </data>
+  <data name="As senhas não conferem." xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="Senha redefinida com sucesso! Você será redirecionado para o login." xml:space="preserve">
+    <value>Password successfully reset! You will be redirected to the login page.</value>
+  </data>
+  <data name="Erro ao redefinir senha:" xml:space="preserve">
+    <value>Error resetting password:</value>
+  </data>
+  <data name="Erro inesperado:" xml:space="preserve">
+    <value>Unexpected error:</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Bem-vindo ao Kakeibo — Seu controle financeiro do jeito japonês" xml:space="preserve">
+    <value>Welcome to Kakeibo — Your financial control the Japanese way</value>
+  </data>
+  <data name="Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira." xml:space="preserve">
+    <value>Organizing your finances doesn't have to be complicated. Kakeibo was created to help you understand where your money goes, make more conscious decisions, and build healthy financial habits — all in a simple, intuitive way, inspired by the traditional Japanese method of financial management.</value>
+  </data>
+  <data name="Com o Kakeibo, você pode:" xml:space="preserve">
+    <value>With Kakeibo, you can:</value>
+  </data>
+  <data name="Registrar seus gastos rapidamente" xml:space="preserve">
+    <value>Record your expenses quickly</value>
+  </data>
+  <data name="Estabelecer metas de economia" xml:space="preserve">
+    <value>Set savings goals</value>
+  </data>
+  <data name="Acompanhar gráficos claros e objetivos" xml:space="preserve">
+    <value>Track clear and objective charts</value>
+  </data>
+  <data name="Refletir sobre seus hábitos de consumo" xml:space="preserve">
+    <value>Reflect on your spending habits</value>
+  </data>
+  <data name="Planejar um futuro financeiro mais tranquilo" xml:space="preserve">
+    <value>Plan a more secure financial future</value>
+  </data>
+  <data name="Dê o primeiro passo para transformar sua relação com o dinheiro." xml:space="preserve">
+    <value>Take the first step to transform your relationship with money.</value>
+  </data>
+  <data name="Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças." xml:space="preserve">
+    <value>Kakeibo: simplicity, awareness, and balance in your finances.</value>
+  </data>
+  <data name="Lista de Despesas" xml:space="preserve">
+    <value>Expense List</value>
+  </data>
+  <data name="Listagem das Despesas Mais Comuns" xml:space="preserve">
+    <value>Listing of Most Common Expenses</value>
+  </data>
+  
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Tipo de Despesa" xml:space="preserve">
+    <value>Expense Type</value>
+  </data>
+  <data name="Despesa" xml:space="preserve">
+    <value>Expense</value>
+  </data>
+  <data name="Ações" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Editar" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Adicionar" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Lista de Despesas - Novo" xml:space="preserve">
+    <value>Expense List - New</value>
+  </data>
+  <data name="Nova Despesa" xml:space="preserve">
+    <value>New Expense</value>
+  </data>
+  <data name="Salvando..." xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="Nome da Despesa" xml:space="preserve">
+    <value>Expense Name</value>
+  </data>
+  <data name="Lista de Despesas - Editar" xml:space="preserve">
+    <value>Expense List - Edit</value>
+  </data>
+  <data name="Editar Despesa" xml:space="preserve">
+    <value>Edit Expense</value>
+  </data>
+  <data name="Carregando..." xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Lista de Despesas - Excluir" xml:space="preserve">
+    <value>Expense List - Delete</value>
+  </data>
+  <data name="Excluir Despesa" xml:space="preserve">
+    <value>Delete Expense</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  
+  <data name="Entrar" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Você será desconectado." xml:space="preserve">
+    <value>You will be logged out.</value>
+  </data>
+  <data name="Sair" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Nova Renda" xml:space="preserve">
+    <value>New Income</value>
+  </data>
+  <data name="Selecione" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Falha ao carregar tipos de entrada" xml:space="preserve">
+    <value>Failed to load input types</value>
+  </data>
+  <data name="Erro inesperado ao carregar dados" xml:space="preserve">
+    <value>Unexpected error loading data</value>
+  </data>
+  <data name="Erro ao salvar" xml:space="preserve">
+    <value>Error saving</value>
+  </data>
+  <data name="Registro de Nova Despesa" xml:space="preserve">
+    <value>New Expense Registration</value>
+  </data>
+  <data name="Suas informações foram gravadas com sucesso." xml:space="preserve">
+    <value>Your information has been recorded successfully.</value>
+  </data>
+  <data name="Clique aqui para retornar." xml:space="preserve">
+    <value>Click here to return.</value>
+  </data>
+  <data name="Registro de Usuário" xml:space="preserve">
+    <value>User Registration</value>
+  </data>
+  <data name="Senha" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Registrar" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Usuário criado com sucesso! Redirecionando para o login..." xml:space="preserve">
+    <value>User created successfully! Redirecting to login...</value>
+  </data>
+  <data name="Falha na comunicação com o servidor ou dados inválidos." xml:space="preserve">
+    <value>Failed communication with server or invalid data.</value>
+  </data>
+  <data name="Erro ao registrar" xml:space="preserve">
+    <value>Error registering</value>
+  </data>
+  <data name="Rendas" xml:space="preserve">
+    <value>Incomes</value>
+  </data>
+  <data name="Rendas do Mês" xml:space="preserve">
+    <value>Monthly Incomes</value>
+  </data>
+  <data name="Rendas do Mês:" xml:space="preserve">
+    <value>Monthly Incomes:</value>
+  </data>
+  <data name="Carregando Rendas..." xml:space="preserve">
+    <value>Loading Incomes...</value>
+  </data>
+  <data name="Nenhuma Renda encontrada." xml:space="preserve">
+    <value>No Income found.</value>
+  </data>
+  <data name="TOTAL:" xml:space="preserve">
+    <value>TOTAL:</value>
+  </data>
+  <data name="Excluir Renda" xml:space="preserve">
+    <value>Delete Income</value>
+  </data>
+  <data name="Carregando dados..." xml:space="preserve">
+    <value>Loading data...</value>
+  </data>
+  <data name="Renda excluída com sucesso" xml:space="preserve">
+    <value>Income deleted successfully</value>
+  </data>
+  <data name="Editar Renda" xml:space="preserve">
+    <value>Edit Income</value>
+  </data>
+  <data name="Renda atualizada com sucesso" xml:space="preserve">
+    <value>Income updated successfully</value>
+  </data>
+  <data name="Resetar Senha" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="Enviar Link de Reset" xml:space="preserve">
+    <value>Send Reset Link</value>
+  </data>
+  <data name="E-mail de redefinição de senha enviado com sucesso!" xml:space="preserve">
+    <value>Password reset email sent successfully!</value>
+  </data>
+  <data name="Erro ao enviar" xml:space="preserve">
+    <value>Error sending</value>
+  </data>
+  <data name="Erro inesperado" xml:space="preserve">
+    <value>Unexpected error</value>
+  </data>
+  <data name="Saídas" xml:space="preserve">
+    <value>Expenses</value>
+  </data>
+  <data name="Saídas do Mês" xml:space="preserve">
+    <value>Monthly Expenses</value>
+  </data>
+  <data name="Saídas do Dia:" xml:space="preserve">
+    <value>Daily Expenses:</value>
+  </data>
+  <data name="Selecione um dia no calendário." xml:space="preserve">
+    <value>Select a day on the calendar.</value>
+  </data>
+  <data name="Nenhuma saída encontrada." xml:space="preserve">
+    <value>No expense found.</value>
+  </data>
+  <data name="Nova Saída" xml:space="preserve">
+    <value>New Expense</value>
+  </data>
+  <data name="Tipos de Despesas" xml:space="preserve">
+    <value>Expense Types</value>
+  </data>
+  <data name="Tipos de Despesa - Editar" xml:space="preserve">
+    <value>Expense Types - Edit</value>
+  </data>
+  <data name="Editar Tipo de Despesa" xml:space="preserve">
+    <value>Edit Expense Type</value>
+  </data>
+  <data name="Tipos de Despesa - Excluir" xml:space="preserve">
+    <value>Expense Types - Delete</value>
+  </data>
+  <data name="Excluir Tipo de Despesa" xml:space="preserve">
+    <value>Delete Expense Type</value>
+  </data>
+  <data name="Nome do Tipo de Despesa" xml:space="preserve">
+    <value>Expense Type Name</value>
+  </data>
+  <data name="Tipo de Despesa não encontrado." xml:space="preserve">
+    <value>Expense Type not found.</value>
+  </data>
+  <data name="Tipos de Despesa - Novo" xml:space="preserve">
+    <value>Expense Types - New</value>
+  </data>
+  <data name="Novo Tipo de Despesa" xml:space="preserve">
+    <value>New Expense Type</value>
+  </data>
+  <data name="O nome do tipo de despesa é obrigatório." xml:space="preserve">
+    <value>The expense type name is required.</value>
+  </data>
+  <data name="Tipos de Rendas" xml:space="preserve">
+    <value>Income Types</value>
+  </data>
+  <data name="Tipo de Renda" xml:space="preserve">
+    <value>Income Type</value>
+  </data>
+  <data name="Tipos de Rendas - Editar" xml:space="preserve">
+    <value>Income Types - Edit</value>
+  </data>
+  <data name="Editar Tipo de Renda" xml:space="preserve">
+    <value>Edit Income Type</value>
+  </data>
+  <data name="Tipos de Rendas - Excluir" xml:space="preserve">
+    <value>Income Types - Delete</value>
+  </data>
+  <data name="Excluir Tipo de Renda" xml:space="preserve">
+    <value>Delete Income Type</value>
+  </data>
+  <data name="Nome do Tipo de Renda" xml:space="preserve">
+    <value>Income Type Name</value>
+  </data>
+  <data name="Tipo de Renda não encontrado." xml:space="preserve">
+    <value>Income Type not found.</value>
+  </data>
+  <data name="Tipos de Rendas - Novo" xml:space="preserve">
+    <value>Income Types - New</value>
+  </data>
+  <data name="Novo Tipo de Renda" xml:space="preserve">
+    <value>New Income Type</value>
+  </data>
+  <data name="O nome do tipo de renda é obrigatório." xml:space="preserve">
+    <value>The income type name is required.</value>
+  </data></root>

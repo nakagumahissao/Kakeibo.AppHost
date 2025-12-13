@@ -1,11 +1,11 @@
-﻿using kakeibo.api.Services;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using Serilog;
+using kakeibo.api.Resources;
 
 namespace kakeibo.api;
 

@@ -1,4 +1,4 @@
-﻿namespace kakeibo.api.Services
+﻿namespace kakeibo.api.Resources
 {
     public class SharedResources
     {

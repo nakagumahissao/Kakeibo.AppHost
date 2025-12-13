@@ -1,8 +1,15 @@
 ﻿@page "/"
+@using Kakeibo.AppHost.Web.Resources
 @using Microsoft.Extensions.Localization
-@inject IStringLocalizer<Home> L
+@rendermode InteractiveServer
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Home"]</PageTitle>
+
+@using System.Globalization
+
+<p>UI Culture: @CultureInfo.CurrentUICulture.Name</p>
+<p>Culture: @CultureInfo.CurrentCulture.Name</p>
 
 <h1>
     @L["Bem-vindo ao Kakeibo — Seu controle financeiro do jeito japonês"]
