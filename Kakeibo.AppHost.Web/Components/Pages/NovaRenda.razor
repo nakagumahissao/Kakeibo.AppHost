@@ -1,52 +1,70 @@
 ﻿@page "/rendas/new"
 @using Microsoft.AspNetCore.Authorization
-@inject IHttpClientFactory HttpFactory
-@using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.Localization
 @using System.Net.Http.Json
 @using System.Text.Json
+@using Kakeibo.AppHost.Web.Models
+
+@inject IHttpClientFactory HttpFactory
 @inject NavigationManager Navigation
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<NovaRenda> L
 
-<PageTitle>Nova Renda</PageTitle>
+<PageTitle>@L["Nova Renda"]</PageTitle>
 
-<h1>Nova Renda</h1>
+<h1>@L["Nova Renda"]</h1>
 
 <EditForm Model="novaEntrada" OnValidSubmit="SalvarEntrada" FormName="novaEntradaForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
+
     <div class="card p-3 mb-3">
         <div class="mb-2">
-            <InputHidden id="anoEntrada" @bind-Value="novaEntrada!.Ano"></InputHidden>
-            <InputHidden id="mesEntrada" @bind-Value="novaEntrada.Mes"></InputHidden>
-            <InputHidden id="userIDEntrada" @bind-Value="novaEntrada.UserID"></InputHidden>
+            <InputHidden id="anoEntrada" @bind-Value="novaEntrada!.Ano" />
+            <InputHidden id="mesEntrada" @bind-Value="novaEntrada.Mes" />
+            <InputHidden id="userIDEntrada" @bind-Value="novaEntrada.UserID" />
 
-            <InputSelect id="tipoEntrada" TValue="int" class="form-select" @bind-Value="novaEntrada.TipoDeEntradaID">
-                <option value="0">Selecione</option>
+            <InputSelect id="tipoEntrada"
+                         TValue="int"
+                         class="form-select"
+                         @bind-Value="novaEntrada.TipoDeEntradaID">
+                <option value="0">@L["Selecione"]</option>
+
                 @foreach (var tipo in tiposEntrada ?? Enumerable.Empty<TiposDeEntradas>())
                 {
-                    <option value="@tipo.TipoDeEntradaId">@tipo.TipoDeEntrada</option>
+                    <option value="@tipo.TipoDeEntradaId">
+                        @tipo.TipoDeEntrada
+                    </option>
                 }
             </InputSelect>
         </div>
 
         <div class="mb-2">
-            <label>Descrição</label>
-            <InputText id="descricao" class="form-control" @bind-Value="novaEntrada.Descricao" />
+            <label>@L["Descrição"]</label>
+            <InputText id="descricao"
+                       class="form-control"
+                       @bind-Value="novaEntrada.Descricao" />
             <ValidationMessage For="@(() => novaEntrada.Descricao)" />
         </div>
 
         <div class="mb-2">
-            <label>Valor</label>
-            <InputNumber id="valorEntrada" TValue="decimal" class="form-control" @bind-Value="novaEntrada.ValorEntrada" />
+            <label>@L["Valor"]</label>
+            <InputNumber id="valorEntrada"
+                         TValue="decimal"
+                         class="form-control"
+                         @bind-Value="novaEntrada.ValorEntrada" />
             <ValidationMessage For="@(() => novaEntrada.ValorEntrada)" />
         </div>
 
         <div class="d-flex justify-content-end mt-3">
             <button type="submit" class="btn btn-primary me-2">
-                Salvar
+                @L["Salvar"]
             </button>
-            <a href="/rendas" class="btn btn-secondary">Cancelar</a>
+
+            <a href="/rendas" class="btn btn-secondary">
+                @L["Cancelar"]
+            </a>
         </div>
     </div>
 </EditForm>
@@ -60,9 +78,9 @@
 
 @code {
     private List<TiposDeEntradas>? tiposEntrada;
-    private string errorMessage = String.Empty;
+    private string errorMessage = string.Empty;
 
-    private string? UserID = String.Empty;
+    private string? UserID = string.Empty;
 
     [SupplyParameterFromForm]
     private Entradas? novaEntrada { get; set; }
@@ -78,7 +96,7 @@
 
         UserID = TokenService.GetUserIdFromToken();
 
-        HttpClient? apisClient = HttpFactory.CreateClient("apis");
+        var apisClient = HttpFactory.CreateClient("apis");
 
         novaEntrada ??= new()
         {
@@ -89,28 +107,32 @@
 
         try
         {
-            tiposEntrada = await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>($"tiposentrada/{UserID}");
+            tiposEntrada =
+                await apisClient.GetFromJsonAsync<List<TiposDeEntradas>>(
+                    $"tiposentrada/{UserID}"
+                );
+
             tiposEntrada ??= new List<TiposDeEntradas>();
         }
         catch (OperationCanceledException)
         {
-            // ... existing code ...
+            // unchanged
         }
         catch (HttpRequestException ex)
         {
-            errorMessage = $"Falha ao carregar tipos de entrada: {ex.Message}";
+            errorMessage = $"{L["Falha ao carregar tipos de entrada"]}: {ex.Message}";
             tiposEntrada = new List<TiposDeEntradas>();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro inesperado ao carregar dados: {ex.Message}";
+            errorMessage = $"{L["Erro inesperado ao carregar dados"]}: {ex.Message}";
             tiposEntrada = new List<TiposDeEntradas>();
         }
     }
 
     private async Task SalvarEntrada()
     {
-        errorMessage = String.Empty;
+        errorMessage = string.Empty;
 
         if (novaEntrada != null)
         {
@@ -119,8 +141,7 @@
             novaEntrada.UserID = UserID!;
         }
 
-
-        HttpClient? apisClient = HttpFactory.CreateClient("apis");
+        var apisClient = HttpFactory.CreateClient("apis");
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "entradas")
         {
@@ -129,16 +150,19 @@
 
         try
         {
-            using var response = await apisClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);            
+            using var response = await apisClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead
+            );
 
             if (!response.IsSuccessStatusCode)
             {
-                errorMessage = $"Erro ao salvar: {response.StatusCode}";
+                errorMessage = $"{L["Erro ao salvar"]}: {response.StatusCode}";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro ao salvar: {ex.GetType().Name} {ex.Message}";
+            errorMessage = $"{L["Erro ao salvar"]}: {ex.GetType().Name} {ex.Message}";
         }
         finally
         {

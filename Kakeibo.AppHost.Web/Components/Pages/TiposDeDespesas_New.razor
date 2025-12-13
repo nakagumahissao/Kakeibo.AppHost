@@ -1,21 +1,25 @@
 ﻿@page "/tiposdespesas/adicionar"
 @using Kakeibo.AppHost.Web.Models
+@using Microsoft.Extensions.Localization
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<TiposDeDespesas_New> L
 @rendermode InteractiveServer
 
-<PageTitle>Tipos de Despesa - Novo</PageTitle>
+<PageTitle>@L["Tipos de Despesa - Novo"]</PageTitle>
 
-<h3 style="padding-bottom:10px;">Nova Tipo de Despesa</h3>
+<h3 style="padding-bottom:10px;">
+    @L["Novo Tipo de Despesa"]
+</h3>
 
 @if (isSaving)
 {
-    <p>Salvando...</p>
+    <p>@L["Salvando..."]</p>
 }
 
 <div class="form-group">
-    <label>Nome do Tipo de Despesa</label>
+    <label>@L["Nome do Tipo de Despesa"]</label>
     <input class="form-control" @bind="tipo.TipoDeDespesa" />
 
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -25,8 +29,12 @@
 </div>
 
 <div class="d-flex align-items-center mt-2 gap-2">
-    <button class="btn btn-primary" @onclick="Salvar">Salvar</button>
-    <a class="btn btn-primary" href="/tiposdespesas">Cancelar</a>
+    <button class="btn btn-primary" @onclick="Salvar">
+        @L["Salvar"]
+    </button>
+    <a class="btn btn-primary" href="/tiposdespesas">
+        @L["Cancelar"]
+    </a>
 </div>
 
 @code {
@@ -52,11 +60,11 @@
         try
         {
             isSaving = true;
-            errorMessage = String.Empty;
+            errorMessage = string.Empty;
 
             if (string.IsNullOrWhiteSpace(tipo.TipoDeDespesa))
             {
-                errorMessage = "O nome do tipo de despesa é obrigatório.";
+                errorMessage = L["O nome do tipo de despesa é obrigatório."];
                 return;
             }
 
@@ -71,7 +79,7 @@
             }
             else
             {
-                errorMessage = "Erro ao salvar. Código: " + response.StatusCode;
+                errorMessage = L["Erro ao salvar. Código: {0}", response.StatusCode];
             }
         }
         catch (Exception ex)

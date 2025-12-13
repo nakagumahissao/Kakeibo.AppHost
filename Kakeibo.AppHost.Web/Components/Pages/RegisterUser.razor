@@ -1,15 +1,17 @@
 ﻿@page "/register-user"
 @using System.Net.Http.Json
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.Extensions.Localization
 @using Kakeibo.AppHost.Web.Models
 @rendermode InteractiveServer
 
-@inject IHttpClientFactory HttpFactory // Keep this injection
-@inject NavigationManager Nav // Add NavigationManager to redirect on success
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
+@inject IStringLocalizer<RegisterUser> L
 
-<PageTitle>Registro de Usuário</PageTitle>
+<PageTitle>@L["Registro de Usuário"]</PageTitle>
 
-<h1 style="padding-bottom:10px;">Registro de Usuário</h1>
+<h1 style="padding-bottom:10px;">@L["Registro de Usuário"]</h1>
 
 @if (!string.IsNullOrEmpty(Message))
 {
@@ -21,75 +23,66 @@
     <ValidationSummary />
 
     <div class="mb-3">
-        <label>Email</label>
+        <label>@L["Email"]</label>
         <InputText class="form-control" @bind-Value="newUser.Email" />
     </div>
 
     <div class="mb-3">
-        <label>Senha</label>
-        <InputText type="password" class="form-control" @bind-Value="newUser.Password" />
+        <label>@L["Senha"]</label>
+        <InputText type="password"
+                   class="form-control"
+                   @bind-Value="newUser.Password" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Registrar</button>
+    <button type="submit" class="btn btn-primary">
+        @L["Registrar"]
+    </button>
 </EditForm>
 
 @code {
     private UserRegistrationModel newUser = new();
 
-    private string Message = String.Empty;
-    private string AlertClass = String.Empty;
+    private string Message = string.Empty;
+    private string AlertClass = string.Empty;
 
     private async Task HandleValidSubmit()
     {
-        // ❌ REMOVED: @using Kakeibo.AppHost.Web.Services (No longer needed)
-        // ❌ REMOVED: @inject TokenService TokenService (No longer needed)
-
-        // 🎯 FIX: Use the injected IHttpClientFactory to create the client named "apis"
         var client = HttpFactory.CreateClient("apis");
 
-        // The API endpoint for registration is correct: POST to /register
         var response = await client.PostAsJsonAsync("/register", newUser);
-
-        // Assuming your ApiResponse DTO is defined in a way that ReadFromJsonAsync can handle
-        // and that the API returns the ApiResponse<object> structure for registration.
-        var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
+        var apiResponse =
+            await response.Content.ReadFromJsonAsync<ApiResponse<object>>();
 
         if (response.IsSuccessStatusCode)
         {
-            // The API returns 200 OK on success
-            // Optional: Check apiResponse?.Success if your API always wraps success in ApiResponse
-
-            Message = $"✔ Usuário criado com sucesso! Redirecionando para o login...";
+            Message = $"✔ {L["Usuário criado com sucesso! Redirecionando para o login..."]}";
             AlertClass = "alert-success";
 
-            // Redirect the user to the login page after successful registration
             await Task.Delay(2000);
             Nav.NavigateTo("/login");
         }
         else
         {
-            // Handle registration failure (e.g., email already taken, weak password)
-            var errorDetails = apiResponse?.Errors != null && apiResponse.Errors.Length > 0
-                ? string.Join(", ", apiResponse.Errors)
-                : "Falha na comunicação com o servidor ou dados inválidos.";
+            var errorDetails =
+                apiResponse?.Errors != null && apiResponse.Errors.Length > 0
+                    ? string.Join(", ", apiResponse.Errors)
+                    : L["Falha na comunicação com o servidor ou dados inválidos."];
 
-            Message = "❌ Erro ao registrar: " + errorDetails;
+            Message = $"{L["Erro ao registrar"]}: {errorDetails}";
             AlertClass = "alert-danger";
         }
     }
 
-    // Your DTOs need to be accessible, either defined here or via a using statement.
-    // Ensure this model is accessible or defined within your shared models namespace.
     public record ApiResponse<T>(bool Success, T? Data, string[] Errors);
 
     public class UserRegistrationModel
     {
         [Required(ErrorMessage = "O email é obrigatório")]
         [EmailAddress(ErrorMessage = "Email inválido")]
-        public string Email { get; set; } = String.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A senha é obrigatória")]
         [MinLength(8, ErrorMessage = "A senha deve ter ao menos 8 caracteres")]
-        public string Password { get; set; } = String.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

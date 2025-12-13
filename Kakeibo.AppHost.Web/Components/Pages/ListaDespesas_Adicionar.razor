@@ -1,45 +1,55 @@
 ﻿@page "/listadespesas/adicionar"
 @using Kakeibo.AppHost.Web.Models
+@using Microsoft.Extensions.Localization
+
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<ListaDespesas_Adicionar> L
+
 @rendermode InteractiveServer
 
-<PageTitle>Lista de Despesas - Novo</PageTitle>
+<PageTitle>@L["Lista de Despesas - Novo"]</PageTitle>
 
-<h3 style="padding-bottom:10px;">Nova Despesa</h3>
+<h3 style="padding-bottom:10px;">@L["Nova Despesa"]</h3>
 
 @if (isSaving)
 {
-    <p>Salvando...</p>
+    <p>@L["Salvando..."]</p>
 }
 
 <div class="form-group">
-    <label>Tipo de Despesa</label>
+    <label>@L["Tipo de Despesa"]</label>
     <select class="form-control" @bind="despesa.TipoDespesaId">
         @if (tiposDeDespesa != null)
         {
             @foreach (var tipo in tiposDeDespesa)
             {
-                <option value="@tipo.TipoDespesaId">@tipo.TipoDeDespesa</option>
+                <option value="@tipo.TipoDespesaId">
+                    @tipo.TipoDeDespesa
+                </option>
             }
         }
     </select>
 </div>
 
 <div class="form-group mt-2">
-    <label>Nome da Despesa</label>
+    <label>@L["Nome da Despesa"]</label>
     <input class="form-control" @bind="despesa.NomeDespesa" />
 </div>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <p class="text-danger mt-1">@errorMessage</p>
+    <p class="text-danger mt-1">@L[errorMessage]</p>
 }
 
 <div class="d-flex align-items-center mt-2 gap-2">
-    <button class="btn btn-primary" @onclick="Salvar">Salvar</button>
-    <a class="btn btn-secondary" href="/listadespesas">Cancelar</a>
+    <button class="btn btn-primary" @onclick="Salvar">
+        @L["Salvar"]
+    </button>
+    <a class="btn btn-secondary" href="/listadespesas">
+        @L["Cancelar"]
+    </a>
 </div>
 
 @code {
@@ -53,6 +63,7 @@
     {
         var token = TokenService.GetToken();
         userId = TokenService.GetUserIdFromToken();
+
         if (string.IsNullOrWhiteSpace(token))
         {
             Nav.NavigateTo("/login", forceLoad: true);
@@ -60,7 +71,11 @@
         }
 
         var client = HttpFactory.CreateClient("apis");
-        tiposDeDespesa = await client.GetFromJsonAsync<List<TiposDeDespesa>>($"tiposdespesa/{userId}");
+        tiposDeDespesa =
+            await client.GetFromJsonAsync<List<TiposDeDespesa>>(
+                $"tiposdespesa/{userId}"
+            );
+
         despesa.UserId = userId;
     }
 
@@ -69,9 +84,10 @@
         try
         {
             isSaving = true;
-            errorMessage = String.Empty;
+            errorMessage = string.Empty;
 
-            if (despesa.TipoDespesaId == 0 || string.IsNullOrWhiteSpace(despesa.NomeDespesa))
+            if (despesa.TipoDespesaId == 0 ||
+                string.IsNullOrWhiteSpace(despesa.NomeDespesa))
             {
                 errorMessage = "Todos os campos são obrigatórios.";
                 return;

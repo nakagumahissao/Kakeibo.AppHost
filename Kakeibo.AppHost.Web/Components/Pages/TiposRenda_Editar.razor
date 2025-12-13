@@ -1,17 +1,19 @@
 ﻿@page "/tiposrendas/editar/{id:int}"
 @using Kakeibo.AppHost.Web.Models
+@using Microsoft.Extensions.Localization
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<TiposRenda_Editar> L
 @rendermode InteractiveServer
 
-<PageTitle>Tipos de Rendas - Editar</PageTitle>
+<PageTitle>@L["Tipos de Rendas - Editar"]</PageTitle>
 
-<h3 style="padding-bottom:10px;">Editar Tipo de Renda</h3>
+<h3 style="padding-bottom:10px;">@L["Editar Tipo de Renda"]</h3>
 
 @if (entrada == null)
 {
-    <p><em>Carregando...</em></p>
+    <p><em>@L["Carregando..."]</em></p>
 }
 else
 {
@@ -19,18 +21,23 @@ else
         <DataAnnotationsValidator />
 
         <div class="mb-3">
-            <label class="form-label">ID</label>
+            <label class="form-label">@L["ID"]</label>
             <input class="form-control" value="@entrada.TipoDeEntradaId" disabled />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Tipo de Renda</label>
+            <label class="form-label">@L["Tipo de Renda"]</label>
             <InputText class="form-control" @bind-Value="entrada.TipoDeEntrada" />
         </div>
 
         <div class="d-flex align-items-center mt-2 gap-2">
-            <button class="btn btn-primary" type="submit">Salvar</button>
-            <a class="btn btn-primary" href="/tiposrendas">Cancelar</a>
+            <button class="btn btn-primary" type="submit">
+                @L["Salvar"]
+            </button>
+
+            <a class="btn btn-primary" href="/tiposrendas">
+                @L["Cancelar"]
+            </a>
         </div>
     </EditForm>
 }
@@ -52,25 +59,20 @@ else
         }
 
         var client = HttpFactory.CreateClient("apis");
-
         entrada = await client.GetFromJsonAsync<TiposDeEntradas>($"tiposentrada/{id}");
 
         if (entrada is null)
         {
-            // Caso não exista, volta para listagem
             Nav.NavigateTo("/tiposrendas");
         }
     }
 
     private async Task SalvarAlteracoes()
     {
-        var token = TokenService.GetToken();
         var userId = TokenService.GetUserIdFromToken();
-
-        entrada!.UserId = userId; // garante que o user está setado
+        entrada!.UserId = userId;
 
         var client = HttpFactory.CreateClient("apis");
-
         var response = await client.PutAsJsonAsync($"tiposentrada/{id}", entrada);
 
         if (response.IsSuccessStatusCode)
@@ -81,10 +83,5 @@ else
         {
             Console.WriteLine("Erro ao salvar o tipo de renda");
         }
-    }
-
-    private void Voltar()
-    {
-        Nav.NavigateTo("/tiposrendas");
     }
 }

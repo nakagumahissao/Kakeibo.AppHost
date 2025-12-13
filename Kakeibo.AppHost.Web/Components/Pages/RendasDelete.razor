@@ -1,45 +1,62 @@
 ﻿@page "/rendas/delete/{EntradaId:int}"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Kakeibo.AppHost.Web.Models
 @rendermode InteractiveServer
+
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<RendasDelete> L
 
-<h3 style="padding-bottom:10px;">Excluir Renda</h3>
+<PageTitle>@L["Excluir Renda"]</PageTitle>
+
+<h3 style="padding-bottom:10px;">
+    @L["Excluir Renda"]
+</h3>
 
 @if (entrada == null && !deleted)
 {
-    <p>Carregando dados...</p>
+    <p>@L["Carregando dados..."]</p>
 }
 else if (deleted)
 {
-    <div class="alert alert-success mt-3">Renda excluída com sucesso ✔</div>
+    <div class="alert alert-success mt-3">
+        @L["Renda excluída com sucesso"] ✔
+    </div>
 
     <a class="btn btn-primary mt-3" href="/rendas">
-        ⬅ Voltar
+        ⬅ @L["Voltar"]
     </a>
 }
 else
 {
     <div class="card p-3 mb-3">
-        <p><strong>ID:</strong> @entrada!.EntradaID</p>
-        <p><strong>Descrição:</strong> @entrada.Descricao</p>
-        <p><strong>Valor:</strong> @entrada.ValorEntrada.ToString("N2")</p>
+        <p>
+            <strong>@L["ID"]:</strong> @entrada!.EntradaID
+        </p>
+        <p>
+            <strong>@L["Descrição"]:</strong> @entrada.Descricao
+        </p>
+        <p>
+            <strong>@L["Valor"]:</strong> @entrada.ValorEntrada.ToString("N2")
+        </p>
     </div>
 
     <div class="d-flex gap-2">
         <button class="btn btn-danger btn-sm" @onclick="ConfirmDelete">
-            🗑 Excluir
+            🗑 @L["Excluir"]
         </button>
 
         <a class="btn btn-secondary btn-sm" href="/rendas">
-            ⬅ Cancelar
+            ⬅ @L["Cancelar"]
         </a>
     </div>
 }
 
 @code {
     [Parameter] public int EntradaId { get; set; }
+
     private Entradas? entrada;
     private bool deleted = false;
 

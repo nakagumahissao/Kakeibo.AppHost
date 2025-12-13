@@ -1,21 +1,23 @@
 ﻿@page "/tiposrendas/adicionar"
 @using Kakeibo.AppHost.Web.Models
+@using Microsoft.Extensions.Localization
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<TiposRenda_New> L
 @rendermode InteractiveServer
 
-<PageTitle>Tipos de Rendas - Novo</PageTitle>
+<PageTitle>@L["Tipos de Rendas - Novo"]</PageTitle>
 
-<h3 style="padding-bottom:10px;">Novo Tipo de Renda</h3>
+<h3 style="padding-bottom:10px;">@L["Novo Tipo de Renda"]</h3>
 
 @if (isSaving)
 {
-    <p>Salvando...</p>
+    <p>@L["Salvando..."]</p>
 }
 
 <div class="form-group">
-    <label>Nome do Tipo de Renda</label>
+    <label>@L["Nome do Tipo de Renda"]</label>
     <input class="form-control" @bind="tipo.TipoDeEntrada" />
 
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -25,15 +27,19 @@
 </div>
 
 <div class="d-flex align-items-center mt-2 gap-2">
-    <button class="btn btn-primary" @onclick="Salvar">Salvar</button>
-    <a class="btn btn-primary" href="/tiposrendas">Cancelar</a>
+    <button class="btn btn-primary" @onclick="Salvar">
+        @L["Salvar"]
+    </button>
+
+    <a class="btn btn-primary" href="/tiposrendas">
+        @L["Cancelar"]
+    </a>
 </div>
 
-
 @code {
-    private TiposDeEntradas tipo = new TiposDeEntradas
+    private TiposDeEntradas tipo = new()
     {
-        TipoDeEntrada = ""
+        TipoDeEntrada = string.Empty
     };
 
     private bool isSaving = false;
@@ -50,10 +56,6 @@
             Nav.NavigateTo("/login", forceLoad: true);
             return;
         }
-
-        tipo = new TiposDeEntradas {
-            TipoDeEntrada = ""
-        };
     }
 
     private async Task Salvar()
@@ -61,11 +63,11 @@
         try
         {
             isSaving = true;
-            errorMessage = String.Empty;
+            errorMessage = string.Empty;
 
-            if (tipo == null || string.IsNullOrWhiteSpace(tipo.TipoDeEntrada))
+            if (string.IsNullOrWhiteSpace(tipo.TipoDeEntrada))
             {
-                errorMessage = "O nome do tipo de renda é obrigatório.";
+                errorMessage = L["O nome do tipo de renda é obrigatório."];
                 return;
             }
 
@@ -80,12 +82,12 @@
             }
             else
             {
-                errorMessage = "Erro ao salvar. Código: " + response.StatusCode;
+                errorMessage = L["Erro ao salvar. Código: {0}", response.StatusCode];
             }
         }
         catch (Exception ex)
         {
-            errorMessage = ex.Message;
+            errorMessage = L["Erro: {0}", ex.Message];
         }
         finally
         {

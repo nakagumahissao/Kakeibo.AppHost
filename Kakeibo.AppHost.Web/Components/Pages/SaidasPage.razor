@@ -1,0 +1,203 @@
+﻿@page "/saidaspage/{userId}/{Day:int}/{Month:int}/{Year:int}"
+@using System.Globalization
+@using Kakeibo.AppHost.Web.Models
+@using Microsoft.Extensions.Localization
+
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SaidasPage> L
+
+<PageTitle>@L["Saídas"]</PageTitle>
+
+<h1>@L["Saídas do Mês"]</h1>
+
+<div class="d-flex" style="gap:20px; padding-top:30px;">
+
+    <!-- Calendar -->
+    <div style="width:35%;">
+        @CalendarHtml()
+    </div>
+
+    <!-- Entries -->
+    <div style="flex:1;">
+        <h5>@L["Saídas do Dia:"] @selectedDayDisplay</h5>
+
+        @if (saidasDoDia == null)
+        {
+            <p>@L["Selecione um dia no calendário."]</p>
+        }
+        else if (!saidasDoDia.Any())
+        {
+            <p>@L["Nenhuma saída encontrada."]</p>
+
+            <div class="mb-2 pt-2">
+                <a href="/saidaspage/new/@Day/@Month/@Year"
+                   class="btn btn-success">
+                    @L["Nova Saída"]
+                </a>
+            </div>
+        }
+        else
+        {
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>@L["ID"]</th>
+                        <th>@L["Descrição"]</th>
+                        <th>@L["Nome da Despesa"]</th>
+                        <th class="text-end">@L["Valor"]</th>
+                        <th>@L["Ações"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in saidasDoDia)
+                    {
+                        totalSaidas += s.ValorDespesa;
+
+                        <tr>
+                            <td>@s.DespesaID</td>
+                            <td>@s.Descricao</td>
+                            <td>@s.NomeDespesa</td>
+                            <td class="text-end">
+                                @s.ValorDespesa.ToString("N2", CultureInfo.CurrentCulture)
+                            </td>
+                            <td>
+                                <a href="/saidaspage/edit/@s.SaidaID/@Day/@Month/@Year"
+                                   class="btn btn-sm btn-primary me-1">
+                                    @L["Editar"]
+                                </a>
+                                <a href="/saidaspage/delete/@s.SaidaID/@Day/@Month/@Year"
+                                   class="btn btn-sm btn-danger">
+                                    @L["Excluir"]
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end text-danger fw-bold">
+                            @L["TOTAL:"]
+                        </td>
+                        <td class="text-end text-danger fw-bold">
+                            @totalSaidas.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="mb-2 pt-2">
+                <a href="/saidaspage/new/@Day/@Month/@Year"
+                   class="btn btn-success">
+                    @L["Nova Saída"]
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int Month { get; set; }
+    [Parameter] public int Year { get; set; }
+    [Parameter] public string userId { get; set; } = string.Empty;
+
+    private List<Saidas>? saidasDoDia;
+    private string selectedDayDisplay = string.Empty;
+    private decimal totalSaidas = 0m;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        totalSaidas = 0m;
+
+        var token = TokenService.GetToken();
+        var tokenUserId = TokenService.GetUserIdFromToken();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            NavManager.NavigateTo("/login", true);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(userId))
+            userId = tokenUserId!;
+
+        var dt = new DateTime(Year, Month, Day);
+        selectedDayDisplay = dt.ToString("d", CultureInfo.CurrentCulture);
+
+        var client = HttpFactory.CreateClient("apis");
+        saidasDoDia = await client.GetFromJsonAsync<List<Saidas>>(
+            $"saidas/{userId}/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
+        );
+    }
+
+    private RenderFragment CalendarHtml() => builder =>
+    {
+        var culture = CultureInfo.CurrentCulture;
+        var dtf = culture.DateTimeFormat;
+
+        var firstDay = new DateTime(Year, Month, 1);
+        int daysInMonth = DateTime.DaysInMonth(Year, Month);
+
+        int firstDayOfWeek = (int)dtf.FirstDayOfWeek;
+        int offset = ((int)firstDay.DayOfWeek - firstDayOfWeek + 7) % 7;
+
+        int totalCells = (offset + daysInMonth) <= 35 ? 35 : 42;
+        int dayCounter = 1;
+        int seq = 0;
+
+        // Month title
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "text-center fw-bold mb-2");
+        builder.AddContent(seq++, firstDay.ToString("MMMM yyyy", culture));
+        builder.CloseElement();
+
+        // Weekdays (culture-aware)
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex");
+
+        for (int i = 0; i < 7; i++)
+        {
+            int idx = (i + firstDayOfWeek) % 7;
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "text-center p-1 border");
+            builder.AddAttribute(seq++, "style", "flex:1;background-color:lightgreen;");
+            builder.AddContent(seq++, dtf.AbbreviatedDayNames[idx]);
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+
+        // Grid
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
+
+        for (int i = 0; i < totalCells; i++)
+        {
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "border text-center p-1");
+            builder.AddAttribute(seq++, "style", "width:14.28%;height:40px;");
+
+            if (i >= offset && dayCounter <= daysInMonth)
+            {
+                int d = dayCounter++;
+
+                builder.OpenElement(seq++, "a");
+                builder.AddAttribute(seq++, "href",
+                    $"/saidaspage/{userId}/{d}/{Month}/{Year}");
+                builder.AddAttribute(seq++, "style",
+                    $"display:block;text-decoration:none;color:black;" +
+                    (d == Day ? "background-color:lightblue;font-weight:bold;" : ""));
+                builder.AddContent(seq++, d);
+                builder.CloseElement();
+            }
+
+            builder.CloseElement();
+        }
+
+        builder.CloseElement();
+    };
+}

@@ -1,14 +1,16 @@
 ﻿@page "/rendas"
 @using Microsoft.AspNetCore.Authorization
+@using System.Globalization
+@using Microsoft.Extensions.Localization
 @inject IHttpClientFactory HttpFactory
-@using Kakeibo.AppHost.Web.Models
-@using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<Calendar> L
+@using Kakeibo.AppHost.Web.Models
 
-<PageTitle>Rendas</PageTitle>
+<PageTitle>@L["Rendas"]</PageTitle>
 
-<h1>Rendas do Mês</h1>
+<h1>@L["Rendas do Mês"]</h1>
 
 <div class="d-flex" style="gap:20px; padding-top:30px;">
 
@@ -19,28 +21,30 @@
 
     <!-- Entries table on the right -->
     <div style="flex:1;">
-        <h5>Rendas do Mês: @selectedMonthDisplay</h5>        
+        <h5>@L["Rendas do Mês:"] @selectedMonthDisplay</h5>
 
         @if (entradasDoMes == null)
         {
-            <p>Carregando Rendas...</p>
+            <p>@L["Carregando Rendas..."]</p>
         }
         else if (!entradasDoMes.Any())
         {
-            <p>Nenhuma Renda encontrada.</p>   
-            
+            <p>@L["Nenhuma Renda encontrada."]</p>
+
             <div class="mb-2" style="padding-top: 10px;">
-                <a href="/rendas/new" class="btn btn-success">Nova Renda</a>
+                <a href="/rendas/new" class="btn btn-success">
+                    @L["Nova Renda"]
+                </a>
             </div>
         }
         else
         {
-            <table class="table table table-striped align-middle">
+            <table class="table table-striped align-middle">
                 <thead>
                     <tr>
-                        <th>Descrição</th>
-                        <th style="text-align:right;">Valor</th>
-                        <th>Ações</th>
+                        <th>@L["Descrição"]</th>
+                        <th class="text-end">@L["Valor"]</th>
+                        <th>@L["Ações"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,24 +54,40 @@
 
                         <tr>
                             <td>@e.Descricao</td>
-                            <td class="text-end">@e.ValorEntrada.ToString("N2")</td>
+                            <td class="text-end">
+                                @e.ValorEntrada.ToString("N2", CultureInfo.CurrentCulture)
+                            </td>
                             <td>
-                                <a href="/rendas/edit/@e.EntradaID" class="btn btn-sm btn-primary me-1">Editar</a>
-                                <a href="/rendas/delete/@e.EntradaID" class="btn btn-sm btn-danger">Excluir</a>
+                                <a href="/rendas/edit/@e.EntradaID"
+                                   class="btn btn-sm btn-primary me-1">
+                                    @L["Editar"]
+                                </a>
+                                <a href="/rendas/delete/@e.EntradaID"
+                                   class="btn btn-sm btn-danger">
+                                    @L["Excluir"]
+                                </a>
                             </td>
                         </tr>
                     }
 
                     <tr>
-                        <td class="text-end" style="color:navy"><strong>TOTAL:</strong></td>
-                        <td class="text-end" style="color:navy"><strong>@totalEntradas.ToString("N2")</strong></td>
+                        <td class="text-end" style="color:navy">
+                            <strong>@L["TOTAL:"]</strong>
+                        </td>
+                        <td class="text-end" style="color:navy">
+                            <strong>
+                                @totalEntradas.ToString("N2", CultureInfo.CurrentCulture)
+                            </strong>
+                        </td>
                         <td></td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="mb-2" style="padding-top: 10px;">
-                <a href="/rendas/new" class="btn btn-success">Nova Renda</a>
+                <a href="/rendas/new" class="btn btn-success">
+                    @L["Nova Renda"]
+                </a>
             </div>
         }
     </div>
@@ -75,7 +95,7 @@
 
 @code {
     private List<Entradas>? entradasDoMes;
-    private string selectedMonthDisplay = String.Empty;
+    private string selectedMonthDisplay = string.Empty;
     private decimal totalEntradas = 0m;
 
     protected override async Task OnInitializedAsync()
@@ -89,16 +109,14 @@
         }
 
         await LoadEntradasDoMesAsync(DateTime.Today);
-
         totalEntradas = 0m;
     }
 
     private async Task LoadEntradasDoMesAsync(DateTime dt)
     {
-        var token = TokenService.GetToken();
         var userId = TokenService.GetUserIdFromToken();
 
-        selectedMonthDisplay = dt.ToString("MM/yyyy");
+        selectedMonthDisplay = dt.ToString("MM/yyyy", CultureInfo.CurrentCulture);
 
         var client = HttpFactory.CreateClient("apis");
         entradasDoMes = await client.GetFromJsonAsync<List<Entradas>>(
@@ -106,72 +124,78 @@
         );
     }
 
-    private RenderFragment CalendarHtml() => __builder =>
+    private RenderFragment CalendarHtml() => builder =>
     {
+        var culture = CultureInfo.CurrentCulture;
+        var dtf = culture.DateTimeFormat;
+
         var today = DateTime.Today;
         var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
         var daysInMonth = DateTime.DaysInMonth(today.Year, today.Month);
 
-        int seq = 0;
+        int cultureFirstDay = (int)dtf.FirstDayOfWeek;
+        int offset = ((int)firstDayOfMonth.DayOfWeek - cultureFirstDay + 7) % 7;
 
-        // Title
-        __builder.OpenElement(seq++, "div");
-        __builder.AddAttribute(seq++, "class", "text-center mb-1 p-1");
-        __builder.AddAttribute(seq++, "style", "background-color: lightyellow; font-weight:bold;");
-        __builder.AddContent(seq++, today.ToString("MMMM yyyy"));
-        __builder.CloseElement();
-
-        // Weekday headers
-        __builder.OpenElement(seq++, "div");
-        __builder.AddAttribute(seq++, "class", "d-flex");
-
-        string[] weekdays = { "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" };
-
-        foreach (var day in weekdays)
-        {
-            __builder.OpenElement(seq++, "div");
-            __builder.AddAttribute(seq++, "class", "text-center p-1 border");
-            __builder.AddAttribute(seq++, "style", "background-color: lightgreen; flex:1;");
-            __builder.AddContent(seq++, day);
-            __builder.CloseElement();
-        }
-
-        __builder.CloseElement(); // weekdays row
-
-        // Calendar grid (non-clickable)
-        int dayOfWeek = (int)firstDayOfMonth.DayOfWeek;
-        int totalCells = ((dayOfWeek + daysInMonth) <= 35 ? 35 : 42);
+        int totalCells = ((offset + daysInMonth) <= 35 ? 35 : 42);
         int dayCounter = 1;
 
-        __builder.OpenElement(seq++, "div");
-        __builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
+        int seq = 0;
+
+        // Month title
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "text-center mb-1 p-1");
+        builder.AddAttribute(seq++, "style", "background-color: lightyellow; font-weight:bold;");
+        builder.AddContent(seq++, today.ToString("MMMM yyyy", culture));
+        builder.CloseElement();
+
+        // Weekday headers (culture-aware)
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex");
+
+        var weekdays = dtf.AbbreviatedDayNames;
+        for (int i = 0; i < 7; i++)
+        {
+            var index = (i + cultureFirstDay) % 7;
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "text-center p-1 border");
+            builder.AddAttribute(seq++, "style", "background-color: lightgreen; flex:1;");
+            builder.AddContent(seq++, weekdays[index]);
+            builder.CloseElement();
+        }
+
+        builder.CloseElement();
+
+        // Calendar grid
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
 
         for (int i = 0; i < totalCells; i++)
         {
-            __builder.OpenElement(seq++, "div");
-            __builder.AddAttribute(seq++, "class", "border text-center p-1");
-            __builder.AddAttribute(seq++, "style", "width:14.28%; height:40px;");
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "border text-center p-1");
+            builder.AddAttribute(seq++, "style", "width:14.28%; height:40px;");
 
-            if (i >= dayOfWeek && dayCounter <= daysInMonth)
+            if (i >= offset && dayCounter <= daysInMonth)
             {
                 if (dayCounter == today.Day)
                 {
-                    __builder.OpenElement(seq++, "span");
-                    __builder.AddAttribute(seq++, "style", "color:red; font-weight:bold;");
-                    __builder.AddContent(seq++, dayCounter);
-                    __builder.CloseElement();
+                    builder.OpenElement(seq++, "span");
+                    builder.AddAttribute(seq++, "style", "color:red; font-weight:bold;");
+                    builder.AddContent(seq++, dayCounter);
+                    builder.CloseElement();
                 }
                 else
                 {
-                    __builder.AddContent(seq++, dayCounter);
+                    builder.AddContent(seq++, dayCounter);
                 }
 
                 dayCounter++;
             }
 
-            __builder.CloseElement();
+            builder.CloseElement();
         }
 
-        __builder.CloseElement(); // grid
+        builder.CloseElement();
     };
 }

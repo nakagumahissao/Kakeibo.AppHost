@@ -55,13 +55,13 @@
 
                 @if (tokenUserId is not null && tokenUserId != "")
                 {
-                    <NavLink class="nav-link" href="@($"/saidas/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+                    <NavLink class="nav-link" href="@($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
                         Despesas
                     </NavLink>
                 }
                 else
                 {
-                    <NavLink class="nav-link" href="@($"/saidas/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+                    <NavLink class="nav-link" href="@($"/saidaspage/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
                         Despesas
                     </NavLink>
                 }

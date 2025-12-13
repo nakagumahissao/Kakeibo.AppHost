@@ -1,29 +1,31 @@
 ﻿@page "/tiposrendas"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<TiposDeRendas> L
 
 @using Kakeibo.AppHost.Web.Models
 
-<PageTitle>Tipos de Rendas</PageTitle>
+<PageTitle>@L["Tipos de Rendas"]</PageTitle>
 
-<h1>Tipos de Rendas</h1>
+<h1>@L["Tipos de Rendas"]</h1>
 
 @if (entradas == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@L["Carregando..."]</em></p>
 }
 else
 {
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Tipo de Renda</th>
-                <th>Ações</th>
+                <th>@L["ID"]</th>
+                <th>@L["Tipo de Renda"]</th>
+                <th>@L["Ações"]</th>
             </tr>
         </thead>
         <tbody>
@@ -35,12 +37,12 @@ else
                     <td>
                         <a href="/tiposrendas/editar/@entrada.TipoDeEntradaId"
                            class="btn btn-sm btn-primary">
-                            Editar
+                            @L["Editar"]
                         </a>
 
                         <a href="/tiposrendas/excluir/@entrada.TipoDeEntradaId"
                            class="btn btn-sm btn-danger ms-2">
-                            Excluir
+                            @L["Excluir"]
                         </a>
                     </td>
                 </tr>
@@ -48,9 +50,10 @@ else
         </tbody>
     </table>
 
-    <a href="/tiposrendas/adicionar" class="btn btn-success">Adicionar</a>
+    <a href="/tiposrendas/adicionar" class="btn btn-success">
+        @L["Adicionar"]
+    </a>
 }
-
 
 @code {
     private List<TiposDeEntradas>? entradas;

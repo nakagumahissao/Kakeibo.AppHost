@@ -1,22 +1,32 @@
 ﻿@page "/rendas/edit/{EntradaId:int}"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Kakeibo.AppHost.Web.Models
 @rendermode InteractiveServer
+
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<RendasEdit> L
 
-<h3 style="padding-bottom:10px;">Editar Renda</h3>
+<PageTitle>@L["Editar Renda"]</PageTitle>
+
+<h3 style="padding-bottom:10px;">
+    @L["Editar Renda"]
+</h3>
 
 @if (entrada == null && !saved)
 {
-    <p>Carregando dados...</p>
+    <p>@L["Carregando dados..."]</p>
 }
 else if (saved)
 {
-    <div class="alert alert-success mt-3">Renda atualizada com sucesso ✔</div>
+    <div class="alert alert-success mt-3">
+        @L["Renda atualizada com sucesso"] ✔
+    </div>
 
     <a class="btn btn-primary mt-3" href="/rendas">
-        ⬅ Voltar
+        ⬅ @L["Voltar"]
     </a>
 }
 else
@@ -25,30 +35,36 @@ else
         <DataAnnotationsValidator />
 
         <div class="mb-3">
-            <label>Descrição:</label>
+            <label>@L["Descrição"]:</label>
             <InputText class="form-control" @bind-Value="entrada!.Descricao" />
         </div>
 
         <div class="mb-3">
-            <label>Valor:</label>
+            <label>@L["Valor"]:</label>
             <InputNumber class="form-control" @bind-Value="entrada.ValorEntrada" step="0.01" />
         </div>
 
         <div class="d-flex gap-2 mt-3">
-            <button class="btn btn-success btn-sm" type="submit">💾 Salvar</button>
-            <a class="btn btn-secondary btn-sm" href="/rendas">⬅ Cancelar</a>
+            <button class="btn btn-success btn-sm" type="submit">
+                💾 @L["Salvar"]
+            </button>
+
+            <a class="btn btn-secondary btn-sm" href="/rendas">
+                ⬅ @L["Cancelar"]
+            </a>
         </div>
     </EditForm>
 }
 
 @code {
     [Parameter] public int EntradaId { get; set; }
+
     private Entradas? entrada;
     private bool saved = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var token = TokenService.GetToken();        
+        var token = TokenService.GetToken();
 
         if (string.IsNullOrWhiteSpace(token))
         {

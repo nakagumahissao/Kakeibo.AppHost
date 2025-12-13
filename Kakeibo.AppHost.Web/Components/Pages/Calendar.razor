@@ -1,14 +1,23 @@
 ﻿@page "/calendar"
+@using System.Globalization
+@using Microsoft.Extensions.Localization
 @rendermode InteractiveServer
 
-<PageTitle>Calendário</PageTitle>
+@inject IStringLocalizer<Calendar> L
 
-<h3 style="padding-bottom:10px;">Calendário</h3>
+<PageTitle>@L["Calendar"]</PageTitle>
+
+<h3 style="padding-bottom:10px;">@L["Calendar"]</h3>
 
 <div class="d-flex align-items-center mb-3">
-    <label for="yearSelect" class="me-2">Selecione o ano:</label>
-    <select id="yearSelect" class="form-select w-auto"
-            @bind="SelectedYear" @bind:after="OnYearChanged">
+    <label for="yearSelect" class="me-2">
+        @L["Select year:"]
+    </label>
+
+    <select id="yearSelect"
+            class="form-select w-auto"
+            @bind="SelectedYear"
+            @bind:after="OnYearChanged">
         @foreach (var year in Years)
         {
             <option value="@year">@year</option>
@@ -30,16 +39,18 @@
                         <div class="calendar-month border p-2 rounded">
 
                             <div class="month-header text-center p-1 mb-2"
-                                 style="background-color: #fff9cc; font-weight: bold;">
+                                 style="background-color:#fff9cc; font-weight:bold;">
                                 @month.MonthName
                             </div>
 
                             <table class="table table-bordered table-sm text-center">
-                                <thead style="background-color: #e8ffe8;">
+                                <thead>
                                     <tr>
                                         @foreach (var day in DayNames)
                                         {
-                                            <th style="background-color: #e8ffe8;">@day</th>
+                                            <th style="background-color:#e8ffe8;">
+                                                @day
+                                            </th>
                                         }
                                     </tr>
                                 </thead>
@@ -50,8 +61,8 @@
                                         <tr>
                                             @foreach (var day in week)
                                             {
-                                                <td style="height: 32px;">
-                                                    @(day.HasValue? day.Value.Day.ToString() : "")
+                                                <td style="height:32px;">
+                                                    @(day?.Day.ToString() ?? "")
                                                 </td>
                                             }
                                         </tr>
@@ -70,16 +81,18 @@
 }
 
 @code {
+
     public int SelectedYear { get; set; } = DateTime.Now.Year;
 
-    public List<int> Years = Enumerable.Range(2025, 60).ToList();
+    public List<int> Years { get; } = Enumerable.Range(2025, 60).ToList();
 
     public List<CalendarMonth>? CalendarMonths;
 
-    private readonly string[] DayNames = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    private string[] DayNames = Array.Empty<string>();
 
     protected override void OnInitialized()
     {
+        InitializeDayNames();
         GenerateCalendar(SelectedYear);
     }
 
@@ -88,24 +101,43 @@
         GenerateCalendar(SelectedYear);
     }
 
+    private void InitializeDayNames()
+    {
+        var culture = CultureInfo.CurrentCulture;
+        var dtf = culture.DateTimeFormat;
+
+        int firstDay = (int)dtf.FirstDayOfWeek;
+        var names = dtf.AbbreviatedDayNames;
+
+        DayNames = Enumerable.Range(0, 7)
+            .Select(i => names[(i + firstDay) % 7])
+            .ToArray();
+    }
+
     private void GenerateCalendar(int year)
     {
         CalendarMonths = new();
 
+        var culture = CultureInfo.CurrentCulture;
+        int cultureFirstDay = (int)culture.DateTimeFormat.FirstDayOfWeek;
+
         for (int month = 1; month <= 12; month++)
         {
-            var firstDay = new DateTime(year, month, 1);
-            var daysInMonth = DateTime.DaysInMonth(year, month);
+            var firstDayOfMonth = new DateTime(year, month, 1);
+            int daysInMonth = DateTime.DaysInMonth(year, month);
 
             var monthObj = new CalendarMonth
             {
-                MonthName = firstDay.ToString("MMMM yyyy")
+                MonthName = firstDayOfMonth.ToString("MMMM yyyy", culture)
             };
 
             var weeks = new List<List<DateTime?>>();
             var currentWeek = new List<DateTime?>();
 
-            for (int i = 0; i < (int)firstDay.DayOfWeek; i++)
+            int offset =
+                ((int)firstDayOfMonth.DayOfWeek - cultureFirstDay + 7) % 7;
+
+            for (int i = 0; i < offset; i++)
                 currentWeek.Add(null);
 
             for (int day = 1; day <= daysInMonth; day++)
@@ -134,7 +166,7 @@
 
     public class CalendarMonth
     {
-        public string MonthName { get; set; } = String.Empty;
+        public string MonthName { get; set; } = string.Empty;
         public List<List<DateTime?>> Weeks { get; set; } = new();
     }
 }

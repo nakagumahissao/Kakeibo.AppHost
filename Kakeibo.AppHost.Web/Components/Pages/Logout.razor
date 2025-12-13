@@ -1,24 +1,41 @@
 ﻿@page "/logout"
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Localization
+
 @inject IJSRuntime JS
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Nav
+@inject IStringLocalizer<Logout> L
 
-<h3 style="padding-bottom:10px;">Logout</h3>
-<p>Você será desconectado.</p>
+<PageTitle>@L["Logout"]</PageTitle>
 
-<button class="btn btn-danger" @onclick="DoLogout">Sair</button>
+<h3 style="padding-bottom:10px;">
+    @L["Logout"]
+</h3>
+
+<p>@L["Você será desconectado."]</p>
+
+<button class="btn btn-danger" @onclick="DoLogout">
+    @L["Sair"]
+</button>
 
 @code {
     private async Task DoLogout()
     {
-        await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        await JS.InvokeVoidAsync(
+            "localStorage.removeItem",
+            "authToken"
+        );
 
         if (AuthProvider is IHostEnvironmentAuthenticationStateProvider envAuth)
         {
-            envAuth.SetAuthenticationState(Task.FromResult(
-                new Microsoft.AspNetCore.Components.Authorization.AuthenticationState(
-                    new System.Security.Claims.ClaimsPrincipal())));
+            envAuth.SetAuthenticationState(
+                Task.FromResult(
+                    new AuthenticationState(
+                        new System.Security.Claims.ClaimsPrincipal()
+                    )
+                )
+            );
         }
 
         Nav.NavigateTo("/login", forceLoad: true);
