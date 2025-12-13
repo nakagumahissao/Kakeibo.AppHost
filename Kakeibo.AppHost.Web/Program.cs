@@ -154,14 +154,14 @@ app.MapPost("/blazor-login", async (
     if (!response.IsSuccessStatusCode)
     {
         Log.Information("Blazor login failed for user {Email}. Status Code: {StatusCode}", loginModel.Email, response.StatusCode);
-        return Results.Json(new { error = L["Invalid credentials"] }, statusCode: StatusCodes.Status401Unauthorized);
+        return Results.Json(new { error = L["Credenciais Inválidas"] }, statusCode: StatusCodes.Status401Unauthorized);
     }
 
     var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
     if (loginResponse == null)
     {
         Log.Error("Blazor login response deserialization failed for user {Email}.", loginModel.Email);
-        return Results.Problem(L["Invalid API response format."]);
+        return Results.Problem(L["Formato Inválido de Resposta de API."]);
     }
 
     tokenService.SetToken(loginResponse.Token);
