@@ -18,8 +18,8 @@
   <data name="As senhas não conferem." xml:space="preserve">
     <value>密码不匹配。</value>
   </data>
-  <data name="BoasVindas" xml:space="preserve">
-    <value>欢迎</value>
+  <data name="Boas vindas ao Kakeibo" xml:space="preserve">
+    <value>欢迎来到 Kakeibo</value>
   </data>
   <data name="Calendário" xml:space="preserve">
     <value>日历</value>
@@ -374,5 +374,17 @@
   </data>
   <data name="Voltar para lista" xml:space="preserve">
     <value>返回列表</value>
+  </data>
+  <data name="Registros" xml:space="preserve">
+    <value>记录</value>
+  </data>
+  <data name="Navigation menu" xml:space="preserve">
+    <value>导航菜单</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>个人资料</value>
+  </data>
+  <data name="Usuários" xml:space="preserve">
+    <value>用户</value>
   </data>
 </root>

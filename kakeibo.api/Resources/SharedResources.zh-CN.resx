@@ -12,4 +12,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
+    <value>密码重置邮件已成功发送。</value>
+  </data>
+  <data name="E-mail não cadastrado." xml:space="preserve">
+    <value>邮箱未注册。</value>
+  </data>
+  <data name="Erro" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Falha ao enviar o e-mail de redefinição." xml:space="preserve">
+    <value>发送重置邮件失败。</value>
+  </data>
+  <data name="Falha ao redefinir a senha." xml:space="preserve">
+    <value>重置密码失败。</value>
+  </data>
+  <data name="O e-mail é obrigatório." xml:space="preserve">
+    <value>邮箱是必填项。</value>
+  </data>
+  <data name="Role já existe" xml:space="preserve">
+    <value>角色已存在</value>
+  </data>
+  <data name="Role não existe" xml:space="preserve">
+    <value>角色不存在</value>
+  </data>
+  <data name="Senha alterada com sucesso!" xml:space="preserve">
+    <value>密码修改成功！</value>
+  </data>
+  <data name="Senha atual incorreta." xml:space="preserve">
+    <value>当前密码不正确。</value>
+  </data>
+  <data name="Senha redefinida com sucesso! Agora você deve fazer login novamente." xml:space="preserve">
+    <value>密码重置成功！您现在需要重新登录。</value>
+  </data>
+  <data name="UserId, token e nova senha são obrigatórios." xml:space="preserve">
+    <value>用户ID、令牌和新密码是必填项。</value>
+  </data>
+  <data name="Usuário não autenticado." xml:space="preserve">
+    <value>用户未认证。</value>
+  </data>
+  <data name="Usuário não encontrado." xml:space="preserve">
+    <value>未找到用户。</value>
+  </data>
+  <data name="Usuário não existe." xml:space="preserve">
+    <value>用户不存在。</value>
+  </data>
 </root>

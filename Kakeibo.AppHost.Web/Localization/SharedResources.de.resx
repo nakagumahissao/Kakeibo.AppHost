@@ -18,8 +18,8 @@
   <data name="As senhas não conferem." xml:space="preserve">
     <value>Die Passwörter stimmen nicht überein.</value>
   </data>
-  <data name="BoasVindas" xml:space="preserve">
-    <value>Willkommen</value>
+  <data name="Boas vindas ao Kakeibo" xml:space="preserve">
+    <value>Willkommen bei Kakeibo</value>
   </data>
   <data name="Calendário" xml:space="preserve">
     <value>Kalender</value>
@@ -374,5 +374,17 @@
   </data>
   <data name="Voltar para lista" xml:space="preserve">
     <value>Zurück zur Liste</value>
+  </data>
+  <data name="Navigation menu" xml:space="preserve">
+    <value>Navigationsmenü</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Registros" xml:space="preserve">
+    <value>Aufzeichnungen</value>
+  </data>
+  <data name="Usuários" xml:space="preserve">
+    <value>Benutzer</value>
   </data>
 </root>
