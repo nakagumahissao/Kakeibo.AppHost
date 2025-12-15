@@ -1,6 +1,6 @@
 ﻿using Kakeibo.AppHost.Web.Components;
 using Kakeibo.AppHost.Web.Models;
-using Kakeibo.AppHost.Web;
+using Kakeibo.AppHost.Web.Localization;
 using Kakeibo.AppHost.Web.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
@@ -86,7 +86,7 @@ var supportedCultures = new[]
 
 builder.Services.AddLocalization(options =>
 {
-    options.ResourcesPath = "Localization";
+    options.ResourcesPath = "";
 });
 
 // ---------------- Blazor ----------------
@@ -131,7 +131,6 @@ app.MapRazorComponents<App>()
 // We use the static local function, passing only HttpContext to manually resolve services.
 app.MapPost("/blazor-login", ProcessLoginAsync)
     .AllowAnonymous();
-
 
 // ---------------- LOCAL STATIC FUNCTION FOR LOGIN ----------------
 // We keep the service locator pattern as it is the only way to avoid DI conflicts in this project.

@@ -1,446 +1,378 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <root>
-  <xsd:schema id="root"
-              xmlns=""
-              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-              xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Credenciais Inválidas" xml:space="preserve">
-    <value>凭据无效</value>
-  </data>
-  <data name="Formato Inválido de Resposta de API." xml:space="preserve">
-    <value>API 响应格式无效。</value>
-  </data>
-  <data name="Alterar Senha" xml:space="preserve">
-    <value>修改密码</value>
-  </data>
-  <data name="Senha Atual" xml:space="preserve">
-    <value>当前密码</value>
-  </data>
-  <data name="Nova Senha" xml:space="preserve">
-    <value>新密码</value>
-  </data>
-  <data name="Confirmar Nova Senha" xml:space="preserve">
-    <value>确认新密码</value>
-  </data>
-  <data name="Salvar" xml:space="preserve">
-    <value>保存</value>
-  </data>
-  <data name="As senhas não coincidem." xml:space="preserve">
-    <value>密码不匹配。</value>
-  </data>
-  <data name="Senha alterada com sucesso!" xml:space="preserve">
-    <value>密码修改成功！</value>
-  </data>
-  <data name="Erro:" xml:space="preserve">
-    <value>错误：</value>
-  </data>
-  <data name="Calendário" xml:space="preserve">
-    <value>日历</value>
-  </data>
-  <data name="Select year:" xml:space="preserve">
-    <value>选择年份：</value>
-  </data>
-  <data name="Excluir Saída" xml:space="preserve">
-    <value>删除支出</value>
-  </data>
-  <data name="Carregando registro..." xml:space="preserve">
-    <value>正在加载记录...</value>
-  </data>
-  <data name="Registro excluído ✔" xml:space="preserve">
-    <value>记录已删除 ✔</value>
-  </data>
-  <data name="Voltar" xml:space="preserve">
-    <value>返回</value>
-  </data>
-  <data name="Descrição:" xml:space="preserve">
-    <value>描述：</value>
-  </data>
-  <data name="Valor:" xml:space="preserve">
-    <value>金额：</value>
-  </data>
-  <data name="Excluir" xml:space="preserve">
-    <value>删除</value>
-  </data>
-  <data name="Cancelar" xml:space="preserve">
-    <value>取消</value>
-  </data>
-  <data name="Editar Saída" xml:space="preserve">
-    <value>编辑支出</value>
-  </data>
-  <data name="Registro atualizado com sucesso ✔" xml:space="preserve">
-    <value>记录更新成功 ✔</value>
-  </data>
-  <data name="Voltar para lista" xml:space="preserve">
-    <value>返回列表</value>
-  </data>
-  <data name="Descrição" xml:space="preserve">
-    <value>描述</value>
-  </data>
-  <data name="Nome Despesa" xml:space="preserve">
-    <value>支出名称</value>
-  </data>
-  <data name="Valor" xml:space="preserve">
-    <value>金额</value>
-  </data>
-  <data name="Resetar Senha - Finalizacao" xml:space="preserve">
-    <value>重置密码 - 完成</value>
-  </data>
-  <data name="Redefinir Senha" xml:space="preserve">
-    <value>重置密码</value>
-  </data>
-  <data name="Confirme a Senha" xml:space="preserve">
-    <value>确认密码</value>
-  </data>
-  <data name="Enviando..." xml:space="preserve">
-    <value>正在发送...</value>
-  </data>
-  <data name="As senhas não conferem." xml:space="preserve">
-    <value>密码不一致。</value>
-  </data>
-  <data name="Senha redefinida com sucesso! Você será redirecionado para o login." xml:space="preserve">
-    <value>密码重置成功！您将被重定向到登录页面。</value>
-  </data>
-  <data name="Erro ao redefinir senha:" xml:space="preserve">
-    <value>重置密码时出错：</value>
-  </data>
-  <data name="Erro inesperado:" xml:space="preserve">
-    <value>意外错误：</value>
-  </data>
-  <data name="Home" xml:space="preserve">
-    <value>主页</value>
-  </data>
-  <data name="BoasVindas" xml:space="preserve">
-    <value>欢迎使用 Kakeibo — 您的日式财务控制</value>
-  </data>
-  <data name="Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira." xml:space="preserve">
-    <value>组织财务无需复杂。Kakeibo 旨在帮助您了解资金流向、做出更明智的决策并建立健康的财务习惯 — 一切都以简单、直观的方式进行，并受到日本传统财务管理方法的启发。</value>
-  </data>
-  <data name="Com o Kakeibo, você pode:" xml:space="preserve">
-    <value>使用 Kakeibo，您可以：</value>
-  </data>
-  <data name="Registrar seus gastos rapidamente" xml:space="preserve">
-    <value>快速记录您的支出</value>
-  </data>
-  <data name="Estabelecer metas de economia" xml:space="preserve">
-    <value>设定储蓄目标</value>
-  </data>
-  <data name="Acompanhar gráficos claros e objetivos" xml:space="preserve">
-    <value>查看清晰且客观的图表</value>
-  </data>
-  <data name="Refletir sobre seus hábitos de consumo" xml:space="preserve">
-    <value>反思您的消费习惯</value>
-  </data>
-  <data name="Planejar um futuro financeiro mais tranquilo" xml:space="preserve">
-    <value>规划更轻松的财务未来</value>
-  </data>
-  <data name="Dê o primeiro passo para transformar sua relação com o dinheiro." xml:space="preserve">
-    <value>迈出第一步，改变您与金钱的关系。</value>
-  </data>
-  <data name="Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças." xml:space="preserve">
-    <value>Kakeibo：您的财务中的简洁、意识和平衡。</value>
-  </data>
-  <data name="Lista de Despesas" xml:space="preserve">
-    <value>支出列表</value>
-  </data>
-  <data name="Listagem das Despesas Mais Comuns" xml:space="preserve">
-    <value>最常见支出列表</value>
-  </data>
-  
-  <data name="ID" xml:space="preserve">
-    <value>ID</value>
-  </data>
-  <data name="Tipo de Despesa" xml:space="preserve">
-    <value>支出类型</value>
-  </data>
-  <data name="Despesa" xml:space="preserve">
-    <value>支出</value>
-  </data>
-  <data name="Ações" xml:space="preserve">
-    <value>操作</value>
-  </data>
-  <data name="Editar" xml:space="preserve">
-    <value>编辑</value>
-  </data>
-  <data name="Adicionar" xml:space="preserve">
-    <value>添加</value>
-  </data>
-  <data name="Lista de Despesas - Novo" xml:space="preserve">
-    <value>支出列表 - 新增</value>
-  </data>
-  <data name="Nova Despesa" xml:space="preserve">
-    <value>新增支出</value>
-  </data>
-  <data name="Salvando..." xml:space="preserve">
-    <value>正在保存...</value>
-  </data>
-  <data name="Nome da Despesa" xml:space="preserve">
-    <value>支出名称</value>
-  </data>
-  <data name="Lista de Despesas - Editar" xml:space="preserve">
-    <value>支出列表 - 编辑</value>
-  </data>
-  <data name="Editar Despesa" xml:space="preserve">
-    <value>编辑支出</value>
-  </data>
-  <data name="Carregando..." xml:space="preserve">
-    <value>正在加载...</value>
-  </data>
-  <data name="Lista de Despesas - Excluir" xml:space="preserve">
-    <value>支出列表 - 删除</value>
-  </data>
-  <data name="Excluir Despesa" xml:space="preserve">
-    <value>删除支出</value>
-  </data>
-  <data name="Login" xml:space="preserve">
-    <value>登录</value>
-  </data>
-  <data name="Email" xml:space="preserve">
-    <value>电子邮件</value>
-  </data>
-  
-  <data name="Entrar" xml:space="preserve">
-    <value>登录</value>
-  </data>
-  <data name="Logout" xml:space="preserve">
-    <value>退出</value>
-  </data>
-  <data name="Você será desconectado." xml:space="preserve">
-    <value>您将被登出。</value>
-  </data>
-  <data name="Sair" xml:space="preserve">
-    <value>退出</value>
-  </data>
-  <data name="Nova Renda" xml:space="preserve">
-    <value>新增收入</value>
-  </data>
-  <data name="Selecione" xml:space="preserve">
-    <value>请选择</value>
-  </data>
-  <data name="Falha ao carregar tipos de entrada" xml:space="preserve">
-    <value>加载输入类型失败</value>
-  </data>
-  <data name="Erro inesperado ao carregar dados" xml:space="preserve">
-    <value>加载数据时发生意外错误</value>
-  </data>
-  <data name="Erro ao salvar" xml:space="preserve">
-    <value>保存时出错</value>
-  </data>
-  <data name="Registro de Nova Despesa" xml:space="preserve">
-    <value>新增支出登记</value>
-  </data>
-  <data name="Suas informações foram gravadas com sucesso." xml:space="preserve">
-    <value>您的信息已成功保存。</value>
-  </data>
-  <data name="Clique aqui para retornar." xml:space="preserve">
-    <value>点击这里返回。</value>
-  </data>
-  <data name="Registro de Usuário" xml:space="preserve">
-    <value>用户注册</value>
-  </data>
-  <data name="Senha" xml:space="preserve">
-    <value>密码</value>
-  </data>
-  <data name="Registrar" xml:space="preserve">
-    <value>注册</value>
-  </data>
-  <data name="Usuário criado com sucesso! Redirecionando para o login..." xml:space="preserve">
-    <value>用户创建成功！正在重定向到登录...</value>
-  </data>
-  <data name="Falha na comunicação com o servidor ou dados inválidos." xml:space="preserve">
-    <value>与服务器通信失败或数据无效。</value>
-  </data>
-  <data name="Erro ao registrar" xml:space="preserve">
-    <value>注册时出错</value>
-  </data>
-  <data name="Rendas" xml:space="preserve">
-    <value>收入</value>
-  </data>
-  <data name="Rendas do Mês" xml:space="preserve">
-    <value>月度收入</value>
-  </data>
-  <data name="Rendas do Mês:" xml:space="preserve">
-    <value>月度收入：</value>
-  </data>
-  <data name="Carregando Rendas..." xml:space="preserve">
-    <value>正在加载收入...</value>
-  </data>
-  <data name="Nenhuma Renda encontrada." xml:space="preserve">
-    <value>未找到收入。</value>
-  </data>
-  <data name="TOTAL:" xml:space="preserve">
-    <value>总计：</value>
-  </data>
-  <data name="Excluir Renda" xml:space="preserve">
-    <value>删除收入</value>
-  </data>
-  <data name="Carregando dados..." xml:space="preserve">
-    <value>正在加载数据...</value>
-  </data>
-  <data name="Renda excluída com sucesso" xml:space="preserve">
-    <value>收入删除成功</value>
-  </data>
-  <data name="Editar Renda" xml:space="preserve">
-    <value>编辑收入</value>
-  </data>
-  <data name="Renda atualizada com sucesso" xml:space="preserve">
-    <value>收入更新成功</value>
-  </data>
-  <data name="Resetar Senha" xml:space="preserve">
-    <value>重置密码</value>
-  </data>
-  <data name="Enviar Link de Reset" xml:space="preserve">
-    <value>发送重置链接</value>
-  </data>
-  <data name="E-mail de redefinição de senha enviado com sucesso!" xml:space="preserve">
-    <value>密码重置邮件发送成功！</value>
-  </data>
-  <data name="Erro ao enviar" xml:space="preserve">
-    <value>发送时出错</value>
-  </data>
-  <data name="Erro inesperado" xml:space="preserve">
-    <value>意外错误</value>
-  </data>
-  <data name="Saídas" xml:space="preserve">
-    <value>支出</value>
-  </data>
-  <data name="Saídas do Mês" xml:space="preserve">
-    <value>月度支出</value>
-  </data>
-  <data name="Saídas do Dia:" xml:space="preserve">
-    <value>当日支出：</value>
-  </data>
-  <data name="Selecione um dia no calendário." xml:space="preserve">
-    <value>请在日历中选择一天。</value>
-  </data>
-  <data name="Nenhuma saída encontrada." xml:space="preserve">
-    <value>未找到支出。</value>
-  </data>
-  <data name="Nova Saída" xml:space="preserve">
-    <value>新增支出</value>
-  </data>
-  <data name="Tipos de Despesas" xml:space="preserve">
-    <value>支出类型</value>
-  </data>
-  <data name="Tipos de Despesa - Editar" xml:space="preserve">
-    <value>支出类型 - 编辑</value>
-  </data>
-  <data name="Editar Tipo de Despesa" xml:space="preserve">
-    <value>编辑支出类型</value>
-  </data>
-  <data name="Tipos de Despesa - Excluir" xml:space="preserve">
-    <value>支出类型 - 删除</value>
-  </data>
-  <data name="Excluir Tipo de Despesa" xml:space="preserve">
-    <value>删除支出类型</value>
-  </data>
-  <data name="Nome do Tipo de Despesa" xml:space="preserve">
-    <value>支出类型名称</value>
-  </data>
-  <data name="Tipo de Despesa não encontrado." xml:space="preserve">
-    <value>未找到支出类型。</value>
-  </data>
-  <data name="Tipos de Despesa - Novo" xml:space="preserve">
-    <value>支出类型 - 新增</value>
-  </data>
-  <data name="Novo Tipo de Despesa" xml:space="preserve">
-    <value>新增支出类型</value>
-  </data>
-  <data name="O nome do tipo de despesa é obrigatório." xml:space="preserve">
-    <value>支出类型名称是必填项。</value>
-  </data>
-  <data name="Tipos de Rendas" xml:space="preserve">
-    <value>收入类型</value>
-  </data>
-  <data name="Tipo de Renda" xml:space="preserve">
-    <value>收入类型</value>
-  </data>
-  <data name="Tipos de Rendas - Editar" xml:space="preserve">
-    <value>收入类型 - 编辑</value>
-  </data>
-  <data name="Editar Tipo de Renda" xml:space="preserve">
-    <value>编辑收入类型</value>
-  </data>
-  <data name="Tipos de Rendas - Excluir" xml:space="preserve">
-    <value>收入类型 - 删除</value>
-  </data>
-  <data name="Excluir Tipo de Renda" xml:space="preserve">
-    <value>删除收入类型</value>
-  </data>
-  <data name="Nome do Tipo de Renda" xml:space="preserve">
-    <value>收入类型名称</value>
-  </data>
-  <data name="Tipo de Renda não encontrado." xml:space="preserve">
-    <value>未找到收入类型。</value>
-  </data>
-  <data name="Tipos de Rendas - Novo" xml:space="preserve">
-    <value>收入类型 - 新增</value>
-  </data>
-  <data name="Novo Tipo de Renda" xml:space="preserve">
-    <value>新增收入类型</value>
-  </data>
-  <data name="O nome do tipo de renda é obrigatório." xml:space="preserve">
-    <value>收入类型名称是必填项。</value>
-  </data></root>
+  <data name="Ações" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="Acompanhar gráficos claros e objetivos" xml:space="preserve">
+    <value>跟踪清晰明确的图表</value>
+  </data>
+  <data name="Adicionar" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="Alterar Senha" xml:space="preserve">
+    <value>更改密码</value>
+  </data>
+  <data name="As senhas não coincidem." xml:space="preserve">
+    <value>密码不匹配。</value>
+  </data>
+  <data name="As senhas não conferem." xml:space="preserve">
+    <value>密码不匹配。</value>
+  </data>
+  <data name="BoasVindas" xml:space="preserve">
+    <value>欢迎</value>
+  </data>
+  <data name="Calendário" xml:space="preserve">
+    <value>日历</value>
+  </data>
+  <data name="Cancelar" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Carregando dados..." xml:space="preserve">
+    <value>正在加载数据...</value>
+  </data>
+  <data name="Carregando registro..." xml:space="preserve">
+    <value>正在加载记录...</value>
+  </data>
+  <data name="Carregando Rendas..." xml:space="preserve">
+    <value>正在加载收入...</value>
+  </data>
+  <data name="Carregando..." xml:space="preserve">
+    <value>正在加载...</value>
+  </data>
+  <data name="Clique aqui para retornar." xml:space="preserve">
+    <value>点击此处返回。</value>
+  </data>
+  <data name="Com o Kakeibo, você pode:" xml:space="preserve">
+    <value>使用家计簿，您可以：</value>
+  </data>
+  <data name="Confirmar Nova Senha" xml:space="preserve">
+    <value>确认新密码</value>
+  </data>
+  <data name="Confirme a Senha" xml:space="preserve">
+    <value>确认密码</value>
+  </data>
+  <data name="CredenciaisInválidas" xml:space="preserve">
+    <value>无效凭证</value>
+  </data>
+  <data name="Dê o primeiro passo para transformar sua relação com o dinheiro." xml:space="preserve">
+    <value>迈出第一步，改变您与金钱的关系。</value>
+  </data>
+  <data name="Descrição" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="Descrição:" xml:space="preserve">
+    <value>描述：</value>
+  </data>
+  <data name="Despesa" xml:space="preserve">
+    <value>支出</value>
+  </data>
+  <data name="E-mail de redefinição de senha enviado com sucesso!" xml:space="preserve">
+    <value>密码重置邮件已成功发送！</value>
+  </data>
+  <data name="Editar" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="Editar Despesa" xml:space="preserve">
+    <value>编辑支出</value>
+  </data>
+  <data name="Editar Renda" xml:space="preserve">
+    <value>编辑收入</value>
+  </data>
+  <data name="Editar Saída" xml:space="preserve">
+    <value>编辑支出</value>
+  </data>
+  <data name="Editar Tipo de Despesa" xml:space="preserve">
+    <value>编辑支出类型</value>
+  </data>
+  <data name="Editar Tipo de Renda" xml:space="preserve">
+    <value>编辑收入类型</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>电子邮件</value>
+  </data>
+  <data name="Entrar" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="Enviando..." xml:space="preserve">
+    <value>正在发送...</value>
+  </data>
+  <data name="Enviar Link de Reset" xml:space="preserve">
+    <value>发送重置链接</value>
+  </data>
+  <data name="Erro ao enviar" xml:space="preserve">
+    <value>发送错误</value>
+  </data>
+  <data name="Erro ao redefinir senha:" xml:space="preserve">
+    <value>重置密码时出错：</value>
+  </data>
+  <data name="Erro ao registrar" xml:space="preserve">
+    <value>注册错误</value>
+  </data>
+  <data name="Erro ao salvar" xml:space="preserve">
+    <value>保存错误</value>
+  </data>
+  <data name="Erro inesperado" xml:space="preserve">
+    <value>意外错误</value>
+  </data>
+  <data name="Erro inesperado ao carregar dados" xml:space="preserve">
+    <value>加载数据时出现意外错误</value>
+  </data>
+  <data name="Erro inesperado:" xml:space="preserve">
+    <value>意外错误：</value>
+  </data>
+  <data name="Erro:" xml:space="preserve">
+    <value>错误：</value>
+  </data>
+  <data name="Estabelecer metas de economia" xml:space="preserve">
+    <value>设定储蓄目标</value>
+  </data>
+  <data name="Excluir" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Excluir Despesa" xml:space="preserve">
+    <value>删除支出</value>
+  </data>
+  <data name="Excluir Renda" xml:space="preserve">
+    <value>删除收入</value>
+  </data>
+  <data name="Excluir Saída" xml:space="preserve">
+    <value>删除支出</value>
+  </data>
+  <data name="Excluir Tipo de Despesa" xml:space="preserve">
+    <value>删除支出类型</value>
+  </data>
+  <data name="Excluir Tipo de Renda" xml:space="preserve">
+    <value>删除收入类型</value>
+  </data>
+  <data name="Falha ao carregar tipos de entrada" xml:space="preserve">
+    <value>加载输入类型失败</value>
+  </data>
+  <data name="Falha na comunicação com o servidor ou dados inválidos." xml:space="preserve">
+    <value>与服务器通信失败或数据无效。</value>
+  </data>
+  <data name="FormatoInválidoRespostaApi" xml:space="preserve">
+    <value>API响应格式无效</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>首页</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças." xml:space="preserve">
+    <value>家计簿：您的财务管理中的简约、意识与平衡。</value>
+  </data>
+  <data name="Lista de Despesas" xml:space="preserve">
+    <value>支出列表</value>
+  </data>
+  <data name="Lista de Despesas - Editar" xml:space="preserve">
+    <value>支出列表 - 编辑</value>
+  </data>
+  <data name="Lista de Despesas - Excluir" xml:space="preserve">
+    <value>支出列表 - 删除</value>
+  </data>
+  <data name="Lista de Despesas - Novo" xml:space="preserve">
+    <value>支出列表 - 新建</value>
+  </data>
+  <data name="Listagem das Despesas Mais Comuns" xml:space="preserve">
+    <value>最常见支出列表</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>注销</value>
+  </data>
+  <data name="Nenhuma Renda encontrada." xml:space="preserve">
+    <value>未找到任何收入。</value>
+  </data>
+  <data name="Nenhuma saída encontrada." xml:space="preserve">
+    <value>未找到任何支出。</value>
+  </data>
+  <data name="Nome da Despesa" xml:space="preserve">
+    <value>支出名称</value>
+  </data>
+  <data name="Nome Despesa" xml:space="preserve">
+    <value>支出名称</value>
+  </data>
+  <data name="Nome do Tipo de Despesa" xml:space="preserve">
+    <value>支出类型名称</value>
+  </data>
+  <data name="Nome do Tipo de Renda" xml:space="preserve">
+    <value>收入类型名称</value>
+  </data>
+  <data name="Nova Despesa" xml:space="preserve">
+    <value>新支出</value>
+  </data>
+  <data name="Nova Renda" xml:space="preserve">
+    <value>新收入</value>
+  </data>
+  <data name="Nova Saída" xml:space="preserve">
+    <value>新支出</value>
+  </data>
+  <data name="Nova Senha" xml:space="preserve">
+    <value>新密码</value>
+  </data>
+  <data name="Novo Tipo de Despesa" xml:space="preserve">
+    <value>新支出类型</value>
+  </data>
+  <data name="Novo Tipo de Renda" xml:space="preserve">
+    <value>新收入类型</value>
+  </data>
+  <data name="O nome do tipo de despesa é obrigatório." xml:space="preserve">
+    <value>支出类型名称为必填项。</value>
+  </data>
+  <data name="O nome do tipo de renda é obrigatório." xml:space="preserve">
+    <value>收入类型名称为必填项。</value>
+  </data>
+  <data name="Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira." xml:space="preserve">
+    <value>整理您的财务不必复杂。家计簿旨在帮助您了解资金流向、做出更明智的决策并建立健康的财务习惯 — 一切都以简单、直观的方式进行，并受到日本传统财务管理方法的启发。</value>
+  </data>
+  <data name="Planejar um futuro financeiro mais tranquilo" xml:space="preserve">
+    <value>规划一个更安稳的财务未来</value>
+  </data>
+  <data name="Redefinir Senha" xml:space="preserve">
+    <value>重置密码</value>
+  </data>
+  <data name="Refletir sobre seus hábitos de consumo" xml:space="preserve">
+    <value>反思您的消费习惯</value>
+  </data>
+  <data name="Registrar" xml:space="preserve">
+    <value>注册</value>
+  </data>
+  <data name="Registrar seus gastos rapidamente" xml:space="preserve">
+    <value>快速记录您的开支</value>
+  </data>
+  <data name="Registro atualizado com sucesso ✔" xml:space="preserve">
+    <value>记录成功更新 ✔</value>
+  </data>
+  <data name="Registro de Nova Despesa" xml:space="preserve">
+    <value>新支出记录</value>
+  </data>
+  <data name="Registro de Usuário" xml:space="preserve">
+    <value>用户注册</value>
+  </data>
+  <data name="Registro excluído ✔" xml:space="preserve">
+    <value>记录已删除 ✔</value>
+  </data>
+  <data name="Renda atualizada com sucesso" xml:space="preserve">
+    <value>收入成功更新</value>
+  </data>
+  <data name="Renda excluída com sucesso" xml:space="preserve">
+    <value>收入成功删除</value>
+  </data>
+  <data name="Rendas" xml:space="preserve">
+    <value>收入</value>
+  </data>
+  <data name="Rendas do Mês" xml:space="preserve">
+    <value>本月收入</value>
+  </data>
+  <data name="Rendas do Mês:" xml:space="preserve">
+    <value>本月收入：</value>
+  </data>
+  <data name="Resetar Senha" xml:space="preserve">
+    <value>重设密码</value>
+  </data>
+  <data name="Resetar Senha - Finalizacao" xml:space="preserve">
+    <value>重设密码 - 完成</value>
+  </data>
+  <data name="Saídas" xml:space="preserve">
+    <value>支出</value>
+  </data>
+  <data name="Saídas do Dia:" xml:space="preserve">
+    <value>当日支出：</value>
+  </data>
+  <data name="Saídas do Mês" xml:space="preserve">
+    <value>本月支出</value>
+  </data>
+  <data name="Sair" xml:space="preserve">
+    <value>退出</value>
+  </data>
+  <data name="Salvando..." xml:space="preserve">
+    <value>正在保存...</value>
+  </data>
+  <data name="Salvar" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Selecione" xml:space="preserve">
+    <value>选择</value>
+  </data>
+  <data name="Selecione um dia no calendário." xml:space="preserve">
+    <value>在日历中选择一天。</value>
+  </data>
+  <data name="Select year:" xml:space="preserve">
+    <value>选择年份：</value>
+  </data>
+  <data name="Senha" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="Senha alterada com sucesso!" xml:space="preserve">
+    <value>密码更改成功！</value>
+  </data>
+  <data name="Senha Atual" xml:space="preserve">
+    <value>当前密码</value>
+  </data>
+  <data name="Senha redefinida com sucesso! Você será redirecionado para o login." xml:space="preserve">
+    <value>密码重置成功！您将被重定向到登录页面。</value>
+  </data>
+  <data name="Suas informações foram gravadas com sucesso." xml:space="preserve">
+    <value>您的信息已成功保存。</value>
+  </data>
+  <data name="Tipo de Despesa" xml:space="preserve">
+    <value>支出类型</value>
+  </data>
+  <data name="Tipo de Despesa não encontrado." xml:space="preserve">
+    <value>未找到支出类型。</value>
+  </data>
+  <data name="Tipo de Renda" xml:space="preserve">
+    <value>收入类型</value>
+  </data>
+  <data name="Tipo de Renda não encontrado." xml:space="preserve">
+    <value>未找到收入类型。</value>
+  </data>
+  <data name="Tipos de Despesa - Editar" xml:space="preserve">
+    <value>支出类型 - 编辑</value>
+  </data>
+  <data name="Tipos de Despesa - Excluir" xml:space="preserve">
+    <value>支出类型 - 删除</value>
+  </data>
+  <data name="Tipos de Despesa - Novo" xml:space="preserve">
+    <value>支出类型 - 新建</value>
+  </data>
+  <data name="Tipos de Despesas" xml:space="preserve">
+    <value>支出类型</value>
+  </data>
+  <data name="Tipos de Rendas" xml:space="preserve">
+    <value>收入类型</value>
+  </data>
+  <data name="Tipos de Rendas - Editar" xml:space="preserve">
+    <value>收入类型 - 编辑</value>
+  </data>
+  <data name="Tipos de Rendas - Excluir" xml:space="preserve">
+    <value>收入类型 - 删除</value>
+  </data>
+  <data name="Tipos de Rendas - Novo" xml:space="preserve">
+    <value>收入类型 - 新建</value>
+  </data>
+  <data name="TOTAL:" xml:space="preserve">
+    <value>总计：</value>
+  </data>
+  <data name="Usuário criado com sucesso! Redirecionando para o login..." xml:space="preserve">
+    <value>用户创建成功！正在重定向到登录页面...</value>
+  </data>
+  <data name="Valor" xml:space="preserve">
+    <value>金额</value>
+  </data>
+  <data name="Valor:" xml:space="preserve">
+    <value>金额：</value>
+  </data>
+  <data name="Você será desconectado." xml:space="preserve">
+    <value>您将被注销。</value>
+  </data>
+  <data name="Voltar" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="Voltar para lista" xml:space="preserve">
+    <value>返回列表</value>
+  </data>
+</root>

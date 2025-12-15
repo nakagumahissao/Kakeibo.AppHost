@@ -1,5 +1,5 @@
 ﻿using Kakeibo.AppHost.Web.Models;
-using Kakeibo.AppHost.Web;
+using Kakeibo.AppHost.Web.Localization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

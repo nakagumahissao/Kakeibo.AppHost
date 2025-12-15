@@ -1,4 +1,4 @@
-﻿namespace Kakeibo.AppHost.Web
+﻿namespace Kakeibo.AppHost.Web.Localization
 {
     public class SharedResources
     {

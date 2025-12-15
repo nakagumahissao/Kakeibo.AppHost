@@ -1,6 +1,7 @@
 using kakeibo.api.Data;
 using kakeibo.api.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -34,24 +35,24 @@ public class Program
         // ---------------------------------------------------------
         // 2. LOCALIZATION
         // ---------------------------------------------------------
-        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-        builder.Services.AddRequestLocalization(options =>
+        // ---------------- CULTURE ----------------
+        var supportedCultures = new[]
         {
-            var supportedCultures = new[]
-            {
-                new CultureInfo("pt-BR"),
-                new CultureInfo("de"),
-                new CultureInfo("en"),
-                new CultureInfo("es"),
-                new CultureInfo("fr"),
-                new CultureInfo("zh-CN"),
-                new CultureInfo("ja-JP")
-            };
+            "en",
+            "en-US",
+            "pt",
+            "pt-BR",
+            "ja",
+            "ja-JP",
+            "de",
+            "es",
+            "fr",
+            "zh-CN"
+        };
 
-            options.SetDefaultCulture("pt-BR")
-                   .AddSupportedCultures(supportedCultures.Select(c => c.Name).ToArray())
-                   .AddSupportedUICultures(supportedCultures.Select(c => c.Name).ToArray());
+        builder.Services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "";
         });
 
         builder.Services.AddMvc()
@@ -146,13 +147,20 @@ public class Program
         // ---------------------------------------------------------
         var app = builder.Build();
 
+        // Localization
+        var localizationOptions = new RequestLocalizationOptions()
+            .SetDefaultCulture(supportedCultures[2])
+            .AddSupportedCultures(supportedCultures)
+            .AddSupportedUICultures(supportedCultures);
+
+        localizationOptions.RequestCultureProviders.Insert(0,
+            new AcceptLanguageHeaderRequestCultureProvider());
+
         // ---------------------------------------------------------
         // 11. MIDDLEWARE PIPELINE
         // ---------------------------------------------------------
         app.UseHttpsRedirection();
-
         app.UseRequestLocalization();
-
         app.UseAuthentication();
         app.UseAuthorization();
 
