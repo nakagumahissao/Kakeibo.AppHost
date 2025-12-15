@@ -1,28 +1,30 @@
 ﻿@page "/tiposdespesas"
 @using Microsoft.AspNetCore.Authorization
 @using Kakeibo.AppHost.Web.Models
+@using System.Globalization
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>Tipos de Despesas</PageTitle>
+<PageTitle>@L["Tipos de Despesas"]</PageTitle>
 
-<h1>Tipos de Despesas</h1>
+<h1>@L["Tipos de Despesas"]</h1>
 
 @if (despesas == null)
 {
-    <p><em>Carregando...</em></p>
+    <p><em>@L["Carregando..."]</em></p>
 }
 else
 {
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Tipo de Despesa</th>
-                <th>Ações</th>
+                <th>@L["ID"]</th>
+                <th>@L["Tipo de Despesa"]</th>
+                <th>@L["Ações"]</th>
             </tr>
         </thead>
         <tbody>
@@ -34,12 +36,12 @@ else
                     <td>
                         <a href="/tiposdespesas/editar/@despesa.TipoDespesaId"
                            class="btn btn-sm btn-primary">
-                            Editar
+                            @L["Editar"]
                         </a>
 
                         <a href="/tiposdespesas/excluir/@despesa.TipoDespesaId"
                            class="btn btn-sm btn-danger ms-2">
-                            Excluir
+                            @L["Excluir"]
                         </a>
                     </td>
                 </tr>
@@ -47,7 +49,10 @@ else
         </tbody>
     </table>
 
-    <a href="/tiposdespesas/adicionar" class="btn btn-success">Adicionar</a>
+    <a href="/tiposdespesas/adicionar"
+       class="btn btn-success">
+        @L["Adicionar"]
+    </a>
 }
 
 @code {

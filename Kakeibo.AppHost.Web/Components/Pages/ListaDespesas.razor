@@ -6,24 +6,25 @@
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>Lista de Despesas</PageTitle>
+<PageTitle>@L["Lista de Despesas"]</PageTitle>
 
-<h1>Listagem das Despesas Mais Comuns</h1>
+<h1>@L["Listagem das Despesas Mais Comuns"]</h1>
 
 @if (despesas == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@L["Carregando..."]</em></p>
 }
 else
 {
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Tipo de Despesa</th>
-                <th>Despesa</th>
-                <th>Ações</th>
+                <th>@L["ID"]</th>
+                <th>@L["Tipo de Despesa"]</th>
+                <th>@L["Despesa"]</th>
+                <th>@L["Ações"]</th>
             </tr>
         </thead>
         <tbody>
@@ -36,12 +37,12 @@ else
                     <td>
                         <a href="/listadespesas/editar/@despesa.DespesaId"
                            class="btn btn-sm btn-primary">
-                            Editar
+                            @L["Editar"]
                         </a>
 
                         <a href="/listadespesas/excluir/@despesa.DespesaId"
                            class="btn btn-sm btn-danger ms-2">
-                            Excluir
+                            @L["Excluir"]
                         </a>
                     </td>
                 </tr>
@@ -51,10 +52,9 @@ else
 
     <button class="btn btn-success"
             @onclick="@(() => Nav.NavigateTo("/listadespesas/adicionar"))">
-        Adicionar
+        @L["Adicionar"]
     </button>
 }
-
 
 @code {
     private List<Despesa>? despesas;

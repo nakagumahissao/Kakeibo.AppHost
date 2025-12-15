@@ -1,23 +1,35 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@L["Home"]</PageTitle>
 
-<h1>Bem-vindo ao Kakeibo — Seu controle financeiro do jeito japonês</h1>
+@using System.Globalization
 
+<h1>
+    @L["BoasVindas"]
+</h1>
 
-<p>Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira.</p
+<p>
+    @L["Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira."]
+</p>
 
-<p>Com o Kakeibo, você pode:</p>
+<p>
+    @L["Com o Kakeibo, você pode:"]
+</p>
 
 <ul>
-    <li>Registrar seus gastos rapidamente</li>    
-    <li>Estabelecer metas de economia</li>
-    <li>Acompanhar gráficos claros e objetivos</li>
-    <li>Refletir sobre seus hábitos de consumo</li>   
-    <li>Planejar um futuro financeiro mais tranquilo</li>
+    <li>@L["Registrar seus gastos rapidamente"]</li>
+    <li>@L["Estabelecer metas de economia"]</li>
+    <li>@L["Acompanhar gráficos claros e objetivos"]</li>
+    <li>@L["Refletir sobre seus hábitos de consumo"]</li>
+    <li>@L["Planejar um futuro financeiro mais tranquilo"]</li>
 </ul>
 
+<p>
+    @L["Dê o primeiro passo para transformar sua relação com o dinheiro."]
+</p>
 
-<p>Dê o primeiro passo para transformar sua relação com o dinheiro.</p>
-
-<p>Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças.</p>
+<p>
+    @L["Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças."]
+</p>

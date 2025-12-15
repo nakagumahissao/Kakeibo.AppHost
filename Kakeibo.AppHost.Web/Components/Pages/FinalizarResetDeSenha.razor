@@ -1,15 +1,16 @@
 ﻿@page "/resetpassword/{UserId}"
-@inject IHttpClientFactory HttpFactory
-@inject NavigationManager Nav
 @using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
-
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 
+<PageTitle>@L["Resetar Senha - Finalizacao"]</PageTitle>
 
-<PageTitle>Resetar Senha - Finalizacao</PageTitle>
-
-<h3 style="padding-bottom:10px;">Redefinir Senha</h3>
+<h3 style="padding-bottom:10px;">
+    @L["Redefinir Senha"]
+</h3>
 
 @if (!string.IsNullOrEmpty(successMessage))
 {
@@ -21,22 +22,39 @@
     <div class="alert alert-danger">@errorMessage</div>
 }
 
-<EditForm Model="@resetPasswordModel" OnValidSubmit="HandleResetPassword" FormName="ResetarSenhaFinalForm">
+<EditForm Model="@resetPasswordModel"
+          OnValidSubmit="HandleResetPassword"
+          FormName="ResetarSenhaFinalForm">
+
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="mb-3">
-        <label for="newPassword" class="form-label">Nova Senha</label>
-        <InputText id="newPassword" type="password" class="form-control" @bind-Value="resetPasswordModel.NewPassword" />
+        <label for="newPassword" class="form-label">
+            @L["Nova Senha"]
+        </label>
+        <InputText id="newPassword"
+                   type="password"
+                   class="form-control"
+                   @bind-Value="resetPasswordModel.NewPassword" />
     </div>
 
     <div class="mb-3">
-        <label for="confirmPassword" class="form-label">Confirme a Senha</label>
-        <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="resetPasswordModel.ConfirmPassword" />
+        <label for="confirmPassword" class="form-label">
+            @L["Confirme a Senha"]
+        </label>
+        <InputText id="confirmPassword"
+                   type="password"
+                   class="form-control"
+                   @bind-Value="resetPasswordModel.ConfirmPassword" />
     </div>
 
-    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
-        @(isSubmitting ? "Enviando..." : "Redefinir Senha")
+    <button type="submit"
+            class="btn btn-primary"
+            disabled="@isSubmitting">
+        @(isSubmitting
+                ? L["Enviando..."]
+                : L["Redefinir Senha"])
     </button>
 </EditForm>
 
@@ -46,7 +64,7 @@
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public string Token { get; set; }
+    public string Token { get; set; } = string.Empty;
 
     private ResetPasswordModel resetPasswordModel = new();
     private bool isSubmitting = false;
@@ -61,7 +79,7 @@
 
         if (resetPasswordModel.NewPassword != resetPasswordModel.ConfirmPassword)
         {
-            errorMessage = "As senhas não conferem.";
+            errorMessage = L["As senhas não conferem."];
             isSubmitting = false;
             return;
         }
@@ -70,32 +88,39 @@
         {
             var client = HttpFactory.CreateClient("apis");
 
-            // Chama o endpoint que confirma o reset de senha
-            var response = await client.PostAsJsonAsync("auth/confirm-reset-password", new
-            {
-                UserId,
-                NewPassword = resetPasswordModel.NewPassword,
-                Token
-            });
+            var response = await client.PostAsJsonAsync(
+                "auth/confirm-reset-password",
+                new
+                {
+                    UserId,
+                    NewPassword = resetPasswordModel.NewPassword,
+                    Token
+                });
 
             if (response.IsSuccessStatusCode)
             {
-                successMessage = "Senha redefinida com sucesso! Você será redirecionado para o login.";
+                successMessage =
+                    L["Senha redefinida com sucesso! Você será redirecionado para o login."];
 
                 TokenService.Logout();
 
-                await Task.Delay(2000); // Pequena pausa para o usuário ver a mensagem
+                await Task.Delay(2000);
                 Nav.NavigateTo("/login", forceLoad: true);
             }
             else
             {
-                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                errorMessage = errorObj?.error ?? $"Erro ao redefinir senha: {response.StatusCode}";
+                var errorObj =
+                    await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+                errorMessage =
+                    errorObj?.error
+                    ?? L["Erro ao redefinir senha:"] + $" {response.StatusCode}";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro inesperado: {ex.Message}";
+            errorMessage =
+                L["Erro inesperado:"] + $" {ex.Message}";
         }
         finally
         {

@@ -6,15 +6,6 @@
   <Project Path="kakeibo.api/kakeibo.api.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
-  <Project Path="Kakeibo.AppHost.AppHost/Kakeibo.AppHost.AppHost.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-  </Project>
-  <Project Path="Kakeibo.AppHost.ServiceDefaults/Kakeibo.AppHost.ServiceDefaults.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-  </Project>
-  <Project Path="Kakeibo.AppHost.Tests/Kakeibo.AppHost.Tests.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-  </Project>
   <Project Path="Kakeibo.AppHost.Web/Kakeibo.AppHost.Web.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>

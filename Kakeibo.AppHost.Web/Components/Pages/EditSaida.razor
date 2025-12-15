@@ -1,51 +1,60 @@
-﻿@page "/saidas/edit/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
+﻿@page "/saidaspage/edit/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
 @using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 
-<h3 style="padding-bottom:10px;">Editar Saída</h3>
+<h3 style="padding-bottom:10px;">
+    @L["Editar Saída"]
+</h3>
 
 @if (saida == null && !updated)
 {
-    <p>Carregando registro...</p>
+    <p>@L["Carregando registro..."]</p>
 }
 else if (updated)
 {
     <div class="alert alert-success mt-3">
-        Registro atualizado com sucesso ✔
+        @L["Registro atualizado com sucesso ✔"]
     </div>
 
-    <a class="btn btn-primary mt-3" href="/saidas/@Day/@Month/@Year">
-        ⬅ Voltar para lista
+    <a class="btn btn-primary mt-3" href="/saidaspage/@Day/@Month/@Year">
+        ⬅ @L["Voltar para lista"]
     </a>
 }
 else
 {
     <div class="card p-3">
         <div class="mb-3">
-            <label class="form-label fw-bold">Descrição</label>
+            <label class="form-label fw-bold">
+                @L["Descrição"]
+            </label>
             <input class="form-control" @bind="saida!.Descricao" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Nome Despesa</label>
+            <label class="form-label fw-bold">
+                @L["Nome Despesa"]
+            </label>
             <input class="form-control" @bind="saida.NomeDespesa" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Valor</label>
+            <label class="form-label fw-bold">
+                @L["Valor"]
+            </label>
             <input type="number" step="0.01" class="form-control" @bind="saida.ValorDespesa" />
         </div>
 
         <div class="d-flex gap-2 mt-3">
             <button class="btn btn-success btn-sm" @onclick="Update">
-                💾 Salvar
+                💾 @L["Salvar"]
             </button>
 
-            <a class="btn btn-secondary btn-sm" href="/saidas/@UserID/@Day/@Month/@Year">
-                ⬅ Cancelar
+            <a class="btn btn-secondary btn-sm" href="/saidaspage/@UserID/@Day/@Month/@Year">
+                ⬅ @L["Cancelar"]
             </a>
         </div>
     </div>
@@ -60,7 +69,7 @@ else
     private Kakeibo.AppHost.Web.Models.Saidas? saida;
     private bool updated = false;
 
-    private string? UserID = "";
+    private string? UserID = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,7 +83,9 @@ else
         UserID = TokenService.GetUserIdFromToken();
 
         var client = HttpFactory.CreateClient("apis");
-        saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>($"saidas/{SaidaId}");
+        saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>(
+            $"saidas/{SaidaId}"
+        );
     }
 
     private async Task Update()

@@ -1,16 +1,17 @@
-﻿@page "/saidas/new/{day:int}/{month:int}/{year:int}"
+﻿@page "/saidaspage/new/{day:int}/{month:int}/{year:int}"
 @using Microsoft.AspNetCore.Authorization
-@using Kakeibo.AppHost.Web.Models
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Net.Http.Json
+@using Kakeibo.AppHost.Web.Models
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
-@inject Microsoft.Extensions.Logging.ILogger<Kakeibo.AppHost.Web.Components.Pages.NovaSaida> Logger
+@inject ILogger<Kakeibo.AppHost.Web.Components.Pages.NovaSaida> Logger
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>Registro de Nova Despesa</PageTitle>
+<PageTitle>@L["Registro de Nova Despesa"]</PageTitle>
 
-<h1>Registro de Nova Despesa</h1>
+<h1>@L["Registro de Nova Despesa"]</h1>
 
 <EditForm Model="novaSaida" OnValidSubmit="SalvarDespesa" FormName="novaSaida">
     <DataAnnotationsValidator />
@@ -25,41 +26,54 @@
 
         <!-- Tipo de Despesa -->
         <div class="mb-2">
-            <label>Tipo de Despesa</label>
-            <InputSelect id="tipoDespesaID" class="form-select" @bind-Value="novaSaida.DespesaID">
-                <option value="0">Selecione</option>
-                @foreach (var tipo in tiposDeDespesa ?? Enumerable.Empty<Kakeibo.AppHost.Web.Models.TiposDeDespesa>())
+            <label>@L["Tipo de Despesa"]</label>
+            <InputSelect id="tipoDespesaID"
+                         class="form-select"
+                         @bind-Value="novaSaida.DespesaID">
+                <option value="0">@L["Selecione"]</option>
+
+                @foreach (var tipo in tiposDeDespesa
+                                ?? Enumerable.Empty<TiposDeDespesa>())
                 {
-                    <option value="@tipo.TipoDespesaId">@tipo.TipoDeDespesa</option>
+                    <option value="@tipo.TipoDespesaId">
+                        @tipo.TipoDeDespesa
+                    </option>
                 }
             </InputSelect>
         </div>
 
-        <!-- Descrição -->
+        <!-- Nome da Despesa -->
         <div class="mb-2">
-            <label>Nome da Despesa</label>
-            <InputText class="form-control" @bind-Value="novaSaida.NomeDespesa" />
+            <label>@L["Nome da Despesa"]</label>
+            <InputText class="form-control"
+                       @bind-Value="novaSaida.NomeDespesa" />
             <ValidationMessage For="@(() => novaSaida.NomeDespesa)" />
         </div>
 
         <!-- Descrição -->
         <div class="mb-2">
-            <label>Descrição</label>
-            <InputText class="form-control" @bind-Value="novaSaida.Descricao" />
+            <label>@L["Descrição"]</label>
+            <InputText class="form-control"
+                       @bind-Value="novaSaida.Descricao" />
             <ValidationMessage For="@(() => novaSaida.Descricao)" />
         </div>
 
         <!-- Valor -->
         <div class="mb-2">
-            <label>Valor</label>
-            <InputNumber class="form-control" @bind-Value="novaSaida.ValorDespesa" />
+            <label>@L["Valor"]</label>
+            <InputNumber class="form-control"
+                         @bind-Value="novaSaida.ValorDespesa" />
             <ValidationMessage For="@(() => novaSaida.ValorDespesa)" />
         </div>
 
         <div class="d-flex justify-content-end mt-3">
-            <button type="submit" class="btn btn-primary me-2">Salvar</button>
-            <a class="btn btn-secondary" href="@($"/saidas/{UserID}/{Day}/{Month}/{Year}")">
-                Cancelar
+            <button type="submit" class="btn btn-primary me-2">
+                @L["Salvar"]
+            </button>
+
+            <a class="btn btn-secondary"
+               href="@($"/saidaspage/{UserID}/{Day}/{Month}/{Year}")">
+                @L["Cancelar"]
             </a>
         </div>
     </div>
@@ -67,7 +81,9 @@
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger mt-3">@errorMessage</div>
+    <div class="alert alert-danger mt-3">
+        @errorMessage
+    </div>
 }
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -83,12 +99,12 @@
     [Parameter] public int Year { get; set; }
 
     [SupplyParameterFromForm]
-    private Kakeibo.AppHost.Web.Models.Saidas? novaSaida { get; set; }
+    private Saidas? novaSaida { get; set; }
 
-    private List<Kakeibo.AppHost.Web.Models.TiposDeDespesa> tiposDeDespesa = new();
-    private string errorMessage = "";
-    private string successMessage = "";
-    private string? UserID = "";
+    private List<TiposDeDespesa> tiposDeDespesa = new();
+    private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
+    private string? UserID = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,7 +117,7 @@
 
         UserID = TokenService.GetUserIdFromToken();
 
-        novaSaida ??= new Kakeibo.AppHost.Web.Models.Saidas
+        novaSaida ??= new Saidas
         {
             DataSaida = DateTime.Today,
             Ano = DateTime.Today.Year.ToString("0000"),
@@ -120,7 +136,11 @@
     private async Task CarregarTiposDespesa()
     {
         var client = HttpFactory.CreateClient("apis");
-        tiposDeDespesa = await client.GetFromJsonAsync<List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>>($"tiposdespesa/{UserID}") ?? new List<Kakeibo.AppHost.Web.Models.TiposDeDespesa>();
+        tiposDeDespesa =
+            await client.GetFromJsonAsync<List<TiposDeDespesa>>(
+                $"tiposdespesa/{UserID}"
+            )
+            ?? new List<TiposDeDespesa>();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -129,7 +149,7 @@
             ? new DateTime(Year, Month, Day)
             : DateTime.Today;
 
-        novaSaida ??= new Kakeibo.AppHost.Web.Models.Saidas
+        novaSaida ??= new Saidas
         {
             DataSaida = dt,
             Ano = dt.Year.ToString("0000"),
@@ -142,22 +162,20 @@
             DataSaidaString = dt.ToString("yyyy-MM-dd")
         };
 
-        if (Year > 0 && Month > 0 && Day > 0)
-            novaSaida.DataSaida = new DateTime(Year, Month, Day);
-        else
-            novaSaida.DataSaida = DateTime.Today;
+        novaSaida.DataSaida = dt;
 
         await CarregarTiposDespesa();
     }
 
     private async Task SalvarDespesa()
     {
-        errorMessage = "";
+        errorMessage = string.Empty;
+
         try
         {
             var dt = (Day > 0 && Month > 0 && Year > 0)
-            ? new DateTime(Year, Month, Day)
-            : DateTime.Today;
+                ? new DateTime(Year, Month, Day)
+                : DateTime.Today;
 
             novaSaida!.DataSaida = dt;
 
@@ -166,12 +184,14 @@
 
             if (!response.IsSuccessStatusCode)
             {
-                errorMessage = $"Erro ao salvar: {response.StatusCode}";
+                errorMessage = $"{L["Erro ao salvar"]}: {response.StatusCode}";
                 return;
             }
 
-            var targetUrl = $"/saidas/{Day}/{Month}/{Year}";
-            successMessage = $"Suas informacoes foram gravadas com sucesso. Clique <a href='{targetUrl}'>aqui</a> para retornar.";
+            var targetUrl = $"/saidaspage/{Day}/{Month}/{Year}";
+            successMessage =
+                $"{L["Suas informações foram gravadas com sucesso."]} " +
+                $"<a href='{targetUrl}'>{L["Clique aqui para retornar."]}</a>";
         }
         catch (Exception ex)
         {

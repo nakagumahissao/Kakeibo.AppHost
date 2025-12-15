@@ -3,22 +3,28 @@
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveServer
 
-<PageTitle>Tipos de Rendas - Excluir</PageTitle>
+<PageTitle>@L["Tipos de Rendas - Excluir"]</PageTitle>
 
-<h3 style="padding-bottom:10px;">Excluir Tipo de Renda</h3>
+<h3 style="padding-bottom:10px;">@L["Excluir Tipo de Renda"]</h3>
 
 @if (tipo == null)
 {
-    <p>Carregando...</p>
+    <p>@L["Carregando..."]</p>
 }
 else
 {
-    <EditForm EditContext="editContext" FormName="ExcluirTipoRendaForm" OnValidSubmit="ConfirmarExclusao">
+    <EditForm EditContext="editContext"
+              FormName="ExcluirTipoRendaForm"
+              OnValidSubmit="ConfirmarExclusao">
+
         <div class="mb-3">
-            <label>Nome do Tipo de Renda</label>
-            <InputText class="form-control" @bind-Value="tipo.TipoDeEntrada" Disabled="true" />
+            <label>@L["Nome do Tipo de Renda"]</label>
+            <InputText class="form-control"
+                       @bind-Value="tipo.TipoDeEntrada"
+                       Disabled="true" />
         </div>
 
         @if (!string.IsNullOrEmpty(errorMessage))
@@ -27,14 +33,20 @@ else
         }
 
         <div class="d-flex align-items-center mt-2 gap-2">
-            <button class="btn btn-danger" type="submit">Excluir</button>
-            <a class="btn btn-primary" href="/tiposrendas">Cancelar</a>
+            <button class="btn btn-danger" type="submit">
+                @L["Excluir"]
+            </button>
+
+            <a class="btn btn-primary" href="/tiposrendas">
+                @L["Cancelar"]
+            </a>
         </div>
     </EditForm>
 }
 
 @code {
     [Parameter] public decimal id { get; set; }
+
     private TiposDeEntradas? tipo;
     private EditContext? editContext;
     private string? errorMessage;
@@ -60,7 +72,7 @@ else
         }
         else
         {
-            errorMessage = "Tipo de Renda não encontrado.";
+            errorMessage = L["Tipo de Renda não encontrado."];
         }
     }
 
@@ -79,12 +91,12 @@ else
             }
             else
             {
-                errorMessage = $"Erro ao excluir. Código: {response.StatusCode}";
+                errorMessage = L["Erro ao excluir. Código: {0}", response.StatusCode];
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro: {ex.Message}";
+            errorMessage = L["Erro: {0}", ex.Message];
         }
     }
 }

@@ -1,40 +1,50 @@
 ﻿@page "/login"
 @using Kakeibo.AppHost.Web.Models
 @rendermode InteractiveServer
-@inject HttpClient Http
+@inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
+@inject ILogger<Login> Logger
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>Login</PageTitle>
+<PageTitle>@L["Login"]</PageTitle>
 
-<h1>Login</h1>
+<h1>@L["Login"]</h1>
 
 @if (editContext is not null)
 {
-    <EditForm EditContext="editContext" OnValidSubmit="SubmitLogin" FormName="LoginInput">
+    <EditForm EditContext="editContext"
+              OnValidSubmit="SubmitLogin"
+              FormName="LoginInput">
+
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="mb-3">
-            <label>Email</label>
-            <InputText @bind-Value="loginModel.Email" class="form-control" />
+            <label>@L["Email"]</label>
+            <InputText @bind-Value="loginModel.Email"
+                       class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label>Password</label>
-            <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+            <label>@L["Senha"]</label>
+            <InputText @bind-Value="loginModel.Password"
+                       type="password"
+                       class="form-control" />
         </div>
 
-        <button type="submit" class="btn btn-primary">Entrar</button>
+        <button type="submit" class="btn btn-primary">
+            @L["Entrar"]
+        </button>
     </EditForm>
 }
 
 @if (!string.IsNullOrEmpty(error))
 {
-    <p style="color:red">@error</p>
+    <p style="color:red; padding-top: 10px;">@L[error]</p>
 }
 
 @code {
-    private LoginModel loginModel = new ();
+    private LoginModel loginModel = new();
     private EditContext? editContext;
     private string? error;
 
@@ -42,8 +52,8 @@
     {
         loginModel = new LoginModel
         {
-            Email = "",
-            Password = ""
+            Email = string.Empty,
+            Password = string.Empty
         };
 
         editContext = new EditContext(loginModel);
@@ -53,8 +63,17 @@
     {
         try
         {
-            var loginUrl = $"{Nav.BaseUri}blazor-login";
-            var response = await Http.PostAsJsonAsync(loginUrl, loginModel);
+            Logger.LogInformation(
+                "Submitting login for {Email}",
+                loginModel.Email
+            );
+
+            var client = HttpFactory.CreateClient("local");
+            var response =
+                await client.PostAsJsonAsync(
+                    "blazor-login",
+                    loginModel
+                );
 
             if (!response.IsSuccessStatusCode)
             {

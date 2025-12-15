@@ -1,138 +1,170 @@
 ﻿using Kakeibo.AppHost.Web.Components;
 using Kakeibo.AppHost.Web.Models;
+using Kakeibo.AppHost.Web.Localization;
 using Kakeibo.AppHost.Web.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
+using Serilog;
 using StackExchange.Redis;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------- Serviços base ----------------
-builder.AddServiceDefaults();
-// builder.AddRedisOutputCache("redis");
+// ---------------- Windows Service ----------------
+builder.Host.UseWindowsService();
 
-// HttpContext para pegar usuário logado
-builder.Services.AddHttpContextAccessor();
+var certPath = builder.Configuration["Kestrel:HttpsCertificate:Path"];
+var certPassword = builder.Configuration["Kestrel:HttpsCertificate:Password"];
 
-var redisConnectionString = builder.Configuration.GetConnectionString("redis")
-    ?? throw new InvalidOperationException("Redis connection string 'redis' not found.");
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // HTTPS on port 446
+    options.Listen(IPAddress.Parse("100.64.1.29"), 446, listenOptions =>
+    {
+        listenOptions.UseHttps(certPath!, certPassword);
+    });
+});
+
+// ---------------- SERILOG ----------------
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithMachineName()
+    .Enrich.WithProcessId()
+    .Enrich.WithThreadId()
+    .CreateLogger();
+
+Log.Information("Starting Kakeibo Web Site Service...");
+builder.Host.UseSerilog();
+
+// ---------------- Redis ----------------
+var redisConnectionString = builder.Configuration.GetConnectionString("redis");
+if (string.IsNullOrEmpty(redisConnectionString))
+{
+    Log.Fatal("Redis connection string not found.");
+    throw new InvalidOperationException("Redis connection string not found.");
+}
 
 var redis = ConnectionMultiplexer.Connect(redisConnectionString);
 
-// This stabilizes the key used to encrypt the authentication cookie.
+// ---------------- Data Protection ----------------
 builder.Services.AddDataProtection()
     .SetApplicationName("KakeiboWebFrontend")
-    .PersistKeysToStackExchangeRedis(
-        redis
-    );
+    .PersistKeysToStackExchangeRedis(redis);
 
-// ---------------- JWT/Cookie Hybrid Setup ----------------
-
-// 1. Register the services needed for JWT handling
+// ---------------- JWT / HTTP ----------------
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 
-// Removed the incorrect ForwardedIdentityHttpClientHandler registration
-// and the redundant IAuthenticationService registration.
-
-// 2. Update the HttpClient registration for "apis"
 builder.Services.AddHttpClient("apis", c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
 })
-// Add the JwtAuthorizationHandler to attach the Bearer token
 .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
-// ---------------- Blazor Server ----------------
+builder.Services.AddHttpClient("local", client =>
+{
+    client.BaseAddress = new Uri("https://100.64.1.29:446/");
+});
+
+// ---------------- CULTURE ----------------
+var supportedCultures = new[]
+{
+    "en",
+    "en-US",
+    "pt",
+    "pt-BR",
+    "ja",
+    "ja-JP",
+    "de",
+    "es",
+    "fr",
+    "zh-CN"
+};
+
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "";
+});
+
+// ---------------- Blazor ----------------
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowBlazorWithCredentials", policy =>
-    {
-        policy.WithOrigins("https://localhost:7030")
-              .AllowCredentials()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
 builder.Services.AddCascadingAuthenticationState();
-
 builder.Services.AddAuthorization();
-
-// ---------------- Output Caching Setup ----------------
-// 1. Register the base output cache services
 builder.Services.AddOutputCache();
-
-// 2. Register the Redis store implementation using the existing connection string
-builder.Services.AddStackExchangeRedisOutputCache(options =>
-{
-    // Uses the connection string successfully retrieved above
-    options.Configuration = redisConnectionString;
-    options.InstanceName = "KakeiboOutputCache"; // Use a distinct instance name
-});
 
 var app = builder.Build();
 
-// ---------------- Request pipeline ----------------
+// Localization
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[2])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+localizationOptions.RequestCultureProviders.Insert(0,
+    new AcceptLanguageHeaderRequestCultureProvider());
+
+app.UseRequestLocalization(localizationOptions);
+
+// ---------------- Pipeline ----------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
 
-app.UseCors("AllowBlazorWithCredentials");
-
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseAntiforgery();
-app.UseOutputCache();
 app.MapStaticAssets();
 app.UseAuthorization();
 
+// ---------------- Blazor Routing ----------------
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// =======================================================
-// LOGIN (Blazor → API → Store JWT & Set Cookie)
-// =======================================================
-app.MapPost("/blazor-login", async (
-    LoginModel loginModel,
-    IHttpClientFactory clientFactory,
-    HttpContext httpContext,
-    TokenService tokenService
-) =>
-{
-    var client = clientFactory.CreateClient("apis");
+// ---------------- LOGIN ENDPOINT ----------------
+// We use the static local function, passing only HttpContext to manually resolve services.
+app.MapPost("/blazor-login", ProcessLoginAsync)
+    .AllowAnonymous();
 
-    // 1. Call the API to validate credentials
+// ---------------- LOCAL STATIC FUNCTION FOR LOGIN ----------------
+// We keep the service locator pattern as it is the only way to avoid DI conflicts in this project.
+static async Task<IResult> ProcessLoginAsync(HttpContext context, LoginModel loginModel)
+{
+    // Manually resolve the necessary services from the request's scope
+    var clientFactory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
+    var tokenService = context.RequestServices.GetRequiredService<TokenService>();
+    var localizerFactory = context.RequestServices.GetRequiredService<IStringLocalizerFactory>();
+
+    var L = localizerFactory.Create(typeof(SharedResources));
+
+    // The rest of the logic remains the same
+    Log.Information("Blazor login attempt for user {Email}.", loginModel.Email);
+
+    var client = clientFactory.CreateClient("apis");
     var response = await client.PostAsJsonAsync("auth/login", loginModel);
 
     if (!response.IsSuccessStatusCode)
-        return Results.Json(new { error = "Credenciais inválidas" }, statusCode: StatusCodes.Status401Unauthorized);
+    {
+        return Results.Json(
+            new { error = L["CredenciaisInválidas"].Value },
+            statusCode: StatusCodes.Status401Unauthorized
+        );
+    }
 
     var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
     if (loginResponse == null)
-        return Results.Problem("Invalid API response format.");
-
-    // Store JWT in server-side TokenService (for Blazor Server circuit)
-    tokenService.SetToken(loginResponse.Token);
-
-    // 2. Create claims and sign in using cookie auth (visible to browser)
-    var claims = new List<Claim>
     {
-        new Claim(ClaimTypes.NameIdentifier, loginResponse.UserID),
-        new Claim(ClaimTypes.Email, loginResponse.Email),
-        new Claim(ClaimTypes.Name, loginResponse.Email)
-    };
-    claims.AddRange(loginResponse.Roles.Select(r => new Claim(ClaimTypes.Role, r)));
+        return Results.Problem(L["FormatoInválidoRespostaApi"].Value);
+    }
 
-    return Results.Ok(new { success = true }); // client will navigate manually
-}).AllowAnonymous();
+    tokenService.SetToken(loginResponse.Token);
+    return Results.Ok(new { success = true });
+}
 
-app.MapDefaultEndpoints();
 app.Run();

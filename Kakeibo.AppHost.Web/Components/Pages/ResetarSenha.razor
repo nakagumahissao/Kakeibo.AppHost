@@ -2,30 +2,50 @@
 @rendermode InteractiveServer
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
+@inject IStringLocalizer<SharedResources> L
 
-<h3 style="padding-bottom:10px;">Resetar Senha</h3>
+<PageTitle>@L["Resetar Senha"]</PageTitle>
+
+<h3 style="padding-bottom:10px;">
+    @L["Resetar Senha"]
+</h3>
 
 @if (!string.IsNullOrEmpty(successMessage))
 {
-    <div class="alert alert-success">@successMessage</div>
+    <div class="alert alert-success">
+        @successMessage
+    </div>
 }
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger">@errorMessage</div>
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
 }
 
-<EditForm Model="@resetPasswordModel" OnValidSubmit="HandleResetPassword" FormName="ResetPasswordForm">
+<EditForm Model="@resetPasswordModel"
+          OnValidSubmit="HandleResetPassword"
+          FormName="ResetPasswordForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <InputText id="email" type="email" class="form-control" @bind-Value="resetPasswordModel.Email" />
+        <label for="email" class="form-label">
+            @L["Email"]
+        </label>
+        <InputText id="email"
+                   type="email"
+                   class="form-control"
+                   @bind-Value="resetPasswordModel.Email" />
     </div>
 
-    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
-        @(isSubmitting ? "Enviando..." : "Enviar Link de Reset")
+    <button type="submit"
+            class="btn btn-primary"
+            disabled="@isSubmitting">
+        @(isSubmitting
+                ? L["Enviando..."]
+                : L["Enviar Link de Reset"])
     </button>
 </EditForm>
 
@@ -44,22 +64,26 @@
         try
         {
             var client = HttpFactory.CreateClient("apis");
-            var response = await client.PostAsJsonAsync("auth/reset-password", resetPasswordModel);
+            var response = await client.PostAsJsonAsync(
+                "auth/reset-password",
+                resetPasswordModel);
 
             if (response.IsSuccessStatusCode)
             {
-                successMessage = "E-mail de redefinição de senha enviado com sucesso!";
+                successMessage = L["E-mail de redefinição de senha enviado com sucesso!"];
             }
             else
             {
-                // Lê o erro retornado pelo backend
-                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                errorMessage = errorObj?.error ?? $"Erro ao enviar: {response.StatusCode}";
+                var errorObj =
+                    await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+                errorMessage = errorObj?.error
+                    ?? L["Erro ao enviar"] + $": {response.StatusCode}";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro inesperado: {ex.Message}";
+            errorMessage = L["Erro inesperado"] + $": {ex.Message}";
         }
         finally
         {

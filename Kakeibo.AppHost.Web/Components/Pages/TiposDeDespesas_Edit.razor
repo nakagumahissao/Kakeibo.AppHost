@@ -3,15 +3,18 @@
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveServer
 
-<PageTitle>Tipos de Despesa - Editar</PageTitle>
+<PageTitle>@L["Tipos de Despesa - Editar"]</PageTitle>
 
-<h3 style="padding-bottom:10px;">Editar Tipo de Despesa</h3>
+<h3 style="padding-bottom:10px;">
+    @L["Editar Tipo de Despesa"]
+</h3>
 
 @if (tipo == null)
 {
-    <p><em>Carregando...</em></p>
+    <p><em>@L["Carregando..."]</em></p>
 }
 else
 {
@@ -19,18 +22,22 @@ else
         <DataAnnotationsValidator />
 
         <div class="mb-3">
-            <label class="form-label">ID</label>
+            <label class="form-label">@L["ID"]</label>
             <input class="form-control" value="@tipo.TipoDespesaId" disabled />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Tipo de Despesa</label>
+            <label class="form-label">@L["Tipo de Despesa"]</label>
             <InputText class="form-control" @bind-Value="tipo.TipoDeDespesa" />
         </div>
 
         <div class="d-flex align-items-center mt-2 gap-2">
-            <button class="btn btn-primary" type="submit">Salvar</button>
-            <a class="btn btn-secondary" href="/tiposdespesas">Cancelar</a>
+            <button class="btn btn-primary" type="submit">
+                @L["Salvar"]
+            </button>
+            <a class="btn btn-secondary" href="/tiposdespesas">
+                @L["Cancelar"]
+            </a>
         </div>
     </EditForm>
 }
