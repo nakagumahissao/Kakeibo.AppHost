@@ -1,4 +1,4 @@
-﻿using Kakeibo.AppHost.Web.Resources;
+﻿using Kakeibo.AppHost.Web;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

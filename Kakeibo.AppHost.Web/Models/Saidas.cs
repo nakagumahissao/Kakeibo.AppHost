@@ -1,4 +1,4 @@
-﻿using Kakeibo.AppHost.Web.Resources;
+﻿using Kakeibo.AppHost.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;

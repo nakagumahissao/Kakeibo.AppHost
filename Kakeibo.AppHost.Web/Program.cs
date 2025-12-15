@@ -1,61 +1,30 @@
 ﻿using Kakeibo.AppHost.Web.Components;
 using Kakeibo.AppHost.Web.Models;
+using Kakeibo.AppHost.Web;
 using Kakeibo.AppHost.Web.Services;
-using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Serilog;
 using StackExchange.Redis;
-using System.Globalization;
 using System.Net;
-using Kakeibo.AppHost.Web;
-using Kakeibo.AppHost.Web.Resources;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ... (Kestrel, Culture, Windows Service, Serilog, Redis, Data Protection, JWT/HTTP, Blazor Setup remains unchanged) ...
-
-// ---------------- CULTURE (FIXED) ----------------
-var supportedCultures = new[]
-{
-    new CultureInfo("pt"),
-    new CultureInfo("pt-BR"),
-    new CultureInfo("ja"),
-    new CultureInfo("ja-JP"),
-    new CultureInfo("en"),
-    new CultureInfo("en-US"),
-    new CultureInfo("de"),
-    new CultureInfo("es"),
-    new CultureInfo("fr"),
-    new CultureInfo("zh-CN")
-};
-
-// --- FINAL LOCALIZATION FIX (Simplified to avoid Type Conflict) ---
-// We remove the explicit factory/localizer registrations that caused the compiler conflict.
-builder.Services.AddLocalization(options =>
-{
-    // We rely on the implicit naming convention again, but the fix must be done 
-    // by ensuring the RootNamespace is correct in the .csproj file.
-    options.ResourcesPath = "Resources";
-});
-
-// ... (Configuration of RequestLocalizationOptions remains unchanged) ...
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    options.DefaultRequestCulture = new RequestCulture("pt-BR");
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
-
-    options.RequestCultureProviders = new IRequestCultureProvider[]
-    {
-        new AcceptLanguageHeaderRequestCultureProvider()
-    };
-});
-
 // ---------------- Windows Service ----------------
 builder.Host.UseWindowsService();
+
+var certPath = builder.Configuration["Kestrel:HttpsCertificate:Path"];
+var certPassword = builder.Configuration["Kestrel:HttpsCertificate:Password"];
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // HTTPS on port 446
+    options.Listen(IPAddress.Parse("100.64.1.29"), 446, listenOptions =>
+    {
+        listenOptions.UseHttps(certPath!, certPassword);
+    });
+});
 
 // ---------------- SERILOG ----------------
 Log.Logger = new LoggerConfiguration()
@@ -100,6 +69,26 @@ builder.Services.AddHttpClient("local", client =>
     client.BaseAddress = new Uri("https://100.64.1.29:446/");
 });
 
+// ---------------- CULTURE ----------------
+var supportedCultures = new[]
+{
+    "en",
+    "en-US",
+    "pt",
+    "pt-BR",
+    "ja",
+    "ja-JP",
+    "de",
+    "es",
+    "fr",
+    "zh-CN"
+};
+
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Localization";
+});
+
 // ---------------- Blazor ----------------
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -111,12 +100,10 @@ builder.Services.AddOutputCache();
 var app = builder.Build();
 
 // Localization
-var localizationOptions = new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture("pt-BR"),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-};
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[2])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
 
 localizationOptions.RequestCultureProviders.Insert(0,
     new AcceptLanguageHeaderRequestCultureProvider());
@@ -155,8 +142,7 @@ static async Task<IResult> ProcessLoginAsync(HttpContext context, LoginModel log
     var tokenService = context.RequestServices.GetRequiredService<TokenService>();
     var localizerFactory = context.RequestServices.GetRequiredService<IStringLocalizerFactory>();
 
-    // Manually create the typed localizer instance using the factory
-    var L = localizerFactory.Create(typeof(SharedResources)); // This relies on the ResourcesPath setting
+    var L = localizerFactory.Create(typeof(SharedResources));
 
     // The rest of the logic remains the same
     Log.Information("Blazor login attempt for user {Email}.", loginModel.Email);

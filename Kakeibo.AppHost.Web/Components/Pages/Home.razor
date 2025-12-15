@@ -1,8 +1,9 @@
 ﻿@page "/"
-@using Kakeibo.AppHost.Web.Resources
-@using Microsoft.Extensions.Localization
+
+
 @rendermode InteractiveServer
-@inject IStringLocalizer<Kakeibo.AppHost.Web.Resources.SharedResources> L
+@inject IStringLocalizer<SharedResources> L
+@inject IStringLocalizerFactory LocalizerFactory
 
 <PageTitle>@L["Home"]</PageTitle>
 
@@ -14,7 +15,7 @@
 <h1>
     @L["BoasVindas"]
 </h1>
-
+<h1>@L["BoasVindas"] (@CultureInfo.CurrentUICulture.Name)</h1>
 <p>
     @L["Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira."]
 </p>
@@ -38,3 +39,33 @@
 <p>
     @L["Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças."]
 </p>
+
+
+<pre>@DebugInfo</pre>
+
+@code {
+    string DebugInfo = "";
+
+    protected override void OnInitialized()
+    {
+        var localizer = LocalizerFactory.Create(typeof(SharedResources));
+
+        var rmField = localizer
+            .GetType()
+            .GetField("_resourceManager",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
+        if (rmField?.GetValue(localizer) is System.Resources.ResourceManager rm)
+        {
+            DebugInfo =
+                $"Resource BaseName: {rm.BaseName}\n" +
+                $"Assembly: {typeof(SharedResources).Assembly.FullName}\n" +
+                $"UI Culture: {CultureInfo.CurrentUICulture.Name}";
+        }
+        else
+        {
+            DebugInfo = "Could not retrieve ResourceManager";
+        }
+    }
+}

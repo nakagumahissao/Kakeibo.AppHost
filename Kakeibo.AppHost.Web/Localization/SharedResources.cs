@@ -1,4 +1,4 @@
-﻿namespace Kakeibo.AppHost.Web.Resources
+﻿namespace Kakeibo.AppHost.Web
 {
     public class SharedResources
     {

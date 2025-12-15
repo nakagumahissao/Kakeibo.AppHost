@@ -1,51 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+  <xsd:schema id="root"
+              xmlns=""
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -59,379 +68,379 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Credenciais Inválidas" xml:space="preserve">
-    <value>無効な認証情報</value>
+    <value>Credenciais Inválidas</value>
   </data>
   <data name="Formato Inválido de Resposta de API." xml:space="preserve">
-    <value>無効なAPI応答フォーマットです。</value>
+    <value>Formato Inválido de Resposta de API.</value>
   </data>
   <data name="Alterar Senha" xml:space="preserve">
-    <value>パスワードの変更</value>
+    <value>Alterar Senha</value>
   </data>
   <data name="Senha Atual" xml:space="preserve">
-    <value>現在のパスワード</value>
+    <value>Senha Atual</value>
   </data>
   <data name="Nova Senha" xml:space="preserve">
-    <value>新しいパスワード</value>
+    <value>Nova Senha</value>
   </data>
   <data name="Confirmar Nova Senha" xml:space="preserve">
-    <value>新しいパスワードの確認</value>
+    <value>Confirmar Nova Senha</value>
   </data>
   <data name="Salvar" xml:space="preserve">
-    <value>保存</value>
+    <value>Salvar</value>
   </data>
   <data name="As senhas não coincidem." xml:space="preserve">
-    <value>パスワードが一致しません。</value>
+    <value>As senhas não coincidem.</value>
   </data>
   <data name="Senha alterada com sucesso!" xml:space="preserve">
-    <value>パスワードが正常に変更されました！</value>
+    <value>Senha alterada com sucesso!</value>
   </data>
   <data name="Erro:" xml:space="preserve">
-    <value>エラー:</value>
+    <value>Erro:</value>
   </data>
   <data name="Calendário" xml:space="preserve">
-    <value>カレンダー</value>
+    <value>Calendário</value>
   </data>
   <data name="Select year:" xml:space="preserve">
-    <value>年を選択:</value>
+    <value>Select year:</value>
   </data>
   <data name="Excluir Saída" xml:space="preserve">
-    <value>支出を削除</value>
+    <value>Excluir Saída</value>
   </data>
   <data name="Carregando registro..." xml:space="preserve">
-    <value>記録を読み込み中...</value>
+    <value>Carregando registro...</value>
   </data>
   <data name="Registro excluído ✔" xml:space="preserve">
-    <value>記録が削除されました ✔</value>
+    <value>Registro excluído ✔</value>
   </data>
   <data name="Voltar" xml:space="preserve">
-    <value>戻る</value>
+    <value>Voltar</value>
   </data>
   <data name="Descrição:" xml:space="preserve">
-    <value>説明:</value>
+    <value>Descrição:</value>
   </data>
   <data name="Valor:" xml:space="preserve">
-    <value>金額:</value>
+    <value>Valor:</value>
   </data>
   <data name="Excluir" xml:space="preserve">
-    <value>削除</value>
+    <value>Excluir</value>
   </data>
   <data name="Cancelar" xml:space="preserve">
-    <value>キャンセル</value>
+    <value>Cancelar</value>
   </data>
   <data name="Editar Saída" xml:space="preserve">
-    <value>支出を編集</value>
+    <value>Editar Saída</value>
   </data>
   <data name="Registro atualizado com sucesso ✔" xml:space="preserve">
-    <value>記録が正常に更新されました ✔</value>
+    <value>Registro atualizado com sucesso ✔</value>
   </data>
   <data name="Voltar para lista" xml:space="preserve">
-    <value>リストに戻る</value>
+    <value>Voltar para lista</value>
   </data>
   <data name="Descrição" xml:space="preserve">
-    <value>説明</value>
+    <value>Descrição</value>
   </data>
   <data name="Nome Despesa" xml:space="preserve">
-    <value>経費名</value>
+    <value>Nome Despesa</value>
   </data>
   <data name="Valor" xml:space="preserve">
-    <value>金額</value>
+    <value>Valor</value>
   </data>
   <data name="Resetar Senha - Finalizacao" xml:space="preserve">
-    <value>パスワードリセット - 完了</value>
+    <value>Resetar Senha - Finalizacao</value>
   </data>
   <data name="Redefinir Senha" xml:space="preserve">
-    <value>パスワードを再設定</value>
+    <value>Redefinir Senha</value>
   </data>
   <data name="Confirme a Senha" xml:space="preserve">
-    <value>パスワードを確認</value>
+    <value>Confirme a Senha</value>
   </data>
   <data name="Enviando..." xml:space="preserve">
-    <value>送信中...</value>
+    <value>Enviando...</value>
   </data>
   <data name="As senhas não conferem." xml:space="preserve">
-    <value>パスワードが一致しません。</value>
+    <value>As senhas não conferem.</value>
   </data>
   <data name="Senha redefinida com sucesso! Você será redirecionado para o login." xml:space="preserve">
-    <value>パスワードが正常に再設定されました！ログイン画面にリダイレクトされます。</value>
+    <value>Senha redefinida com sucesso! Você será redirecionado para o login.</value>
   </data>
   <data name="Erro ao redefinir senha:" xml:space="preserve">
-    <value>パスワードの再設定エラー:</value>
+    <value>Erro ao redefinir senha:</value>
   </data>
   <data name="Erro inesperado:" xml:space="preserve">
-    <value>予期せぬエラー:</value>
+    <value>Erro inesperado:</value>
   </data>
   <data name="Home" xml:space="preserve">
-    <value>ホーム</value>
+    <value>Home</value>
   </data>
   <data name="BoasVindas" xml:space="preserve">
-    <value>家計簿へようこそ — 日本式で家計を管理しましょう</value>
+    <value>Bem-vindo ao Kakeibo — Seu controle financeiro do jeito japonês</value>
   </data>
   <data name="Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira." xml:space="preserve">
-    <value>家計の整理は複雑である必要はありません。Kakeiboは、お金がどこに使われているかを理解し、より意識的な意思決定を行い、健全な家計の習慣を築くのに役立つよう作成されました。すべてがシンプルで直感的であり、伝統的な日本の家計管理方法からインスピレーションを得ています。</value>
+    <value>Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira.</value>
   </data>
   <data name="Com o Kakeibo, você pode:" xml:space="preserve">
-    <value>Kakeiboでできること:</value>
+    <value>Com o Kakeibo, você pode:</value>
   </data>
   <data name="Registrar seus gastos rapidamente" xml:space="preserve">
-    <value>支出をすばやく記録する</value>
+    <value>Registrar seus gastos rapidamente</value>
   </data>
   <data name="Estabelecer metas de economia" xml:space="preserve">
-    <value>貯蓄目標を設定する</value>
+    <value>Estabelecer metas de economia</value>
   </data>
   <data name="Acompanhar gráficos claros e objetivos" xml:space="preserve">
-    <value>明確で客観的なグラフを追跡する</value>
+    <value>Acompanhar gráficos claros e objetivos</value>
   </data>
   <data name="Refletir sobre seus hábitos de consumo" xml:space="preserve">
-    <value>消費習慣を振り返る</value>
+    <value>Refletir sobre seus hábitos de consumo</value>
   </data>
   <data name="Planejar um futuro financeiro mais tranquilo" xml:space="preserve">
-    <value>より安心な経済的な未来を計画する</value>
+    <value>Planejar um futuro financeiro mais tranquilo</value>
   </data>
   <data name="Dê o primeiro passo para transformar sua relação com o dinheiro." xml:space="preserve">
-    <value>お金との関係を変えるための一歩を踏み出しましょう。</value>
+    <value>Dê o primeiro passo para transformar sua relação com o dinheiro.</value>
   </data>
   <data name="Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças." xml:space="preserve">
-    <value>Kakeibo: あなたの家計にシンプルさ、意識、そしてバランスを。</value>
+    <value>Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças.</value>
   </data>
   <data name="Lista de Despesas" xml:space="preserve">
-    <value>経費リスト</value>
+    <value>Lista de Despesas</value>
   </data>
   <data name="Listagem das Despesas Mais Comuns" xml:space="preserve">
-    <value>最も一般的な経費のリスト</value>
+    <value>Listagem das Despesas Mais Comuns</value>
   </data>
   
   <data name="ID" xml:space="preserve">
     <value>ID</value>
   </data>
   <data name="Tipo de Despesa" xml:space="preserve">
-    <value>経費の種類</value>
+    <value>Tipo de Despesa</value>
   </data>
   <data name="Despesa" xml:space="preserve">
-    <value>経費</value>
+    <value>Despesa</value>
   </data>
   <data name="Ações" xml:space="preserve">
-    <value>アクション</value>
+    <value>Ações</value>
   </data>
   <data name="Editar" xml:space="preserve">
-    <value>編集</value>
+    <value>Editar</value>
   </data>
   <data name="Adicionar" xml:space="preserve">
-    <value>追加</value>
+    <value>Adicionar</value>
   </data>
   <data name="Lista de Despesas - Novo" xml:space="preserve">
-    <value>経費リスト - 新規</value>
+    <value>Lista de Despesas - Novo</value>
   </data>
   <data name="Nova Despesa" xml:space="preserve">
-    <value>新しい経費</value>
+    <value>Nova Despesa</value>
   </data>
   <data name="Salvando..." xml:space="preserve">
-    <value>保存中...</value>
+    <value>Salvando...</value>
   </data>
   <data name="Nome da Despesa" xml:space="preserve">
-    <value>経費名</value>
+    <value>Nome da Despesa</value>
   </data>
   <data name="Lista de Despesas - Editar" xml:space="preserve">
-    <value>経費リスト - 編集</value>
+    <value>Lista de Despesas - Editar</value>
   </data>
   <data name="Editar Despesa" xml:space="preserve">
-    <value>経費を編集</value>
+    <value>Editar Despesa</value>
   </data>
   <data name="Carregando..." xml:space="preserve">
-    <value>読み込み中...</value>
+    <value>Carregando...</value>
   </data>
   <data name="Lista de Despesas - Excluir" xml:space="preserve">
-    <value>経費リスト - 削除</value>
+    <value>Lista de Despesas - Excluir</value>
   </data>
   <data name="Excluir Despesa" xml:space="preserve">
-    <value>経費を削除</value>
+    <value>Excluir Despesa</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>ログイン</value>
+    <value>Login</value>
   </data>
   <data name="Email" xml:space="preserve">
-    <value>Eメール</value>
+    <value>Email</value>
   </data>
   
   <data name="Entrar" xml:space="preserve">
-    <value>入る</value>
+    <value>Entrar</value>
   </data>
   <data name="Logout" xml:space="preserve">
-    <value>ログアウト</value>
+    <value>Logout</value>
   </data>
   <data name="Você será desconectado." xml:space="preserve">
-    <value>ログアウトされます。</value>
+    <value>Você será desconectado.</value>
   </data>
   <data name="Sair" xml:space="preserve">
-    <value>終了</value>
+    <value>Sair</value>
   </data>
   <data name="Nova Renda" xml:space="preserve">
-    <value>新しい収入</value>
+    <value>Nova Renda</value>
   </data>
   <data name="Selecione" xml:space="preserve">
-    <value>選択</value>
+    <value>Selecione</value>
   </data>
   <data name="Falha ao carregar tipos de entrada" xml:space="preserve">
-    <value>入力タイプの読み込みに失敗しました</value>
+    <value>Falha ao carregar tipos de entrada</value>
   </data>
   <data name="Erro inesperado ao carregar dados" xml:space="preserve">
-    <value>データの読み込み中に予期せぬエラーが発生しました</value>
+    <value>Erro inesperado ao carregar dados</value>
   </data>
   <data name="Erro ao salvar" xml:space="preserve">
-    <value>保存エラー</value>
+    <value>Erro ao salvar</value>
   </data>
   <data name="Registro de Nova Despesa" xml:space="preserve">
-    <value>新規経費の登録</value>
+    <value>Registro de Nova Despesa</value>
   </data>
   <data name="Suas informações foram gravadas com sucesso." xml:space="preserve">
-    <value>情報が正常に記録されました。</value>
+    <value>Suas informações foram gravadas com sucesso.</value>
   </data>
   <data name="Clique aqui para retornar." xml:space="preserve">
-    <value>ここをクリックして戻る</value>
+    <value>Clique aqui para retornar.</value>
   </data>
   <data name="Registro de Usuário" xml:space="preserve">
-    <value>ユーザー登録</value>
+    <value>Registro de Usuário</value>
   </data>
   <data name="Senha" xml:space="preserve">
-    <value>パスワード</value>
+    <value>Senha</value>
   </data>
   <data name="Registrar" xml:space="preserve">
-    <value>登録</value>
+    <value>Registrar</value>
   </data>
   <data name="Usuário criado com sucesso! Redirecionando para o login..." xml:space="preserve">
-    <value>ユーザーが正常に作成されました！ログイン画面にリダイレクトしています...</value>
+    <value>Usuário criado com sucesso! Redirecionando para o login...</value>
   </data>
   <data name="Falha na comunicação com o servidor ou dados inválidos." xml:space="preserve">
-    <value>サーバーとの通信失敗、または無効なデータです。</value>
+    <value>Falha na comunicação com o servidor ou dados inválidos.</value>
   </data>
   <data name="Erro ao registrar" xml:space="preserve">
-    <value>登録エラー</value>
+    <value>Erro ao registrar</value>
   </data>
   <data name="Rendas" xml:space="preserve">
-    <value>収入</value>
+    <value>Rendas</value>
   </data>
   <data name="Rendas do Mês" xml:space="preserve">
-    <value>月間収入</value>
+    <value>Rendas do Mês</value>
   </data>
   <data name="Rendas do Mês:" xml:space="preserve">
-    <value>月間収入:</value>
+    <value>Rendas do Mês:</value>
   </data>
   <data name="Carregando Rendas..." xml:space="preserve">
-    <value>収入を読み込み中...</value>
+    <value>Carregando Rendas...</value>
   </data>
   <data name="Nenhuma Renda encontrada." xml:space="preserve">
-    <value>収入は見つかりませんでした。</value>
+    <value>Nenhuma Renda encontrada.</value>
   </data>
   <data name="TOTAL:" xml:space="preserve">
-    <value>合計:</value>
+    <value>TOTAL:</value>
   </data>
   <data name="Excluir Renda" xml:space="preserve">
-    <value>収入を削除</value>
+    <value>Excluir Renda</value>
   </data>
   <data name="Carregando dados..." xml:space="preserve">
-    <value>データを読み込み中...</value>
+    <value>Carregando dados...</value>
   </data>
   <data name="Renda excluída com sucesso" xml:space="preserve">
-    <value>収入が正常に削除されました</value>
+    <value>Renda excluída com sucesso</value>
   </data>
   <data name="Editar Renda" xml:space="preserve">
-    <value>収入を編集</value>
+    <value>Editar Renda</value>
   </data>
   <data name="Renda atualizada com sucesso" xml:space="preserve">
-    <value>収入が正常に更新されました</value>
+    <value>Renda atualizada com sucesso</value>
   </data>
   <data name="Resetar Senha" xml:space="preserve">
-    <value>パスワードをリセット</value>
+    <value>Resetar Senha</value>
   </data>
   <data name="Enviar Link de Reset" xml:space="preserve">
-    <value>リセットリンクを送信</value>
+    <value>Enviar Link de Reset</value>
   </data>
   <data name="E-mail de redefinição de senha enviado com sucesso!" xml:space="preserve">
-    <value>パスワード再設定用のEメールが正常に送信されました！</value>
+    <value>E-mail de redefinição de senha enviado com sucesso!</value>
   </data>
   <data name="Erro ao enviar" xml:space="preserve">
-    <value>送信エラー</value>
+    <value>Erro ao enviar</value>
   </data>
   <data name="Erro inesperado" xml:space="preserve">
-    <value>予期せぬエラー</value>
+    <value>Erro inesperado</value>
   </data>
   <data name="Saídas" xml:space="preserve">
-    <value>支出</value>
+    <value>Saídas</value>
   </data>
   <data name="Saídas do Mês" xml:space="preserve">
-    <value>月間支出</value>
+    <value>Saídas do Mês</value>
   </data>
   <data name="Saídas do Dia:" xml:space="preserve">
-    <value>日々の支出:</value>
+    <value>Saídas do Dia:</value>
   </data>
   <data name="Selecione um dia no calendário." xml:space="preserve">
-    <value>カレンダーで日付を選択してください。</value>
+    <value>Selecione um dia no calendário.</value>
   </data>
   <data name="Nenhuma saída encontrada." xml:space="preserve">
-    <value>支出は見つかりませんでした。</value>
+    <value>Nenhuma saída encontrada.</value>
   </data>
   <data name="Nova Saída" xml:space="preserve">
-    <value>新しい支出</value>
+    <value>Nova Saída</value>
   </data>
   <data name="Tipos de Despesas" xml:space="preserve">
-    <value>経費の種類</value>
+    <value>Tipos de Despesas</value>
   </data>
   <data name="Tipos de Despesa - Editar" xml:space="preserve">
-    <value>経費の種類 - 編集</value>
+    <value>Tipos de Despesa - Editar</value>
   </data>
   <data name="Editar Tipo de Despesa" xml:space="preserve">
-    <value>経費の種類を編集</value>
+    <value>Editar Tipo de Despesa</value>
   </data>
   <data name="Tipos de Despesa - Excluir" xml:space="preserve">
-    <value>経費の種類 - 削除</value>
+    <value>Tipos de Despesa - Excluir</value>
   </data>
   <data name="Excluir Tipo de Despesa" xml:space="preserve">
-    <value>経費の種類を削除</value>
+    <value>Excluir Tipo de Despesa</value>
   </data>
   <data name="Nome do Tipo de Despesa" xml:space="preserve">
-    <value>経費の種類の名前</value>
+    <value>Nome do Tipo de Despesa</value>
   </data>
   <data name="Tipo de Despesa não encontrado." xml:space="preserve">
-    <value>経費の種類が見つかりませんでした。</value>
+    <value>Tipo de Despesa não encontrado.</value>
   </data>
   <data name="Tipos de Despesa - Novo" xml:space="preserve">
-    <value>経費の種類 - 新規</value>
+    <value>Tipos de Despesa - Novo</value>
   </data>
   <data name="Novo Tipo de Despesa" xml:space="preserve">
-    <value>新しい経費の種類</value>
+    <value>Novo Tipo de Despesa</value>
   </data>
   <data name="O nome do tipo de despesa é obrigatório." xml:space="preserve">
-    <value>経費の種類の名前は必須です。</value>
+    <value>O nome do tipo de despesa é obrigatório.</value>
   </data>
   <data name="Tipos de Rendas" xml:space="preserve">
-    <value>収入の種類</value>
+    <value>Tipos de Rendas</value>
   </data>
   <data name="Tipo de Renda" xml:space="preserve">
-    <value>収入の種類</value>
+    <value>Tipo de Renda</value>
   </data>
   <data name="Tipos de Rendas - Editar" xml:space="preserve">
-    <value>収入の種類 - 編集</value>
+    <value>Tipos de Rendas - Editar</value>
   </data>
   <data name="Editar Tipo de Renda" xml:space="preserve">
-    <value>収入の種類を編集</value>
+    <value>Editar Tipo de Renda</value>
   </data>
   <data name="Tipos de Rendas - Excluir" xml:space="preserve">
-    <value>収入の種類 - 削除</value>
+    <value>Tipos de Rendas - Excluir</value>
   </data>
   <data name="Excluir Tipo de Renda" xml:space="preserve">
-    <value>収入の種類を削除</value>
+    <value>Excluir Tipo de Renda</value>
   </data>
   <data name="Nome do Tipo de Renda" xml:space="preserve">
-    <value>収入の種類の名前</value>
+    <value>Nome do Tipo de Renda</value>
   </data>
   <data name="Tipo de Renda não encontrado." xml:space="preserve">
-    <value>収入の種類が見つかりませんでした。</value>
+    <value>Tipo de Renda não encontrado.</value>
   </data>
   <data name="Tipos de Rendas - Novo" xml:space="preserve">
-    <value>収入の種類 - 新規</value>
+    <value>Tipos de Rendas - Novo</value>
   </data>
   <data name="Novo Tipo de Renda" xml:space="preserve">
-    <value>新しい収入の種類</value>
+    <value>Novo Tipo de Renda</value>
   </data>
   <data name="O nome do tipo de renda é obrigatório." xml:space="preserve">
-    <value>収入の種類の名前は必須です。</value>
+    <value>O nome do tipo de renda é obrigatório.</value>
   </data></root>
