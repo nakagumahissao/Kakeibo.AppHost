@@ -1,11 +1,9 @@
 ﻿@page "/listadespesas/excluir/{id:int}"
 @using Kakeibo.AppHost.Web.Models
-
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<ListaDespesas_Excluir> L
+@inject IStringLocalizer<SharedResources> L
 
 @rendermode InteractiveServer
 

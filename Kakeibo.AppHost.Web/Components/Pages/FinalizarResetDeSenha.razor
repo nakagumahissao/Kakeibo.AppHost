@@ -1,13 +1,10 @@
 ﻿@page "/resetpassword/{UserId}"
 @using System.ComponentModel.DataAnnotations
-
-
 @rendermode InteractiveServer
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<FinalizarResetDeSenha> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Resetar Senha - Finalizacao"]</PageTitle>
 

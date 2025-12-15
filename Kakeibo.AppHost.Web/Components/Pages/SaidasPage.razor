@@ -1,13 +1,11 @@
 ﻿@page "/saidaspage/{userId}/{Day:int}/{Month:int}/{Year:int}"
 @using System.Globalization
 @using Kakeibo.AppHost.Web.Models
-
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<SaidasPage> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Saídas"]</PageTitle>
 

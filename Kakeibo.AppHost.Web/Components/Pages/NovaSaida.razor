@@ -1,15 +1,13 @@
 ﻿@page "/saidaspage/new/{day:int}/{month:int}/{year:int}"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
-
 @using System.Net.Http.Json
 @using Kakeibo.AppHost.Web.Models
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
 @inject ILogger<Kakeibo.AppHost.Web.Components.Pages.NovaSaida> Logger
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<NovaSaida> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Registro de Nova Despesa"]</PageTitle>
 

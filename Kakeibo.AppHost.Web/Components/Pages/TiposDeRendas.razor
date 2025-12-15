@@ -1,12 +1,11 @@
 ﻿@page "/tiposrendas"
 @using Microsoft.AspNetCore.Authorization
-
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<TiposDeRendas> L
+@inject IStringLocalizer<SharedResources> L
 
 @using Kakeibo.AppHost.Web.Models
 

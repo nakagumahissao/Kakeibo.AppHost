@@ -1,12 +1,13 @@
 ﻿@page "/tiposdespesas"
 @using Microsoft.AspNetCore.Authorization
 @using Kakeibo.AppHost.Web.Models
+@using System.Globalization
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<TiposDeDespesas> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Tipos de Despesas"]</PageTitle>
 

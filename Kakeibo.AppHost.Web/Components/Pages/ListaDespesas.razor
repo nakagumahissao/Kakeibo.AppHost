@@ -1,14 +1,12 @@
 ﻿@page "/listadespesas"
 @using Microsoft.AspNetCore.Authorization
 @using Kakeibo.AppHost.Web.Models
-
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<ListaDespesas> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Lista de Despesas"]</PageTitle>
 

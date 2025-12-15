@@ -1,11 +1,9 @@
 ﻿@page "/logout"
 @using Microsoft.AspNetCore.Components.Authorization
-
-
 @inject IJSRuntime JS
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Nav
-@inject IStringLocalizer<Logout> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Logout"]</PageTitle>
 

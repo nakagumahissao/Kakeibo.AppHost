@@ -1,10 +1,9 @@
 ﻿@page "/tiposrendas/editar/{id:int}"
 @using Kakeibo.AppHost.Web.Models
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<TiposRenda_Editar> L
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveServer
 
 <PageTitle>@L["Tipos de Rendas - Editar"]</PageTitle>

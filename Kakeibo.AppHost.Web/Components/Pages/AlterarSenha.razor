@@ -1,13 +1,11 @@
 ﻿@page "/alterar-senha"
 @using Kakeibo.AppHost.Web.Services
-
 @rendermode InteractiveServer
-
 @inject IHttpClientFactory HttpFactory
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<AlterarSenha> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Alterar Senha"]</PageTitle>
 

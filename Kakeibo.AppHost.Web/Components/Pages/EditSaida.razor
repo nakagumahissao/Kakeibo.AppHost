@@ -1,13 +1,10 @@
 ﻿@page "/saidaspage/edit/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
 @using Microsoft.AspNetCore.Authorization
-
-
 @rendermode InteractiveServer
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<EditSaida> L
+@inject IStringLocalizer<SharedResources> L
 
 <h3 style="padding-bottom:10px;">
     @L["Editar Saída"]

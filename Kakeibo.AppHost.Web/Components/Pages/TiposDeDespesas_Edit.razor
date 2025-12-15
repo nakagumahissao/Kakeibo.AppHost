@@ -1,10 +1,9 @@
 ﻿@page "/tiposdespesas/editar/{id:decimal}"
 @using Kakeibo.AppHost.Web.Models
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<TiposDeDespesas_Edit> L
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveServer
 
 <PageTitle>@L["Tipos de Despesa - Editar"]</PageTitle>

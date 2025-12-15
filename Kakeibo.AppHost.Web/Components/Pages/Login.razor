@@ -1,12 +1,10 @@
 ﻿@page "/login"
 @using Kakeibo.AppHost.Web.Models
-
 @rendermode InteractiveServer
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject ILogger<Login> Logger
-@inject IStringLocalizer<Login> L
+@inject IStringLocalizer<SharedResources> L
 
 <PageTitle>@L["Login"]</PageTitle>
 

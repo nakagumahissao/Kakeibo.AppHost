@@ -1,11 +1,10 @@
 ﻿@page "/rendas"
 @using Microsoft.AspNetCore.Authorization
 @using System.Globalization
-
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<Calendar> L
+@inject IStringLocalizer<SharedResources> L
 @using Kakeibo.AppHost.Web.Models
 
 <PageTitle>@L["Rendas"]</PageTitle>

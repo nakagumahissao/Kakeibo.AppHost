@@ -1,13 +1,11 @@
 ﻿@page "/saidaspage/delete/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
 @using Microsoft.AspNetCore.Components.Authorization
-
 @rendermode InteractiveServer
-
 @inject IHttpClientFactory HttpFactory
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
-@inject IStringLocalizer<DeleteSaida> L
+@inject IStringLocalizer<SharedResources> L
 
 <h3 style="padding-bottom:10px;">
     @L["Excluir Saída"]

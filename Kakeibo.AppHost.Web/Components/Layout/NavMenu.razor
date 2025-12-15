@@ -2,6 +2,9 @@
 @inject IJSRuntime JS
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Nav
+@rendermode InteractiveServer
+@inject IStringLocalizer<SharedResources> L
+
 
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 
@@ -11,76 +14,74 @@
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="@L["Navigation menu"]" class="navbar-toggler" />
 
 <div class="nav-scrollable">
     <nav class="nav flex-column" style="width: 250px;">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill" aria-hidden="true"></span> @L["Home"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="calendar">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Calendário
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Calendário"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="tiposdespesas">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Tipos de Despesas
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Tipos de Despesas"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="tiposrendas">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Tipos de Rendas
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Tipos de Rendas"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="listadespesas">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Despesas Comuns
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Lista de Despesas"]
             </NavLink>
         </div>
 
-        <!-- Custom vertical dropdown -->
         <div class="nav-item px-3">
             <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                <span class="bi bi-list-nested" aria-hidden="true"></span> Registros
+                <span class="bi bi-list-nested" aria-hidden="true"></span> @L["Registros"]
             </a>
             <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                <NavLink class="nav-link" href="rendas">Entradas</NavLink>
+                <NavLink class="nav-link" href="rendas">@L["Rendas"]</NavLink>
 
                 @if (tokenUserId is not null && tokenUserId != "")
                 {
                     <NavLink class="nav-link" href="@($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                        Despesas
+                        @L["Saídas"]
                     </NavLink>
                 }
                 else
                 {
                     <NavLink class="nav-link" href="@($"/saidaspage/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                        Despesas
+                        @L["Saídas"]
                     </NavLink>
                 }
             </div>
         </div>
 
-        <!-- ================= USERS / ACCOUNT MENU ================= -->
         @if (tokenUserId is not null && tokenUserId != "")
         {
             <div class="nav-item px-3">
                 <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                    <span class="bi bi bi-list-nested"></span> Profile
+                    <span class="bi bi-list-nested"></span> @L["Profile"]
                 </a>
 
                 <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                    <NavLink class="nav-link" href="/alterar-senha">Alterar Senha</NavLink>
-                    <NavLink class="nav-link" href="/resetar-senha">Resetar Senha</NavLink>
+                    <NavLink class="nav-link" href="/alterar-senha">@L["Alterar Senha"]</NavLink>
+                    <NavLink class="nav-link" href="/resetar-senha">@L["Resetar Senha"]</NavLink>
 
-                    <button class="nav-link btn btn-link text-start" @onclick="Logout">Sair</button>
+                    <button class="nav-link btn btn-link text-start" @onclick="Logout">@L["Sair"]</button>
                 </div>
             </div>
         }
@@ -89,12 +90,12 @@
             <div class="nav-item px-3">
                 <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
                     <span class="bi bi-list-nested" aria-hidden="true"></span>
-                    Usuários
+                    @L["Usuários"]
                 </a>
 
                 <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                    <NavLink class="nav-link" href="/login">Entrar</NavLink>
-                    <NavLink class="nav-link" href="/register-user">Registrar</NavLink>
+                    <NavLink class="nav-link" href="/login">@L["Entrar"]</NavLink>
+                    <NavLink class="nav-link" href="/register-user">@L["Registrar"]</NavLink>
                 </div>
             </div>
         }
