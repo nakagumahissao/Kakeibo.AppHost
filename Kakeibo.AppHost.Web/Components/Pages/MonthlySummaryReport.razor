@@ -16,22 +16,16 @@
 
 <h1 class="text-center">@L["Resumo Geral Mensal"]</h1>
 
-<div class="d-flex">
-</div>
-
-<!-- ================= CALENDAR ================= -->
 <div class="d-flex justify-content-center mt-4">
     <div style="width:35%;">
         @CalendarHtml()
     </div>
 </div>
 
-<!-- ================= MONTH INFO ================= -->
 <div class="text-center my-4" style="width:100%;">
     <h2 style="color: navy;">@L["Mês Selecionado:"] @selectedMonthDisplay</h2>
 </div>
 
-<!-- ================= OWNED MONEY ================= -->
 @if (ownedMoney != null)
 {
     <div class="mt-4 d-flex justify-content-center">
@@ -63,7 +57,6 @@
     </div>
 }
 
-<!-- ================= MONTHLY EXPENSES ================= -->
 @if (monthlyExpenses != null)
 {
     <div class="mt-4 d-flex justify-content-center">
@@ -199,6 +192,7 @@
     {
         var culture = CultureInfo.CurrentCulture;
         var dtf = culture.DateTimeFormat;
+        var today = DateTime.Today;
 
         var firstDay = new DateTime(currentYear, currentMonth, 1);
         int daysInMonth = DateTime.DaysInMonth(currentYear, currentMonth);
@@ -255,14 +249,29 @@
         /* Grid */
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
+
+        bool isCurrentMonthAndYear = (currentYear == today.Year && currentMonth == today.Month);
+
         for (int i = 0; i < totalCells; i++)
         {
             builder.OpenElement(seq++, "div");
+
+            string cellStyle = "width:14.28%;height:40px;";
+            bool isToday = isCurrentMonthAndYear && (i >= offset && dayCounter == today.Day);
+
+            if (isToday)
+            {
+                // Light yellow background for current date
+                cellStyle += "background-color: #ffffcc; font-weight: bold;";
+            }
+
             builder.AddAttribute(seq++, "class", "border text-center p-1");
-            builder.AddAttribute(seq++, "style", "width:14.28%;height:40px;");
+            builder.AddAttribute(seq++, "style", cellStyle);
 
             if (i >= offset && dayCounter <= daysInMonth)
+            {
                 builder.AddContent(seq++, dayCounter++);
+            }
 
             builder.CloseElement();
         }
