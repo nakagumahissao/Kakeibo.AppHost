@@ -1,0 +1,271 @@
+﻿@page "/monthlysummary"
+@page "/monthlysummary/{Year:int}/{Month:int}"
+
+@using System.Globalization
+@using System.Net
+@using Kakeibo.AppHost.Web.Models
+
+@inject IHttpClientFactory HttpFactory
+@inject NavigationManager NavManager
+@inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+@inject IStringLocalizer<SharedResources> L
+
+@rendermode InteractiveServer
+
+<PageTitle>@L["Resumo Geral Mensal"]</PageTitle>
+
+<h1 class="text-center">@L["Resumo Geral Mensal"]</h1>
+
+<div class="d-flex">
+</div>
+
+<!-- ================= CALENDAR ================= -->
+<div class="d-flex justify-content-center mt-4">
+    <div style="width:35%;">
+        @CalendarHtml()
+    </div>
+</div>
+
+<!-- ================= MONTH INFO ================= -->
+<div class="text-center my-4" style="width:100%;">
+    <h2 style="color: navy;">@L["Mês Selecionado:"] @selectedMonthDisplay</h2>
+</div>
+
+<!-- ================= OWNED MONEY ================= -->
+@if (ownedMoney != null)
+{
+    <div class="mt-4 d-flex justify-content-center">
+        <div style="width:60%;">
+            <h3 class="mb-2">@L["Owned Money"]</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>@L["Total de Rendas"]</th>
+                        <td class="text-end">
+                            @ownedMoney.MonthlyTotalIncome.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@L["Despesas Fixas"]</th>
+                        <td class="text-end text-danger">
+                            @ownedMoney.TotalFixedExpenses.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr class="table-success fw-bold">
+                        <th>@L["Saldo Disponível"]</th>
+                        <td class="text-end">
+                            @ownedMoney.IncomeMinusFixedExp.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- ================= MONTHLY EXPENSES ================= -->
+@if (monthlyExpenses != null)
+{
+    <div class="mt-4 d-flex justify-content-center">
+        <div style="width:60%;">
+            <h3 class="mb-2">@L["Monthly Expenses"]</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>@L["Saques Bancários"]</th>
+                        <td class="text-end">
+                            @monthlyExpenses.BankWithdrawals.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@L["Alimentação"]</th>
+                        <td class="text-end">
+                            @monthlyExpenses.FoodCosts.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@L["Outras Despesas"]</th>
+                        <td class="text-end">
+                            @monthlyExpenses.OtherExpenses.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr class="table-warning fw-bold">
+                        <th>@L["Total do Mês"]</th>
+                        <td class="text-end text-danger">
+                            @monthlyExpenses.MonthlyTotal.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr class="table-success fw-bold">
+                        <th>@L["Saldo para o Próximo Mês"]</th>
+                        <td class="text-end">
+                            @monthlyExpenses.SaldoParaMesSeguinte.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+    /* ================= ROUTE PARAMS ================= */
+    [Parameter] public int? Year { get; set; }
+    [Parameter] public int? Month { get; set; }
+
+    /* ================= STATE ================= */
+    private int currentYear;
+    private int currentMonth;
+
+    private int prevYear;
+    private int prevMonth;
+    private int nextYear;
+    private int nextMonth;
+
+    private string selectedMonthDisplay = string.Empty;
+
+    private OwnedMoney? ownedMoney;
+    private MonthlyExpensesTotals? monthlyExpenses;
+
+    /* ================= LIFECYCLE ================= */
+    protected override async Task OnParametersSetAsync()
+    {
+        var token = TokenService.GetToken();
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            NavManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var today = DateTime.Today;
+
+        currentYear = Year ?? today.Year;
+        currentMonth = Month ?? today.Month;
+
+        var current = new DateTime(currentYear, currentMonth, 1);
+
+        var prev = current.AddMonths(-1);
+        var next = current.AddMonths(1);
+
+        prevYear = prev.Year;
+        prevMonth = prev.Month;
+
+        nextYear = next.Year;
+        nextMonth = next.Month;
+
+        selectedMonthDisplay = current.ToString("MMMM yyyy", CultureInfo.CurrentCulture);
+
+        await LoadMonthlyDataAsync();
+    }
+
+    /* ================= DATA ================= */
+    private async Task LoadMonthlyDataAsync()
+    {
+        var userId = TokenService.GetUserIdFromToken();
+        var client = HttpFactory.CreateClient("apis");
+
+        // OwnedMoney
+        try
+        {
+            var response = await client.GetAsync(
+                $"ownedmoney/{currentYear}/{currentMonth:00}/{userId}");
+            if (response.IsSuccessStatusCode)
+                ownedMoney = await response.Content.ReadFromJsonAsync<OwnedMoney>();
+            else
+                ownedMoney = new OwnedMoney { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, MonthlyTotalIncome = 0, TotalFixedExpenses = 0, IncomeMinusFixedExp = 0 };
+        }
+        catch
+        {
+            ownedMoney = new OwnedMoney { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, MonthlyTotalIncome = 0, TotalFixedExpenses = 0, IncomeMinusFixedExp = 0 };
+        }
+
+        // MonthlyExpenses
+        try
+        {
+            var response = await client.GetAsync(
+                $"monthlyexpenses/{currentYear}/{currentMonth:00}/{userId}");
+            if (response.IsSuccessStatusCode)
+                monthlyExpenses = await response.Content.ReadFromJsonAsync<MonthlyExpensesTotals>();
+            else
+                monthlyExpenses = new MonthlyExpensesTotals { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, BankWithdrawals = 0, FoodCosts = 0, OtherExpenses = 0, MonthlyTotal = 0, SaldoParaMesSeguinte = 0 };
+        }
+        catch
+        {
+            monthlyExpenses = new MonthlyExpensesTotals { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, BankWithdrawals = 0, FoodCosts = 0, OtherExpenses = 0, MonthlyTotal = 0, SaldoParaMesSeguinte = 0 };
+        }
+    }
+
+    /* ================= CALENDAR ================= */
+    private RenderFragment CalendarHtml() => builder =>
+    {
+        var culture = CultureInfo.CurrentCulture;
+        var dtf = culture.DateTimeFormat;
+
+        var firstDay = new DateTime(currentYear, currentMonth, 1);
+        int daysInMonth = DateTime.DaysInMonth(currentYear, currentMonth);
+
+        int firstDayOfWeek = (int)dtf.FirstDayOfWeek;
+        int offset = ((int)firstDay.DayOfWeek - firstDayOfWeek + 7) % 7;
+
+        int totalCells = (offset + daysInMonth) <= 35 ? 35 : 42;
+        int dayCounter = 1;
+        int seq = 0;
+
+        /* Header */
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex justify-content-between align-items-center mb-2");
+
+        // Previous month button
+        builder.OpenElement(seq++, "a");
+        builder.AddAttribute(seq++, "class", "btn btn-secondary");
+        builder.AddAttribute(seq++, "style", "width:1.5cm; height:1.1cm; font-size:1.5rem; display:flex; align-items:center; justify-content:center;");
+        builder.AddAttribute(seq++, "href", $"/monthlysummary/{prevYear}/{prevMonth}");
+        builder.AddContent(seq++, "<");
+        builder.CloseElement();
+
+        // Month name
+        builder.OpenElement(seq++, "strong");
+        builder.AddAttribute(seq++, "style", "font-size:1.3rem;");
+        builder.AddContent(seq++, firstDay.ToString("MMMM yyyy", culture));
+        builder.CloseElement();
+
+        // Next month button
+        builder.OpenElement(seq++, "a");
+        builder.AddAttribute(seq++, "class", "btn btn-secondary");
+        builder.AddAttribute(seq++, "style", "width:1.5cm; height:1.1cm; font-size:1.5rem; display:flex; align-items:center; justify-content:center;");
+        builder.AddAttribute(seq++, "href", $"/monthlysummary/{nextYear}/{nextMonth}");
+        builder.AddContent(seq++, ">");
+        builder.CloseElement();
+
+        builder.CloseElement();
+
+        /* Weekdays */
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex");
+        for (int i = 0; i < 7; i++)
+        {
+            int idx = (i + firstDayOfWeek) % 7;
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "text-center p-1 border");
+            builder.AddAttribute(seq++, "style", "flex:1;background-color:lightgreen;");
+            builder.AddContent(seq++, dtf.AbbreviatedDayNames[idx]);
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+
+        /* Grid */
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
+        for (int i = 0; i < totalCells; i++)
+        {
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "border text-center p-1");
+            builder.AddAttribute(seq++, "style", "width:14.28%;height:40px;");
+
+            if (i >= offset && dayCounter <= daysInMonth)
+                builder.AddContent(seq++, dayCounter++);
+
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+    };
+}

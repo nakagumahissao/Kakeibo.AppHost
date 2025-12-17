@@ -1,6 +1,8 @@
 ﻿@page "/saidaspage/delete/{SaidaId:decimal}/{Day:int}/{Month:int}/{Year:int}"
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
+
 @inject IHttpClientFactory HttpFactory
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Nav
@@ -15,34 +17,30 @@
 {
     <p>@L["Carregando registro..."]</p>
 }
-else if (deleted)
-{
-    <div class="alert alert-success">
-        @L["Registro excluído ✔"]
-    </div>
-    <a class="btn btn-primary" href="/saidaspage/@Day/@Month/@Year">
-        @L["Voltar"]
-    </a>
-}
 else
 {
-    <div class="card p-3">
-        <p>
-            <b>@L["Descrição:"]</b> @saida?.Descricao
-        </p>
-        <p>
-            <b>@L["Valor:"]</b> @saida?.ValorDespesa.ToString("N2")
-        </p>
-    </div>
+    <EditForm Model="deleteModel" OnValidSubmit="ConfirmDelete" FormName="DeleteSaidasForm">
+        <DataAnnotationsValidator />
 
-    <div class="d-flex align-items-center mt-2 gap-2">
-        <button class="btn btn-danger" @onclick="ConfirmDelete">
-            🗑 @L["Excluir"]
-        </button>
-        <a class="btn btn-primary" href="/saidaspage/@UserId/@Day/@Month/@Year">
-            @L["Cancelar"]
-        </a>
-    </div>
+        <div class="card p-3">
+            <p>
+                <b>@L["Descrição:"]</b> @saida?.Descricao
+            </p>
+            <p>
+                <b>@L["Valor:"]</b> @saida?.ValorDespesa.ToString("N2")
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center mt-2 gap-2">
+            <button type="submit" class="btn btn-danger">
+                🗑 @L["Excluir"]
+            </button>
+
+            <a class="btn btn-primary" href="/saidaspage/@UserId/@Day/@Month/@Year">
+                @L["Cancelar"]
+            </a>
+        </div>
+    </EditForm>
 }
 
 @code {
@@ -54,7 +52,9 @@ else
     private Kakeibo.AppHost.Web.Models.Saidas? saida;
     private bool deleted;
 
-    public string? UserId = string.Empty;
+    public string? UserId { get; set; } = string.Empty;
+
+    private DeleteSaidaModel deleteModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,17 +71,26 @@ else
         saida = await client.GetFromJsonAsync<Kakeibo.AppHost.Web.Models.Saidas>(
             $"saidas/{SaidaId}"
         );
+
+        deleteModel.SaidaId = SaidaId;
     }
 
     private async Task ConfirmDelete()
     {
         var client = HttpFactory.CreateClient("apis");
-        var resp = await client.DeleteAsync($"saidas/{SaidaId}");
+        var resp = await client.DeleteAsync($"saidas/{deleteModel.SaidaId}");
 
         if (resp.IsSuccessStatusCode)
         {
             deleted = true;
             saida = null;
+            Nav.NavigateTo($"/saidaspage/{UserId}/{Day}/{Month}/{Year}");
         }
+    }
+
+    private sealed class DeleteSaidaModel
+    {
+        [Required]
+        public decimal SaidaId { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/saidaspage/{userId}/{Day:int}/{Month:int}/{Year:int}"
 @using System.Globalization
 @using Kakeibo.AppHost.Web.Models
+@using System.Net
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
@@ -98,6 +99,55 @@
     </div>
 </div>
 
+<!-- =================== DAILY TOTALS TABLE =================== -->
+@if (dailyTotals != null)
+{
+    <div class="mt-4 d-flex justify-content-center">
+        <div style="width:60%;">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th class="pe-4">@L["Saldo do Último Dia"]</th>
+                        <td class="text-end">
+                            @dailyTotals.PrevSaldoBancario.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="pe-4">@L["Saques Bancários"]</th>
+                        <td class="text-end">
+                            @dailyTotals.BankWithdrawals.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="pe-4">@L["Gastos com Alimentação"]</th>
+                        <td class="text-end">
+                            @dailyTotals.FoodCosts.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="pe-4">@L["Outras Despesas"]</th>
+                        <td class="text-end">
+                            @dailyTotals.OtherExpenses.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr class="table-warning fw-bold">
+                        <th class="pe-4">@L["Total do Dia"]</th>
+                        <td class="text-end text-danger">
+                            @dailyTotals.DailyTotal.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr class="table-success fw-bold">
+                        <th class="pe-4">@L["Saldo Bancário Previsto"]</th>
+                        <td class="text-end">
+                            @dailyTotals.SaldoBancarioPrevisto.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter] public int Day { get; set; }
     [Parameter] public int Month { get; set; }
@@ -105,6 +155,8 @@
     [Parameter] public string userId { get; set; } = string.Empty;
 
     private List<Saidas>? saidasDoDia;
+    private DailyExpensesTotals? dailyTotals;
+
     private string selectedDayDisplay = string.Empty;
     private decimal totalSaidas = 0m;
 
@@ -128,9 +180,37 @@
         selectedDayDisplay = dt.ToString("d", CultureInfo.CurrentCulture);
 
         var client = HttpFactory.CreateClient("apis");
+
         saidasDoDia = await client.GetFromJsonAsync<List<Saidas>>(
             $"saidas/{userId}/{dt.Day:00}-{dt.Month:00}-{dt.Year:0000}"
         );
+
+        await LoadDailyTotalsAsync();
+    }
+
+    private async Task LoadDailyTotalsAsync()
+    {
+        var client = HttpFactory.CreateClient("apis");
+
+        var response = await client.GetAsync(
+            $"dailyexpenses/{userId}/{Year}/{Month:00}/{Day:00}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            dailyTotals = new DailyExpensesTotals
+            {
+                PrevSaldoBancario = 0,
+                BankWithdrawals = 0,
+                FoodCosts = 0,
+                OtherExpenses = 0,
+                DailyTotal = 0,
+                SaldoBancarioPrevisto = 0
+            };
+            return;
+        }
+
+        response.EnsureSuccessStatusCode();
+        dailyTotals = await response.Content.ReadFromJsonAsync<DailyExpensesTotals>();
     }
 
     private RenderFragment CalendarHtml() => builder =>
@@ -148,13 +228,11 @@
         int dayCounter = 1;
         int seq = 0;
 
-        // Month title
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "text-center fw-bold mb-2");
         builder.AddContent(seq++, firstDay.ToString("MMMM yyyy", culture));
         builder.CloseElement();
 
-        // Weekdays (culture-aware)
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex");
 
@@ -169,7 +247,6 @@
         }
         builder.CloseElement();
 
-        // Grid
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
 

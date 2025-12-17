@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using kakeibo.api.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Ykakeibo.api.Models;
 
 namespace kakeibo.api.Data
 {
@@ -17,6 +19,10 @@ namespace kakeibo.api.Data
         public DbSet<PlanoAnual> planoAnuals { get; set; }
         public DbSet<Resultados> resultados { get; set; }
         public DbSet<Saidas> saidas { get; set; }
+        public DbSet<DailyExpensesTotals> dailyExpensesTotals { get; set; }
+        public DbSet<MonthlyExpensesTotals> monthlyExpensesTotals { get; set; }
+        public DbSet<OwnedMoney> ownedMoneys { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +34,7 @@ namespace kakeibo.api.Data
                 .HasColumnType("decimal(18,0)");
 
             modelBuilder.Entity<Entradas>()
+                .ToTable(tb => tb.HasTrigger("trg_RecalcOwnedMoney_FromEntradas"))
                 .Property(e => e.EntradaID)
                 .HasColumnType("decimal(18,0)");
 
@@ -40,8 +47,9 @@ namespace kakeibo.api.Data
                 .HasColumnType("decimal(18,0)");
 
             modelBuilder.Entity<Saidas>()
+                .ToTable(tb => tb.HasTrigger("trg_RecalcDailyAndMonthlyExpenses"))
                 .Property(r => r.SaidaID)
-                .HasColumnType("decimal(18,0)");
+                .HasColumnType("decimal(18,0)");        
 
             modelBuilder.Entity<TiposDeDespesa>()
                 .Property(r => r.TipoDespesaID)
@@ -49,6 +57,18 @@ namespace kakeibo.api.Data
 
             modelBuilder.Entity<TiposDeEntradas>()
                 .Property(r => r.TipoDeEntradaID)
+                .HasColumnType("decimal(18,0)");
+
+            modelBuilder.Entity<DailyExpensesTotals>()
+                .Property(r => r.DailyRecordID)
+                .HasColumnType("decimal(18,0)");
+
+            modelBuilder.Entity<MonthlyExpensesTotals>()
+                .Property(r => r.MonthlyRecordID)
+                .HasColumnType("decimal(18,0)");
+
+            modelBuilder.Entity<OwnedMoney>()
+                .Property(r => r.OwnedMoneyID)
                 .HasColumnType("decimal(18,0)");
         }
     }

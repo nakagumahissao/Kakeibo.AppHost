@@ -24,25 +24,25 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="calendar">
+            <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/calendar")}")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Calendário"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tiposdespesas">
+            <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/tiposdespesas")}")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Tipos de Despesas"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tiposrendas">
+            <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/tiposrendas")}")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Tipos de Rendas"]
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="listadespesas">
+            <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/listadespesas")}")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Lista de Despesas"]
             </NavLink>
         </div>
@@ -52,34 +52,30 @@
                 <span class="bi bi-list-nested" aria-hidden="true"></span> @L["Registros"]
             </a>
             <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                <NavLink class="nav-link" href="rendas">@L["Rendas"]</NavLink>
-
-                @if (tokenUserId is not null && tokenUserId != "")
-                {
-                    <NavLink class="nav-link" href="@($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                        @L["Saídas"]
-                    </NavLink>
-                }
-                else
-                {
-                    <NavLink class="nav-link" href="@($"/saidaspage/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                        @L["Saídas"]
-                    </NavLink>
-                }
+                <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/rendas")}")">
+                    @L["Rendas"]
+                </NavLink>
+                <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString($"/saidaspage/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")}")">
+                    @L["Saídas"]
+                </NavLink>
             </div>
         </div>
 
-        @if (tokenUserId is not null && tokenUserId != "")
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/monthlysummary")}")">
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Resumo Geral Mensal"]
+            </NavLink>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(tokenUserId))
         {
             <div class="nav-item px-3">
                 <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
                     <span class="bi bi-list-nested"></span> @L["Profile"]
                 </a>
-
                 <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
                     <NavLink class="nav-link" href="/alterar-senha">@L["Alterar Senha"]</NavLink>
                     <NavLink class="nav-link" href="/resetar-senha">@L["Resetar Senha"]</NavLink>
-
                     <button class="nav-link btn btn-link text-start" @onclick="Logout">@L["Sair"]</button>
                 </div>
             </div>
@@ -88,10 +84,8 @@
         {
             <div class="nav-item px-3">
                 <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                    <span class="bi bi-list-nested" aria-hidden="true"></span>
-                    @L["Usuários"]
+                    <span class="bi bi-list-nested" aria-hidden="true"></span> @L["Usuários"]
                 </a>
-
                 <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
                     <NavLink class="nav-link" href="/login">@L["Entrar"]</NavLink>
                     <NavLink class="nav-link" href="/register-user">@L["Registrar"]</NavLink>

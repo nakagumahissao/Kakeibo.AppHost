@@ -64,7 +64,7 @@ else
 
         if (string.IsNullOrWhiteSpace(token))
         {
-            Nav.NavigateTo("/login", forceLoad: true);
+            Nav.NavigateTo("/login/returnUrl==/tiposrendas", forceLoad: true);
             return;
         }
 

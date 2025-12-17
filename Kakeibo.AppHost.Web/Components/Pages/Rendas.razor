@@ -1,6 +1,7 @@
 ﻿@page "/rendas"
 @using Microsoft.AspNetCore.Authorization
 @using System.Globalization
+@using System.Net
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
@@ -70,13 +71,11 @@
                     }
 
                     <tr>
-                        <td class="text-end" style="color:navy">
-                            <strong>@L["TOTAL:"]</strong>
+                        <td class="text-end text-primary fw-bold">
+                            @L["TOTAL:"]
                         </td>
-                        <td class="text-end" style="color:navy">
-                            <strong>
-                                @totalEntradas.ToString("N2", CultureInfo.CurrentCulture)
-                            </strong>
+                        <td class="text-end text-primary fw-bold">
+                            @totalEntradas.ToString("N2", CultureInfo.CurrentCulture)
                         </td>
                         <td></td>
                     </tr>
@@ -92,8 +91,41 @@
     </div>
 </div>
 
+<!-- =================== OWNED MONEY (MONTH SUMMARY) =================== -->
+@if (ownedMoney != null)
+{
+    <div class="mt-4 d-flex justify-content-center">
+        <div style="width:60%;">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>@L["Total de Rendas do Mês"]</th>
+                        <td class="text-end">
+                            @ownedMoney.MonthlyTotalIncome.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@L["Despesas Fixas"]</th>
+                        <td class="text-end">
+                            @ownedMoney.TotalFixedExpenses.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                    <tr class="table-warning fw-bold">
+                        <th>@L["Renda Líquida"]</th>
+                        <td class="text-end">
+                            @ownedMoney.IncomeMinusFixedExp.ToString("N2", CultureInfo.CurrentCulture)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
 @code {
     private List<Entradas>? entradasDoMes;
+    private OwnedMoney? ownedMoney;
+
     private string selectedMonthDisplay = string.Empty;
     private decimal totalEntradas = 0m;
 
@@ -107,20 +139,43 @@
             return;
         }
 
-        await LoadEntradasDoMesAsync(DateTime.Today);
-        totalEntradas = 0m;
+        await LoadMonthAsync(DateTime.Today);
     }
 
-    private async Task LoadEntradasDoMesAsync(DateTime dt)
+    private async Task LoadMonthAsync(DateTime dt)
     {
-        var userId = TokenService.GetUserIdFromToken();
+        totalEntradas = 0m;
 
+        var userId = TokenService.GetUserIdFromToken();
         selectedMonthDisplay = dt.ToString("MM/yyyy", CultureInfo.CurrentCulture);
 
         var client = HttpFactory.CreateClient("apis");
+
         entradasDoMes = await client.GetFromJsonAsync<List<Entradas>>(
             $"entradas/{userId}/{dt.Month:00}-{dt.Year:0000}"
         );
+
+        await LoadOwnedMoneyAsync(dt, userId!, client);
+    }
+
+    private async Task LoadOwnedMoneyAsync(DateTime dt, string userId, HttpClient client)
+    {
+        var response = await client.GetAsync(
+            $"ownedmoney/{dt.Year}/{dt.Month:00}/{userId}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            ownedMoney = new OwnedMoney
+            {
+                MonthlyTotalIncome = 0,
+                TotalFixedExpenses = 0,
+                IncomeMinusFixedExp = 0
+            };
+            return;
+        }
+
+        response.EnsureSuccessStatusCode();
+        ownedMoney = await response.Content.ReadFromJsonAsync<OwnedMoney>();
     }
 
     private RenderFragment CalendarHtml() => builder =>
@@ -135,37 +190,31 @@
         int cultureFirstDay = (int)dtf.FirstDayOfWeek;
         int offset = ((int)firstDayOfMonth.DayOfWeek - cultureFirstDay + 7) % 7;
 
-        int totalCells = ((offset + daysInMonth) <= 35 ? 35 : 42);
+        int totalCells = (offset + daysInMonth) <= 35 ? 35 : 42;
         int dayCounter = 1;
-
         int seq = 0;
 
-        // Month title
         builder.OpenElement(seq++, "div");
-        builder.AddAttribute(seq++, "class", "text-center mb-1 p-1");
-        builder.AddAttribute(seq++, "style", "background-color: lightyellow; font-weight:bold;");
+        builder.AddAttribute(seq++, "class", "text-center mb-1 p-1 fw-bold");
+        builder.AddAttribute(seq++, "style", "background-color: lightyellow;");
         builder.AddContent(seq++, today.ToString("MMMM yyyy", culture));
         builder.CloseElement();
 
-        // Weekday headers (culture-aware)
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex");
 
-        var weekdays = dtf.AbbreviatedDayNames;
         for (int i = 0; i < 7; i++)
         {
-            var index = (i + cultureFirstDay) % 7;
+            int idx = (i + cultureFirstDay) % 7;
 
             builder.OpenElement(seq++, "div");
             builder.AddAttribute(seq++, "class", "text-center p-1 border");
-            builder.AddAttribute(seq++, "style", "background-color: lightgreen; flex:1;");
-            builder.AddContent(seq++, weekdays[index]);
+            builder.AddAttribute(seq++, "style", "flex:1;background-color:lightgreen;");
+            builder.AddContent(seq++, dtf.AbbreviatedDayNames[idx]);
             builder.CloseElement();
         }
-
         builder.CloseElement();
 
-        // Calendar grid
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
 
@@ -173,23 +222,11 @@
         {
             builder.OpenElement(seq++, "div");
             builder.AddAttribute(seq++, "class", "border text-center p-1");
-            builder.AddAttribute(seq++, "style", "width:14.28%; height:40px;");
+            builder.AddAttribute(seq++, "style", "width:14.28%;height:40px;");
 
             if (i >= offset && dayCounter <= daysInMonth)
             {
-                if (dayCounter == today.Day)
-                {
-                    builder.OpenElement(seq++, "span");
-                    builder.AddAttribute(seq++, "style", "color:red; font-weight:bold;");
-                    builder.AddContent(seq++, dayCounter);
-                    builder.CloseElement();
-                }
-                else
-                {
-                    builder.AddContent(seq++, dayCounter);
-                }
-
-                dayCounter++;
+                builder.AddContent(seq++, dayCounter++);
             }
 
             builder.CloseElement();

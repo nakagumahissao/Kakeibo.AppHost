@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @using Kakeibo.AppHost.Web.Models
+@using Microsoft.AspNetCore.WebUtilities
 @rendermode InteractiveServer
 @inject IHttpClientFactory HttpFactory
 @inject NavigationManager Nav
@@ -44,6 +45,7 @@
 }
 
 @code {
+    private string? returnUrl;
     private LoginModel loginModel = new();
     private EditContext? editContext;
     private string? error;
@@ -58,9 +60,15 @@
 
         editContext = new EditContext(loginModel);
     }
-
+        
     private async Task SubmitLogin()
     {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
+        {
+            returnUrl = url;
+        }
+
         try
         {
             Logger.LogInformation(
@@ -81,8 +89,14 @@
                 return;
             }
 
-            // Successful login → navigate to home
-            Nav.NavigateTo("/", forceLoad: true);
+            if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                Nav.NavigateTo(returnUrl, true);
+            }
+            else
+            {
+                Nav.NavigateTo("/", true);
+            }
         }
         catch (Exception ex)
         {

@@ -1,5 +1,6 @@
 ﻿using kakeibo.api.Data;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace kakeibo.api
 {
@@ -47,13 +48,21 @@ namespace kakeibo.api
             }).RequireAuthorization();
 
 
-            app.MapDelete("/saidas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
+            app.MapDelete("/saidas/{id:decimal}", async (decimal id, KakeiboDBContext db, ILogger<Program> Log) =>
             {
                 var s = await db.saidas.Where(s => s.SaidaID == id).FirstOrDefaultAsync();
                 if (s is null) return Results.NotFound();
 
                 db.saidas.Remove(s);
-                await db.SaveChangesAsync();
+
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    Log.LogError($"Error deleting Saida with ID {id}: {ex.Message}");
+                }
 
                 return Results.NoContent();
             }).RequireAuthorization();
