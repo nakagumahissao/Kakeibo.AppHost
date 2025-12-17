@@ -411,8 +411,8 @@
   <data name="Renda Líquida" xml:space="preserve">
     <value>Ingreso neto</value>
   </data>
-  <data name="Resumo Geral Mensal" xml:space="preserve">
-    <value>Resumen general mensual</value>
+  <data name="Resumo Mensal" xml:space="preserve">
+    <value>Resumen mensual</value>
   </data>
   <data name="Saldo Bancário Previsto" xml:space="preserve">
     <value>Saldo bancario previsto</value>

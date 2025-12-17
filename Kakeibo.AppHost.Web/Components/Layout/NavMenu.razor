@@ -55,7 +55,7 @@
                 <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/rendas")}")">
                     @L["Rendas"]
                 </NavLink>
-                <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString($"/saidaspage/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")}")">
+                <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")}")">
                     @L["Saídas"]
                 </NavLink>
             </div>
@@ -63,7 +63,7 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="@($"/login?returnUrl={Uri.EscapeDataString("/monthlysummary")}")">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Resumo Geral Mensal"]
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Resumo Mensal"]
             </NavLink>
         </div>
 
@@ -71,12 +71,14 @@
         {
             <div class="nav-item px-3">
                 <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                    <span class="bi bi-list-nested"></span> @L["Profile"]
+                    <span class="bi bi bi-list-nested"></span> Profile
                 </a>
+
                 <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                    <NavLink class="nav-link" href="/alterar-senha">@L["Alterar Senha"]</NavLink>
-                    <NavLink class="nav-link" href="/resetar-senha">@L["Resetar Senha"]</NavLink>
-                    <button class="nav-link btn btn-link text-start" @onclick="Logout">@L["Sair"]</button>
+                    <NavLink class="nav-link" href="/alterar-senha">Alterar Senha</NavLink>
+                    <NavLink class="nav-link" href="/resetar-senha">Resetar Senha</NavLink>
+
+                    <button class="nav-link btn btn-link text-start" @onclick="Logout">Sair</button>
                 </div>
             </div>
         }
@@ -84,11 +86,13 @@
         {
             <div class="nav-item px-3">
                 <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                    <span class="bi bi-list-nested" aria-hidden="true"></span> @L["Usuários"]
+                    <span class="bi bi-list-nested" aria-hidden="true"></span>
+                    Usuários
                 </a>
+
                 <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                    <NavLink class="nav-link" href="/login">@L["Entrar"]</NavLink>
-                    <NavLink class="nav-link" href="/register-user">@L["Registrar"]</NavLink>
+                    <NavLink class="nav-link" href="/login">Entrar</NavLink>
+                    <NavLink class="nav-link" href="/register-user">Registrar</NavLink>
                 </div>
             </div>
         }
