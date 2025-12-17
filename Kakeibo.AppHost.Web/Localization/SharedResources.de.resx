@@ -16,7 +16,7 @@
     <value>Die Passwörter stimmen nicht überein.</value>
   </data>
   <data name="As senhas não conferem." xml:space="preserve">
-    <value>Die Passwörter stimmen nicht überein.</value>
+    <value>Die Passwörter sind nicht identisch.</value>
   </data>
   <data name="Boas vindas ao Kakeibo" xml:space="preserve">
     <value>Willkommen bei Kakeibo</value>
@@ -31,7 +31,7 @@
     <value>Daten werden geladen...</value>
   </data>
   <data name="Carregando registro..." xml:space="preserve">
-    <value>Eintrag wird geladen...</value>
+    <value>Datensatz wird geladen...</value>
   </data>
   <data name="Carregando Rendas..." xml:space="preserve">
     <value>Einnahmen werden geladen...</value>
@@ -52,7 +52,7 @@
     <value>Passwort bestätigen</value>
   </data>
   <data name="CredenciaisInválidas" xml:space="preserve">
-    <value>Ungültige Anmeldeinformationen</value>
+    <value>Ungültige Anmeldedaten</value>
   </data>
   <data name="Dê o primeiro passo para transformar sua relação com o dinheiro." xml:space="preserve">
     <value>Machen Sie den ersten Schritt, um Ihre Beziehung zu Geld zu verändern.</value>
@@ -67,7 +67,7 @@
     <value>Ausgabe</value>
   </data>
   <data name="E-mail de redefinição de senha enviado com sucesso!" xml:space="preserve">
-    <value>E-Mail zur Passwortzurücksetzung erfolgreich gesendet!</value>
+    <value>E-Mail zum Zurücksetzen des Passworts erfolgreich gesendet!</value>
   </data>
   <data name="Editar" xml:space="preserve">
     <value>Bearbeiten</value>
@@ -79,13 +79,13 @@
     <value>Einnahme bearbeiten</value>
   </data>
   <data name="Editar Saída" xml:space="preserve">
-    <value>Ausgabe bearbeiten</value>
+    <value>Abgang bearbeiten</value>
   </data>
   <data name="Editar Tipo de Despesa" xml:space="preserve">
-    <value>Ausgabetyp bearbeiten</value>
+    <value>Ausgabenart bearbeiten</value>
   </data>
   <data name="Editar Tipo de Renda" xml:space="preserve">
-    <value>Einnahmetyp bearbeiten</value>
+    <value>Einnahmenart bearbeiten</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>E-Mail</value>
@@ -97,7 +97,7 @@
     <value>Wird gesendet...</value>
   </data>
   <data name="Enviar Link de Reset" xml:space="preserve">
-    <value>Link zum Zurücksetzen senden</value>
+    <value>Reset-Link senden</value>
   </data>
   <data name="Erro ao enviar" xml:space="preserve">
     <value>Fehler beim Senden</value>
@@ -106,7 +106,7 @@
     <value>Fehler beim Zurücksetzen des Passworts:</value>
   </data>
   <data name="Erro ao registrar" xml:space="preserve">
-    <value>Fehler bei der Registrierung</value>
+    <value>Fehler beim Registrieren</value>
   </data>
   <data name="Erro ao salvar" xml:space="preserve">
     <value>Fehler beim Speichern</value>
@@ -136,22 +136,22 @@
     <value>Einnahme löschen</value>
   </data>
   <data name="Excluir Saída" xml:space="preserve">
-    <value>Ausgabe löschen</value>
+    <value>Abgang löschen</value>
   </data>
   <data name="Excluir Tipo de Despesa" xml:space="preserve">
-    <value>Ausgabetyp löschen</value>
+    <value>Ausgabenart löschen</value>
   </data>
   <data name="Excluir Tipo de Renda" xml:space="preserve">
-    <value>Einnahmetyp löschen</value>
+    <value>Einnahmenart löschen</value>
   </data>
   <data name="Falha ao carregar tipos de entrada" xml:space="preserve">
-    <value>Laden der Eingabetypen fehlgeschlagen</value>
+    <value>Eingabearten konnten nicht geladen werden</value>
   </data>
   <data name="Falha na comunicação com o servidor ou dados inválidos." xml:space="preserve">
-    <value>Fehler bei der Serverkommunikation oder ungültige Daten.</value>
+    <value>Serverkommunikation fehlgeschlagen oder ungültige Daten.</value>
   </data>
   <data name="FormatoInválidoRespostaApi" xml:space="preserve">
-    <value>Ungültiges API-Antwortformat</value>
+    <value>Ungültiges Format der API-Antwort</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Startseite</value>
@@ -160,7 +160,7 @@
     <value>ID</value>
   </data>
   <data name="Kakeibo: simplicidade, consciência e equilíbrio nas suas finanças." xml:space="preserve">
-    <value>Kakeibo: Einfachheit, Bewusstsein und Gleichgewicht in Ihren Finanzen.</value>
+    <value>Kakeibo: Einfachheit, Bewusstsein und Gleichgewicht für Ihre Finanzen.</value>
   </data>
   <data name="Lista de Despesas" xml:space="preserve">
     <value>Ausgabenliste</value>
@@ -175,10 +175,10 @@
     <value>Ausgabenliste - Neu</value>
   </data>
   <data name="Listagem das Despesas Mais Comuns" xml:space="preserve">
-    <value>Auflistung der häufigsten Ausgaben</value>
+    <value>Liste der häufigsten Ausgaben</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>Anmelden</value>
+    <value>Login</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Abmelden</value>
@@ -187,19 +187,19 @@
     <value>Keine Einnahmen gefunden.</value>
   </data>
   <data name="Nenhuma saída encontrada." xml:space="preserve">
-    <value>Keine Ausgaben gefunden.</value>
+    <value>Keine Abgänge gefunden.</value>
   </data>
   <data name="Nome da Despesa" xml:space="preserve">
     <value>Name der Ausgabe</value>
   </data>
   <data name="Nome Despesa" xml:space="preserve">
-    <value>Name der Ausgabe</value>
+    <value>Ausgabenname</value>
   </data>
   <data name="Nome do Tipo de Despesa" xml:space="preserve">
-    <value>Name des Ausgabetyps</value>
+    <value>Name der Ausgabenart</value>
   </data>
   <data name="Nome do Tipo de Renda" xml:space="preserve">
-    <value>Name des Einnahmetyps</value>
+    <value>Name der Einnahmenart</value>
   </data>
   <data name="Nova Despesa" xml:space="preserve">
     <value>Neue Ausgabe</value>
@@ -208,25 +208,25 @@
     <value>Neue Einnahme</value>
   </data>
   <data name="Nova Saída" xml:space="preserve">
-    <value>Neue Ausgabe</value>
+    <value>Neuer Abgang</value>
   </data>
   <data name="Nova Senha" xml:space="preserve">
     <value>Neues Passwort</value>
   </data>
   <data name="Novo Tipo de Despesa" xml:space="preserve">
-    <value>Neuer Ausgabetyp</value>
+    <value>Neue Ausgabenart</value>
   </data>
   <data name="Novo Tipo de Renda" xml:space="preserve">
-    <value>Neuer Einnahmetyp</value>
+    <value>Neue Einnahmenart</value>
   </data>
   <data name="O nome do tipo de despesa é obrigatório." xml:space="preserve">
-    <value>Der Name des Ausgabetyps ist erforderlich.</value>
+    <value>Der Name der Ausgabenart ist erforderlich.</value>
   </data>
   <data name="O nome do tipo de renda é obrigatório." xml:space="preserve">
-    <value>Der Name des Einnahmetyps ist erforderlich.</value>
+    <value>Der Name der Einnahmenart ist erforderlich.</value>
   </data>
   <data name="Organizar suas finanças não precisa ser complicado. O Kakeibo foi criado para ajudar você a entender para onde seu dinheiro vai, tomar decisões mais conscientes e construir hábitos financeiros saudáveis — tudo de forma simples, intuitiva e inspirada no tradicional método japonês de gestão financeira." xml:space="preserve">
-    <value>Die Organisation Ihrer Finanzen muss nicht kompliziert sein. Kakeibo wurde entwickelt, um Ihnen zu helfen, zu verstehen, wohin Ihr Geld fließt, bewusstere Entscheidungen zu treffen und gesunde Finanzgewohnheiten aufzubauen — alles auf einfache, intuitive Weise und inspiriert von der traditionellen japanischen Finanzverwaltungsmethode.</value>
+    <value>Ihre Finanzen zu organisieren muss nicht kompliziert sein. Kakeibo wurde entwickelt, um Ihnen zu helfen zu verstehen, wohin Ihr Geld fließt, bewusstere Entscheidungen zu treffen und gesunde Finanzgewohnheiten aufzubauen – alles auf einfache, intuitive Weise, inspiriert von der traditionellen japanischen Methode der Haushaltsführung.</value>
   </data>
   <data name="Planejar um futuro financeiro mais tranquilo" xml:space="preserve">
     <value>Eine entspanntere finanzielle Zukunft planen</value>
@@ -235,25 +235,25 @@
     <value>Passwort zurücksetzen</value>
   </data>
   <data name="Refletir sobre seus hábitos de consumo" xml:space="preserve">
-    <value>Über Ihre Konsumgewohnheiten nachdenken</value>
+    <value>Über die eigenen Konsumgewohnheiten nachdenken</value>
   </data>
   <data name="Registrar" xml:space="preserve">
     <value>Registrieren</value>
   </data>
   <data name="Registrar seus gastos rapidamente" xml:space="preserve">
-    <value>Ihre Ausgaben schnell erfassen</value>
+    <value>Ausgaben schnell erfassen</value>
   </data>
   <data name="Registro atualizado com sucesso ✔" xml:space="preserve">
-    <value>Eintrag erfolgreich aktualisiert ✔</value>
+    <value>Datensatz erfolgreich aktualisiert ✔</value>
   </data>
   <data name="Registro de Nova Despesa" xml:space="preserve">
-    <value>Neue Ausgabe erfassen</value>
+    <value>Erfassung einer neuen Ausgabe</value>
   </data>
   <data name="Registro de Usuário" xml:space="preserve">
     <value>Benutzerregistrierung</value>
   </data>
   <data name="Registro excluído ✔" xml:space="preserve">
-    <value>Eintrag gelöscht ✔</value>
+    <value>Datensatz gelöscht ✔</value>
   </data>
   <data name="Renda atualizada com sucesso" xml:space="preserve">
     <value>Einnahme erfolgreich aktualisiert</value>
@@ -265,7 +265,7 @@
     <value>Einnahmen</value>
   </data>
   <data name="Rendas do Mês" xml:space="preserve">
-    <value>Einnahmen des Monats</value>
+    <value>Monatliche Einnahmen</value>
   </data>
   <data name="Rendas do Mês:" xml:space="preserve">
     <value>Einnahmen des Monats:</value>
@@ -277,19 +277,19 @@
     <value>Passwort zurücksetzen - Abschluss</value>
   </data>
   <data name="Saídas" xml:space="preserve">
-    <value>Ausgaben</value>
+    <value>Abgänge</value>
   </data>
   <data name="Saídas do Dia:" xml:space="preserve">
-    <value>Ausgaben des Tages:</value>
+    <value>Tagesabgänge:</value>
   </data>
   <data name="Saídas do Mês" xml:space="preserve">
-    <value>Ausgaben des Monats</value>
+    <value>Monatliche Abgänge</value>
   </data>
   <data name="Sair" xml:space="preserve">
     <value>Abmelden</value>
   </data>
   <data name="Salvando..." xml:space="preserve">
-    <value>Speichern...</value>
+    <value>Wird gespeichert...</value>
   </data>
   <data name="Salvar" xml:space="preserve">
     <value>Speichern</value>
@@ -319,40 +319,40 @@
     <value>Ihre Informationen wurden erfolgreich gespeichert.</value>
   </data>
   <data name="Tipo de Despesa" xml:space="preserve">
-    <value>Ausgabetyp</value>
+    <value>Ausgabenart</value>
   </data>
   <data name="Tipo de Despesa não encontrado." xml:space="preserve">
-    <value>Ausgabetyp nicht gefunden.</value>
+    <value>Ausgabenart nicht gefunden.</value>
   </data>
   <data name="Tipo de Renda" xml:space="preserve">
-    <value>Einnahmetyp</value>
+    <value>Einnahmenart</value>
   </data>
   <data name="Tipo de Renda não encontrado." xml:space="preserve">
-    <value>Einnahmetyp nicht gefunden.</value>
+    <value>Einnahmenart nicht gefunden.</value>
   </data>
   <data name="Tipos de Despesa - Editar" xml:space="preserve">
-    <value>Ausgabetypen - Bearbeiten</value>
+    <value>Ausgabenarten - Bearbeiten</value>
   </data>
   <data name="Tipos de Despesa - Excluir" xml:space="preserve">
-    <value>Ausgabetypen - Löschen</value>
+    <value>Ausgabenarten - Löschen</value>
   </data>
   <data name="Tipos de Despesa - Novo" xml:space="preserve">
-    <value>Ausgabetypen - Neu</value>
+    <value>Ausgabenarten - Neu</value>
   </data>
   <data name="Tipos de Despesas" xml:space="preserve">
-    <value>Ausgabetypen</value>
+    <value>Ausgabenarten</value>
   </data>
   <data name="Tipos de Rendas" xml:space="preserve">
-    <value>Einnahmetypen</value>
+    <value>Einnahmenarten</value>
   </data>
   <data name="Tipos de Rendas - Editar" xml:space="preserve">
-    <value>Einnahmetypen - Bearbeiten</value>
+    <value>Einnahmenarten - Bearbeiten</value>
   </data>
   <data name="Tipos de Rendas - Excluir" xml:space="preserve">
-    <value>Einnahmetypen - Löschen</value>
+    <value>Einnahmenarten - Löschen</value>
   </data>
   <data name="Tipos de Rendas - Novo" xml:space="preserve">
-    <value>Einnahmetypen - Neu</value>
+    <value>Einnahmenarten - Neu</value>
   </data>
   <data name="TOTAL:" xml:space="preserve">
     <value>GESAMT:</value>
@@ -382,9 +382,63 @@
     <value>Profil</value>
   </data>
   <data name="Registros" xml:space="preserve">
-    <value>Aufzeichnungen</value>
+    <value>Datensätze</value>
   </data>
   <data name="Usuários" xml:space="preserve">
     <value>Benutzer</value>
+  </data>
+  <data name="Alimentação" xml:space="preserve">
+    <value>Verpflegung</value>
+  </data>
+  <data name="Despesas Fixas" xml:space="preserve">
+    <value>Fixkosten</value>
+  </data>
+  <data name="Gastos com Alimentação" xml:space="preserve">
+    <value>Lebensmittelausgaben</value>
+  </data>
+  <data name="Mês Selecionado:" xml:space="preserve">
+    <value>Ausgewählter Monat:</value>
+  </data>
+  <data name="Monthly Expenses" xml:space="preserve">
+    <value>Monatliche Ausgaben</value>
+  </data>
+  <data name="Outras Despesas" xml:space="preserve">
+    <value>Sonstige Ausgaben</value>
+  </data>
+  <data name="Owned Money" xml:space="preserve">
+    <value>Verfügbares Geld</value>
+  </data>
+  <data name="Renda Líquida" xml:space="preserve">
+    <value>Nettoeinkommen</value>
+  </data>
+  <data name="Resumo Geral Mensal" xml:space="preserve">
+    <value>Monatliche Gesamtübersicht</value>
+  </data>
+  <data name="Saldo Bancário Previsto" xml:space="preserve">
+    <value>Voraussichtlicher Kontostand</value>
+  </data>
+  <data name="Saldo Disponível" xml:space="preserve">
+    <value>Verfügbarer Saldo</value>
+  </data>
+  <data name="Saldo do Último Dia" xml:space="preserve">
+    <value>Saldo des letzten Tages</value>
+  </data>
+  <data name="Saldo para o Próximo Mês" xml:space="preserve">
+    <value>Übertrag in den nächsten Monat</value>
+  </data>
+  <data name="Saques Bancários" xml:space="preserve">
+    <value>Bargeldabhebungen</value>
+  </data>
+  <data name="Total de Rendas" xml:space="preserve">
+    <value>Gesamteinnahmen</value>
+  </data>
+  <data name="Total de Rendas do Mês" xml:space="preserve">
+    <value>Gesamteinnahmen des Monats</value>
+  </data>
+  <data name="Total do Dia" xml:space="preserve">
+    <value>Tagessumme</value>
+  </data>
+  <data name="Total do Mês" xml:space="preserve">
+    <value>Monatssumme</value>
   </data>
 </root>

@@ -387,4 +387,58 @@
   <data name="Usuários" xml:space="preserve">
     <value>Usuários</value>
   </data>
+  <data name="Alimentação" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Despesas Fixas" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Gastos com Alimentação" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Mês Selecionado:" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Monthly Expenses" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Outras Despesas" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Owned Money" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Renda Líquida" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Resumo Geral Mensal" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo Bancário Previsto" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo Disponível" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo do Último Dia" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo para o Próximo Mês" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saques Bancários" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total de Rendas" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total de Rendas do Mês" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total do Dia" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total do Mês" xml:space="preserve">
+    <value></value>
+  </data>
 </root>
