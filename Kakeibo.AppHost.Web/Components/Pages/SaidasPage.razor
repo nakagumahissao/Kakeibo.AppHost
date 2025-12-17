@@ -218,24 +218,46 @@
         var culture = CultureInfo.CurrentCulture;
         var dtf = culture.DateTimeFormat;
 
-        var firstDay = new DateTime(Year, Month, 1);
-        int daysInMonth = DateTime.DaysInMonth(Year, Month);
+        var currentMonth = new DateTime(Year, Month, 1);
 
-        int firstDayOfWeek = (int)dtf.FirstDayOfWeek;
-        int offset = ((int)firstDay.DayOfWeek - firstDayOfWeek + 7) % 7;
+        // Previous and Next month
+        var prevMonth = currentMonth.AddMonths(-1);
+        var nextMonth = currentMonth.AddMonths(1);
 
-        int totalCells = (offset + daysInMonth) <= 35 ? 35 : 42;
-        int dayCounter = 1;
         int seq = 0;
 
+        // Header with < and > navigation
         builder.OpenElement(seq++, "div");
-        builder.AddAttribute(seq++, "class", "text-center fw-bold mb-2");
-        builder.AddContent(seq++, firstDay.ToString("MMMM yyyy", culture));
+        builder.AddAttribute(seq++, "class", "d-flex justify-content-between align-items-center mb-2");
+
+        // Previous month button
+        builder.OpenElement(seq++, "a");
+        builder.AddAttribute(seq++, "href", $"/saidaspage/{userId}/{1}/{prevMonth.Month}/{prevMonth.Year}");
+        builder.AddAttribute(seq++, "class", "btn btn-sm text-white");
+        builder.AddAttribute(seq++, "style", "background-color:crimson; width:60px; height:35px; display:flex; align-items:center; justify-content:center; font-weight:bold;");
+        builder.AddContent(seq++, "<");
         builder.CloseElement();
 
+        // Month-Year title
+        builder.OpenElement(seq++, "div");
+        builder.AddAttribute(seq++, "class", "fw-bold text-center flex-grow-1");
+        builder.AddContent(seq++, currentMonth.ToString("MMMM yyyy", culture));
+        builder.CloseElement();
+
+        // Next month button
+        builder.OpenElement(seq++, "a");
+        builder.AddAttribute(seq++, "href", $"/saidaspage/{userId}/{1}/{nextMonth.Month}/{nextMonth.Year}");
+        builder.AddAttribute(seq++, "class", "btn btn-sm text-white");
+        builder.AddAttribute(seq++, "style", "background-color:crimson; width:60px; height:35px; display:flex; align-items:center; justify-content:center; font-weight:bold;");
+        builder.AddContent(seq++, ">");
+        builder.CloseElement();
+
+        builder.CloseElement(); // Close header div
+
+        // Days of week row
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex");
-
+        int firstDayOfWeek = (int)dtf.FirstDayOfWeek;
         for (int i = 0; i < 7; i++)
         {
             int idx = (i + firstDayOfWeek) % 7;
@@ -247,9 +269,15 @@
         }
         builder.CloseElement();
 
+        // Calendar days
+        int daysInMonth = DateTime.DaysInMonth(Year, Month);
+        var firstDay = currentMonth;
+        int offset = ((int)firstDay.DayOfWeek - firstDayOfWeek + 7) % 7;
+        int totalCells = (offset + daysInMonth) <= 35 ? 35 : 42;
+        int dayCounter = 1;
+
         builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-flex flex-wrap");
-
         for (int i = 0; i < totalCells; i++)
         {
             builder.OpenElement(seq++, "div");
@@ -259,10 +287,8 @@
             if (i >= offset && dayCounter <= daysInMonth)
             {
                 int d = dayCounter++;
-
                 builder.OpenElement(seq++, "a");
-                builder.AddAttribute(seq++, "href",
-                    $"/saidaspage/{userId}/{d}/{Month}/{Year}");
+                builder.AddAttribute(seq++, "href", $"/saidaspage/{userId}/{d}/{Month}/{Year}");
                 builder.AddAttribute(seq++, "style",
                     $"display:block;text-decoration:none;color:black;" +
                     (d == Day ? "background-color:lightblue;font-weight:bold;" : ""));
@@ -272,7 +298,6 @@
 
             builder.CloseElement();
         }
-
         builder.CloseElement();
     };
 }
