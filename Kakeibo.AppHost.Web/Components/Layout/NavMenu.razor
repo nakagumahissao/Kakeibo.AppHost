@@ -62,7 +62,12 @@
                     <NavLink class="nav-link" href="@GetProtectedUrl("/rendas")">
                         @L["Rendas"]
                     </NavLink>
-                    <NavLink class="nav-link" href="@GetProtectedUrl($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+
+                    @{
+                        var userId = string.IsNullOrWhiteSpace(tokenUserId) ? "notloggedin" : tokenUserId;
+                    }
+
+                    <NavLink class="nav-link" href="@GetProtectedUrl($"/saidaspage/{userId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
                         @L["Saídas"]
                     </NavLink>
                 </div>
