@@ -22,6 +22,20 @@ namespace Kakeibo.AppHost.Web.Services
             )?.Value;
         }
 
+        // -----------------------------
+        // NEW: Get user email from token
+        // -----------------------------
+        public string? GetUserEmail()
+        {
+            if (_token == null) return null;
+
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_token);
+            return jwt.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.Email ||  // standard .NET claim type
+                c.Type == "email"              // common JWT claim
+            )?.Value;
+        }
+
         // =========================
         // LOGOUT
         // =========================

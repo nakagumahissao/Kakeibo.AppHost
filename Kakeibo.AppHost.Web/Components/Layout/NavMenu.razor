@@ -2,11 +2,10 @@
 @inject IJSRuntime JS
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Nav
-@rendermode InteractiveServer
 @inject IStringLocalizer<SharedResources> L
-
-
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
+
+@rendermode InteractiveServer
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -14,128 +13,138 @@
     </div>
 </div>
 
-<input type="checkbox" title="@L["Navigation menu"]" class="navbar-toggler" />
-
 <div class="nav-scrollable">
     <nav class="nav flex-column" style="width: 250px;">
+
+        @* Home *@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill" aria-hidden="true"></span> @L["Home"]
             </NavLink>
         </div>
 
+        @* Calendar *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="calendar">
+            <NavLink class="nav-link" href="/calendar">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Calendário"]
             </NavLink>
         </div>
 
+        @* Tipos de Despesas *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tiposdespesas">
+            <NavLink class="nav-link" href="@GetProtectedUrl("/tiposdespesas")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Tipos de Despesas"]
             </NavLink>
         </div>
 
+        @* Tipos de Rendas *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tiposrendas">
+            <NavLink class="nav-link" href="@GetProtectedUrl("/tiposrendas")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Tipos de Rendas"]
             </NavLink>
         </div>
 
+        @* Lista de Despesas *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="listadespesas">
+            <NavLink class="nav-link" href="@GetProtectedUrl("/listadespesas")">
                 <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Lista de Despesas"]
             </NavLink>
         </div>
 
+        @* Registros Submenu *@
         <div class="nav-item px-3">
-            <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
+            <a class="nav-link" style="cursor: pointer;" @onclick="ToggleRegistros">
                 <span class="bi bi-list-nested" aria-hidden="true"></span> @L["Registros"]
             </a>
-            <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                <NavLink class="nav-link" href="rendas">@L["Rendas"]</NavLink>
-
-                @if (tokenUserId is not null && tokenUserId != "")
-                {
-                    <NavLink class="nav-link" href="@($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
+            @if (showRegistros)
+            {
+                <div class="submenu d-flex flex-column ps-3">
+                    <NavLink class="nav-link" href="@GetProtectedUrl("/rendas")">
+                        @L["Rendas"]
+                    </NavLink>
+                    <NavLink class="nav-link" href="@GetProtectedUrl($"/saidaspage/{tokenUserId}/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
                         @L["Saídas"]
                     </NavLink>
-                }
-                else
-                {
-                    <NavLink class="nav-link" href="@($"/saidaspage/notlogged/{DateTime.Today.Day}/{DateTime.Today.Month}/{DateTime.Today.Year}")">
-                        @L["Saídas"]
-                    </NavLink>
-                }
-            </div>
+                </div>
+            }
         </div>
 
-        @if (tokenUserId is not null && tokenUserId != "")
+        @* Monthly Summary *@
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@GetProtectedUrl("/monthlysummary")">
+                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> @L["Resumo Mensal"]
+            </NavLink>
+        </div>
+
+        <hr class="text-white mx-3" />
+
+        @* User Section *@
+        @if (!string.IsNullOrWhiteSpace(tokenUserId))
         {
             <div class="nav-item px-3">
-                <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                    <span class="bi bi-list-nested"></span> @L["Profile"]
+                <a class="nav-link" style="cursor: pointer;" @onclick="ToggleProfile">
+                    <span class="bi bi-person-circle"></span> Profile
                 </a>
-
-                <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                    <NavLink class="nav-link" href="/alterar-senha">@L["Alterar Senha"]</NavLink>
-                    <NavLink class="nav-link" href="/resetar-senha">@L["Resetar Senha"]</NavLink>
-
-                    <button class="nav-link btn btn-link text-start" @onclick="Logout">@L["Sair"]</button>
-                </div>
+                @if (showProfile)
+                {
+                    <div class="submenu d-flex flex-column ps-3">
+                        <NavLink class="nav-link" href="/alterar-senha">@L["Alterar Senha"]</NavLink>
+                        <NavLink class="nav-link" href="/resetar-senha">@L["Resetar Senha"]</NavLink>
+                        <button class="nav-link btn btn-link text-start p-0 ps-3" @onclick="Logout">@L["Sair"]</button>
+                    </div>
+                }
             </div>
         }
         else
         {
             <div class="nav-item px-3">
-                <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                    <span class="bi bi-list-nested" aria-hidden="true"></span>
-                    @L["Usuários"]
+                <a class="nav-link" style="cursor: pointer;" @onclick="ToggleProfile">
+                    <span class="bi bi-list-nested"></span> @L["Usuários"]
                 </a>
-
-                <div class="submenu" style="display: none; flex-direction: column; padding-left: 15px;">
-                    <NavLink class="nav-link" href="/login">@L["Entrar"]</NavLink>
-                    <NavLink class="nav-link" href="/register-user">@L["Registrar"]</NavLink>
-                </div>
+                @if (showProfile)
+                {
+                    <div class="submenu d-flex flex-column ps-3">
+                        <NavLink class="nav-link" href="/login">@L["Entrar"]</NavLink>
+                        <NavLink class="nav-link" href="/register-user">@L["Registrar"]</NavLink>
+                    </div>
+                }
             </div>
         }
     </nav>
 </div>
 
-<script>
-    function toggleSubmenu(event) {
-        event.preventDefault();
-        const submenu = event.currentTarget.nextElementSibling;
-        if (submenu.style.display === "none") {
-            submenu.style.display = "flex";
-        } else {
-            submenu.style.display = "none";
-        }
-    }
-</script>
-
 @code {
-    private bool showUserMenu = false;
-    private string? token;
+    private bool showRegistros = false;
+    private bool showProfile = false;
     private string? tokenUserId;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        token = TokenService.GetToken();
-        tokenUserId = TokenService.GetUserIdFromToken();
+        if (firstRender)
+        {
+            // Token reading usually requires JS Interop, which is only available after render
+            tokenUserId = TokenService.GetUserIdFromToken();
+            StateHasChanged();
+        }
     }
 
-    void ToggleUserMenu()
+    private void ToggleRegistros() => showRegistros = !showRegistros;
+    private void ToggleProfile() => showProfile = !showProfile;
+
+    // Helper to reduce HTML clutter
+    private string GetProtectedUrl(string path)
     {
-        showUserMenu = !showUserMenu;
+        if (!string.IsNullOrWhiteSpace(tokenUserId))
+        {
+            return path;
+        }
+        return $"/login?returnUrl={Uri.EscapeDataString(path)}";
     }
 
     async Task Logout()
     {
-        // Clear token
         await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
 
-        // Reset auth state
         if (AuthProvider is IHostEnvironmentAuthenticationStateProvider envAuth)
         {
             envAuth.SetAuthenticationState(Task.FromResult(

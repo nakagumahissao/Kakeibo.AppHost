@@ -17,16 +17,6 @@
 {
     <p>@L["Carregando dados..."]</p>
 }
-else if (deleted)
-{
-    <div class="alert alert-success mt-3">
-        @L["Renda excluída com sucesso"] ✔
-    </div>
-
-    <a class="btn btn-primary mt-3" href="/rendas">
-        ⬅ @L["Voltar"]
-    </a>
-}
 else
 {
     <div class="card p-3 mb-3">
@@ -80,7 +70,7 @@ else
         {
             deleted = true;
             entrada = null;
-            StateHasChanged();
+            Nav.NavigateTo("/rendas");
         }
     }
 }

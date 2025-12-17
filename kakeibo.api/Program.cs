@@ -181,10 +181,12 @@ public class Program
         app.MapTiposDeDespesaEndpoints();
         app.MapTiposDeEntradasEndpoints();
         app.MapSaidasEndpoints();
-        app.MapResultadosEndpoints();
         app.MapPlanoAnualEndpoints();
         app.MapEntradasEndpoints();
         app.MapDespesasEndpoints();
+        app.MapDailyExpensesTotalsEndpoints();
+        app.MapMonthlyExpensesTotalsEndpoints();
+        app.MapOwnedMoneyEndpoints();
 
         // ---------------------------------------------------------
         // 13. RUN

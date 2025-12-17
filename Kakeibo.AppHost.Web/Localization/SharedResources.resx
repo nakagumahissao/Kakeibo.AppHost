@@ -18,8 +18,8 @@
   <data name="As senhas não conferem." xml:space="preserve">
     <value>As senhas não conferem.</value>
   </data>
-  <data name="BoasVindas" xml:space="preserve">
-    <value>BoasVindas</value>
+  <data name="Boas vindas ao Kakeibo" xml:space="preserve">
+    <value>Boas vindas ao Kakeibo</value>
   </data>
   <data name="Calendário" xml:space="preserve">
     <value>Calendário</value>
@@ -374,5 +374,71 @@
   </data>
   <data name="Voltar para lista" xml:space="preserve">
     <value>Voltar para lista</value>
+  </data>
+  <data name="Navigation menu" xml:space="preserve">
+    <value>Navigation menu</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Registros" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="Usuários" xml:space="preserve">
+    <value>Usuários</value>
+  </data>
+  <data name="Alimentação" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Despesas Fixas" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Gastos com Alimentação" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Mês Selecionado:" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Monthly Expenses" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Outras Despesas" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Owned Money" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Renda Líquida" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Resumo Mensal" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo Bancário Previsto" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo Disponível" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo do Último Dia" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saldo para o Próximo Mês" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Saques Bancários" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total de Rendas" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total de Rendas do Mês" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total do Dia" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Total do Mês" xml:space="preserve">
+    <value></value>
   </data>
 </root>

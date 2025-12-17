@@ -27,16 +27,15 @@
         <!-- Tipo de Despesa -->
         <div class="mb-2">
             <label>@L["Tipo de Despesa"]</label>
-            <InputSelect id="tipoDespesaID"
+            <InputSelect id="despesaID"
                          class="form-select"
                          @bind-Value="novaSaida.DespesaID">
                 <option value="0">@L["Selecione"]</option>
 
-                @foreach (var tipo in tiposDeDespesa
-                                ?? Enumerable.Empty<TiposDeDespesa>())
+                @foreach (var tipo in despesa?? Enumerable.Empty<Despesa>())
                 {
-                    <option value="@tipo.TipoDespesaId">
-                        @tipo.TipoDeDespesa
+                    <option value="@tipo.DespesaId">
+                        @tipo.NomeDespesa
                     </option>
                 }
             </InputSelect>
@@ -101,7 +100,7 @@
     [SupplyParameterFromForm]
     private Saidas? novaSaida { get; set; }
 
-    private List<TiposDeDespesa> tiposDeDespesa = new();
+    private List<Despesa> despesa = new();
     private string errorMessage = string.Empty;
     private string successMessage = string.Empty;
     private string? UserID = string.Empty;
@@ -136,11 +135,11 @@
     private async Task CarregarTiposDespesa()
     {
         var client = HttpFactory.CreateClient("apis");
-        tiposDeDespesa =
-            await client.GetFromJsonAsync<List<TiposDeDespesa>>(
-                $"tiposdespesa/{UserID}"
+        despesa =
+            await client.GetFromJsonAsync<List<Despesa>>(
+                $"despesas/{UserID}"
             )
-            ?? new List<TiposDeDespesa>();
+            ?? new List<Despesa>();
     }
 
     protected override async Task OnParametersSetAsync()
