@@ -20,7 +20,7 @@ namespace kakeibo.api
                         d.UserID,
                         d.NomeDespesa
                     })                    
-                    .OrderBy(u => u.TipoDespesaNome)
+                    .OrderBy(u => u.NomeDespesa)
                     .ToListAsync();
 
                 return Results.Ok(all);

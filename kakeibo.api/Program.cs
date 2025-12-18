@@ -187,6 +187,7 @@ public class Program
         app.MapDailyExpensesTotalsEndpoints();
         app.MapMonthlyExpensesTotalsEndpoints();
         app.MapOwnedMoneyEndpoints();
+        app.MapDespesasVariaveisEndpoints();
 
         // ---------------------------------------------------------
         // 13. RUN
