@@ -9,6 +9,7 @@
 @inject NavigationManager NavManager
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 @inject IStringLocalizer<SharedResources> L
+@inject ILogger<MonthlySummaryReport> Log
 
 @rendermode InteractiveServer
 
@@ -229,8 +230,9 @@
                 despesasVariaveis.Add(new DespesasVariaveis { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, NomeDespesa = "", TotalDestaCategoria = 0M });
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Log.LogError(ex, "Error fetching Despesas Variaveis");
             despesasVariaveis = new List<DespesasVariaveis>();
             despesasVariaveis.Add(new DespesasVariaveis { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, NomeDespesa = "", TotalDestaCategoria = 0M });
         }

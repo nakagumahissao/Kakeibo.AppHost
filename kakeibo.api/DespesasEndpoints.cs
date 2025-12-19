@@ -1,5 +1,7 @@
 ﻿using kakeibo.api.Data;
+using kakeibo.api.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace kakeibo.api
 {
@@ -7,24 +9,27 @@ namespace kakeibo.api
     {
         public static void MapDespesasEndpoints(this WebApplication app)
         {
-            app.MapGet("/despesas/{UserID}", async (string UserID, KakeiboDBContext db) =>
+            app.MapGet("/despesas/{UserID}", async (string UserID, KakeiboDBContext db, IStringLocalizer<SharedResources> L) =>
             {
-                var all = await db.despesas
+                var data = await db.despesas
                     .Where(u => u.UserID == UserID)
                     .Include(d => d.TiposDeDespesa)
-                    .Select(d => new
-                    {
-                        d.DespesaID,
-                        d.TipoDespesaID,
-                        TipoDespesaNome = d.TiposDeDespesa!.TipoDeDespesa,
-                        d.UserID,
-                        d.NomeDespesa
-                    })                    
                     .OrderBy(u => u.NomeDespesa)
                     .ToListAsync();
 
-                return Results.Ok(all);
-            }).RequireAuthorization();
+                var result = data.Select(d => new
+                {
+                    d.DespesaID,
+                    d.TipoDespesaID,
+                    TipoDespesaNome = L[d.TiposDeDespesa!.TipoDeDespesa].Value,
+                    d.UserID,
+                    NomeDespesa = L[d.NomeDespesa].Value
+                });
+
+                return Results.Ok(result);
+            })
+            .RequireAuthorization();
+
 
             app.MapGet("/despesas/{id:decimal}", async (decimal id, KakeiboDBContext db) =>
             {

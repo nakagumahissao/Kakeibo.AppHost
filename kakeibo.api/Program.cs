@@ -149,19 +149,20 @@ public class Program
 
         // Localization
         var localizationOptions = new RequestLocalizationOptions()
-            .SetDefaultCulture(supportedCultures[2])
+            .SetDefaultCulture("pt-BR")
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
 
-        localizationOptions.RequestCultureProviders.Insert(0,
-            new AcceptLanguageHeaderRequestCultureProvider());
+        localizationOptions.RequestCultureProviders.Insert(0, new JwtCultureProvider());
 
         // ---------------------------------------------------------
         // 11. MIDDLEWARE PIPELINE
         // ---------------------------------------------------------
         app.UseHttpsRedirection();
         app.UseRequestLocalization();
+
         app.UseAuthentication();
+        app.UseRequestLocalization(localizationOptions);
         app.UseAuthorization();
 
         app.UseCors("AllowBlazorWithCredentials");

@@ -17,7 +17,6 @@ namespace kakeibo.api.Data
         public DbSet<Despesas> despesas { get; set; }
         public DbSet<Entradas> entradas { get; set; }
         public DbSet<PlanoAnual> planoAnuals { get; set; }
-        public DbSet<Resultados> resultados { get; set; }
         public DbSet<Saidas> saidas { get; set; }
         public DbSet<DailyExpensesTotals> dailyExpensesTotals { get; set; }
         public DbSet<MonthlyExpensesTotals> monthlyExpensesTotals { get; set; }
@@ -41,10 +40,6 @@ namespace kakeibo.api.Data
 
             modelBuilder.Entity<PlanoAnual>()
                 .Property(e => e.PlanoAnualID)
-                .HasColumnType("decimal(18,0)");
-
-            modelBuilder.Entity<Resultados>()
-                .Property(p => p.ResultadoID)
                 .HasColumnType("decimal(18,0)");
 
             modelBuilder.Entity<Saidas>()

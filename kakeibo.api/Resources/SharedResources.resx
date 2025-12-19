@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    (header idêntico ao que você forneceu)
-  -->
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -60,4 +57,89 @@
   <data name="Usuário não existe." xml:space="preserve">
     <value>Usuário não existe.</value>
   </data>
+  <data name="Estacionamento" xml:space="preserve">
+    <value>Estacionamento</value>
+  </data>
+  <data name="Energia Eletrica" xml:space="preserve">
+    <value>Energia Eletrica</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>Gas</value>
+  </data>
+  <data name="Agua" xml:space="preserve">
+    <value>Agua</value>
+  </data>
+  <data name="Celular" xml:space="preserve">
+    <value>Celular</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>Internet</value>
+  </data>
+  <data name="Reserva p/ Gastos Pessoais" xml:space="preserve">
+    <value>Reserva p/ Gastos Pessoais</value>
+  </data>
+  <data name="Seguros/Nenkin" xml:space="preserve">
+    <value>Seguros/Nenkin</value>
+  </data>
+  <data name="Poupanca" xml:space="preserve">
+    <value>Poupanca</value>
+  </data>
+  <data name="Cartoes de Credito" xml:space="preserve">
+    <value>Cartoes de Credito</value>
+  </data>
+  <data name="Financiamentos" xml:space="preserve">
+    <value>Financiamentos</value>
+  </data>
+  <data name="Despesas com Alimentacao" xml:space="preserve">
+    <value>Despesas com Alimentacao</value>
+  </data>
+  <data name="Despesas com Necessidades Diarias" xml:space="preserve">
+    <value>Despesas com Necessidades Diarias</value>
+  </data>
+  <data name="Vestuario" xml:space="preserve">
+    <value>Vestuario</value>
+  </data>
+  <data name="Criancas" xml:space="preserve">
+    <value>Criancas</value>
+  </data>
+  <data name="Entretenimento/Educacao" xml:space="preserve">
+    <value>Entretenimento/Educacao</value>
+  </data>
+  <data name="Cuidados Medicos" xml:space="preserve">
+    <value>Cuidados Medicos</value>
+  </data>
+  <data name="Passagens p/ Trabalho" xml:space="preserve">
+    <value>Passagens p/ Trabalho</value>
+  </data>
+  <data name="Saque Bancario" xml:space="preserve">
+    <value>Saque Bancario</value>
+  </data>
+  <data name="Aluguel" xml:space="preserve">
+    <value>Aluguel</value>
+  </data>
+  <data name="Fixas" xml:space="preserve">
+    <value>Fixas</value>
+  </data>
+  <data name="Variaveis" xml:space="preserve">
+    <value>Variaveis</value>
+  </data>
+  <data name="Salario 1" xml:space="preserve">
+    <value>Salario 1</value>
+  </data>
+  <data name="Salario 2" xml:space="preserve">
+    <value>Salario 2</value>
+  </data>
+  <data name="Salario 3" xml:space="preserve">
+    <value>Salario 3</value>
+  </data>
+  <data name="Outras Rendas" xml:space="preserve">
+    <value>Outras Rendas</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>Outros</value>
+  </data>
+  <data name="Resultado do Mes Anterior" xml:space="preserve">
+    <value>Resultado do Mes Anterior</value>
+  </data>
+
 </root>

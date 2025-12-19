@@ -12,23 +12,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
-    <value>密码重置邮件已成功发送。</value>
+    <value>密码重置电子邮件已成功发送。</value>
   </data>
   <data name="E-mail não cadastrado." xml:space="preserve">
-    <value>邮箱未注册。</value>
+    <value>电子邮件未注册。</value>
   </data>
   <data name="Erro" xml:space="preserve">
     <value>错误</value>
   </data>
   <data name="Falha ao enviar o e-mail de redefinição." xml:space="preserve">
-    <value>发送重置邮件失败。</value>
+    <value>发送密码重置电子邮件失败。</value>
   </data>
   <data name="Falha ao redefinir a senha." xml:space="preserve">
-    <value>重置密码失败。</value>
+    <value>密码重置失败。</value>
   </data>
   <data name="O e-mail é obrigatório." xml:space="preserve">
-    <value>邮箱是必填项。</value>
+    <value>电子邮件是必填项。</value>
   </data>
   <data name="Role já existe" xml:space="preserve">
     <value>角色已存在</value>
@@ -43,10 +44,10 @@
     <value>当前密码不正确。</value>
   </data>
   <data name="Senha redefinida com sucesso! Agora você deve fazer login novamente." xml:space="preserve">
-    <value>密码重置成功！您现在需要重新登录。</value>
+    <value>密码重置成功！现在您需要重新登录。</value>
   </data>
   <data name="UserId, token e nova senha são obrigatórios." xml:space="preserve">
-    <value>用户ID、令牌和新密码是必填项。</value>
+    <value>UserId、令牌和新密码是必填项。</value>
   </data>
   <data name="Usuário não autenticado." xml:space="preserve">
     <value>用户未认证。</value>
@@ -57,4 +58,92 @@
   <data name="Usuário não existe." xml:space="preserve">
     <value>用户不存在。</value>
   </data>
+
+  <data name="Estacionamento" xml:space="preserve">
+    <value>停车费</value>
+  </data>
+  <data name="Energia Eletrica" xml:space="preserve">
+    <value>电费</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>燃气费</value>
+  </data>
+  <data name="Agua" xml:space="preserve">
+    <value>水费</value>
+  </data>
+  <data name="Celular" xml:space="preserve">
+    <value>手机费用</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>互联网费用</value>
+  </data>
+  <data name="Reserva p/ Gastos Pessoais" xml:space="preserve">
+    <value>个人支出预留</value>
+  </data>
+  <data name="Seguros/Nenkin" xml:space="preserve">
+    <value>保险/养老金</value>
+  </data>
+  <data name="Poupanca" xml:space="preserve">
+    <value>储蓄</value>
+  </data>
+  <data name="Cartoes de Credito" xml:space="preserve">
+    <value>信用卡</value>
+  </data>
+  <data name="Financiamentos" xml:space="preserve">
+    <value>贷款</value>
+  </data>
+  <data name="Despesas com Alimentacao" xml:space="preserve">
+    <value>食品支出</value>
+  </data>
+  <data name="Despesas com Necessidades Diarias" xml:space="preserve">
+    <value>日常必需品支出</value>
+  </data>
+  <data name="Vestuario" xml:space="preserve">
+    <value>服装</value>
+  </data>
+  <data name="Criancas" xml:space="preserve">
+    <value>儿童</value>
+  </data>
+  <data name="Entretenimento/Educacao" xml:space="preserve">
+    <value>娱乐/教育</value>
+  </data>
+  <data name="Cuidados Medicos" xml:space="preserve">
+    <value>医疗护理</value>
+  </data>
+  <data name="Passagens p/ Trabalho" xml:space="preserve">
+    <value>通勤交通费</value>
+  </data>
+  <data name="Saque Bancario" xml:space="preserve">
+    <value>银行取款</value>
+  </data>
+  <data name="Aluguel" xml:space="preserve">
+    <value>房租</value>
+  </data>
+
+  <data name="Fixas" xml:space="preserve">
+    <value>固定</value>
+  </data>
+  <data name="Variaveis" xml:space="preserve">
+    <value>可变</value>
+  </data>
+
+  <data name="Salario 1" xml:space="preserve">
+    <value>工资 1</value>
+  </data>
+  <data name="Salario 2" xml:space="preserve">
+    <value>工资 2</value>
+  </data>
+  <data name="Salario 3" xml:space="preserve">
+    <value>工资 3</value>
+  </data>
+  <data name="Outras Rendas" xml:space="preserve">
+    <value>其他收入</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="Resultado do Mes Anterior" xml:space="preserve">
+    <value>上月结余</value>
+  </data>
+
 </root>

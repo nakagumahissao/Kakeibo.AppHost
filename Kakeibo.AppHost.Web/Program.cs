@@ -1,12 +1,13 @@
 ﻿using Kakeibo.AppHost.Web.Components;
-using Kakeibo.AppHost.Web.Models;
 using Kakeibo.AppHost.Web.Localization;
+using Kakeibo.AppHost.Web.Models;
 using Kakeibo.AppHost.Web.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Serilog;
 using StackExchange.Redis;
+using System.Globalization;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,12 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 // ---------------- Windows Service ----------------
 builder.Host.UseWindowsService();
 
+// ---------------- Kestrel HTTPS ----------------
 var certPath = builder.Configuration["Kestrel:HttpsCertificate:Path"];
 var certPassword = builder.Configuration["Kestrel:HttpsCertificate:Password"];
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    // HTTPS on port 446
     options.Listen(IPAddress.Parse("100.64.1.29"), 446, listenOptions =>
     {
         listenOptions.UseHttps(certPath!, certPassword);
@@ -39,7 +40,7 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Starting Kakeibo Web Site Service...");
 builder.Host.UseSerilog();
 
-// ---------------- Redis ----------------
+// ---------------- Redis Data Protection ----------------
 var redisConnectionString = builder.Configuration.GetConnectionString("redis");
 if (string.IsNullOrEmpty(redisConnectionString))
 {
@@ -48,13 +49,11 @@ if (string.IsNullOrEmpty(redisConnectionString))
 }
 
 var redis = ConnectionMultiplexer.Connect(redisConnectionString);
-
-// ---------------- Data Protection ----------------
 builder.Services.AddDataProtection()
     .SetApplicationName("KakeiboWebFrontend")
     .PersistKeysToStackExchangeRedis(redis);
 
-// ---------------- JWT / HTTP ----------------
+// ---------------- HTTP / JWT ----------------
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 
@@ -69,19 +68,11 @@ builder.Services.AddHttpClient("local", client =>
     client.BaseAddress = new Uri("https://100.64.1.29:446/");
 });
 
-// ---------------- CULTURE ----------------
+// ---------------- CULTURE / LOCALIZATION ----------------
 var supportedCultures = new[]
 {
-    "en",
-    "en-US",
-    "pt",
-    "pt-BR",
-    "ja",
-    "ja-JP",
-    "de",
-    "es",
-    "fr",
-    "zh-CN"
+    "en", "en-US", "pt", "pt-BR",
+    "ja", "ja-JP", "de", "es", "fr", "zh-CN"
 };
 
 builder.Services.AddLocalization(options =>
@@ -89,7 +80,7 @@ builder.Services.AddLocalization(options =>
     options.ResourcesPath = "";
 });
 
-// ---------------- Blazor ----------------
+// ---------------- Blazor Server ----------------
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -99,9 +90,9 @@ builder.Services.AddOutputCache();
 
 var app = builder.Build();
 
-// Localization
+// ---------------- Localization Middleware ----------------
 var localizationOptions = new RequestLocalizationOptions()
-    .SetDefaultCulture(supportedCultures[2])
+    .SetDefaultCulture("pt-BR")
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 
@@ -110,7 +101,7 @@ localizationOptions.RequestCultureProviders.Insert(0,
 
 app.UseRequestLocalization(localizationOptions);
 
-// ---------------- Pipeline ----------------
+// ---------------- Middleware Pipeline ----------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -128,22 +119,18 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // ---------------- LOGIN ENDPOINT ----------------
-// We use the static local function, passing only HttpContext to manually resolve services.
 app.MapPost("/blazor-login", ProcessLoginAsync)
     .AllowAnonymous();
 
 // ---------------- LOCAL STATIC FUNCTION FOR LOGIN ----------------
-// We keep the service locator pattern as it is the only way to avoid DI conflicts in this project.
 static async Task<IResult> ProcessLoginAsync(HttpContext context, LoginModel loginModel)
 {
-    // Manually resolve the necessary services from the request's scope
+    // Resolve services
     var clientFactory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
     var tokenService = context.RequestServices.GetRequiredService<TokenService>();
     var localizerFactory = context.RequestServices.GetRequiredService<IStringLocalizerFactory>();
-
     var L = localizerFactory.Create(typeof(SharedResources));
 
-    // The rest of the logic remains the same
     Log.Information("Blazor login attempt for user {Email}.", loginModel.Email);
 
     var client = clientFactory.CreateClient("apis");

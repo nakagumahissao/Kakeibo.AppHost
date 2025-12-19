@@ -12,6 +12,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
     <value>Password reset email sent successfully.</value>
   </data>
@@ -22,13 +23,13 @@
     <value>Error</value>
   </data>
   <data name="Falha ao enviar o e-mail de redefinição." xml:space="preserve">
-    <value>Failed to send the reset email.</value>
+    <value>Failed to send password reset email.</value>
   </data>
   <data name="Falha ao redefinir a senha." xml:space="preserve">
-    <value>Failed to reset the password.</value>
+    <value>Failed to reset password.</value>
   </data>
   <data name="O e-mail é obrigatório." xml:space="preserve">
-    <value>The email is required.</value>
+    <value>Email is required.</value>
   </data>
   <data name="Role já existe" xml:space="preserve">
     <value>Role already exists</value>
@@ -43,7 +44,7 @@
     <value>Current password is incorrect.</value>
   </data>
   <data name="Senha redefinida com sucesso! Agora você deve fazer login novamente." xml:space="preserve">
-    <value>Password reset successfully! You should log in again now.</value>
+    <value>Password reset successfully! You must now log in again.</value>
   </data>
   <data name="UserId, token e nova senha são obrigatórios." xml:space="preserve">
     <value>UserId, token, and new password are required.</value>
@@ -57,4 +58,92 @@
   <data name="Usuário não existe." xml:space="preserve">
     <value>User does not exist.</value>
   </data>
+
+  <data name="Estacionamento" xml:space="preserve">
+    <value>Parking</value>
+  </data>
+  <data name="Energia Eletrica" xml:space="preserve">
+    <value>Electricity</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>Gas</value>
+  </data>
+  <data name="Agua" xml:space="preserve">
+    <value>Water</value>
+  </data>
+  <data name="Celular" xml:space="preserve">
+    <value>Mobile Phone</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>Internet</value>
+  </data>
+  <data name="Reserva p/ Gastos Pessoais" xml:space="preserve">
+    <value>Personal Expenses Reserve</value>
+  </data>
+  <data name="Seguros/Nenkin" xml:space="preserve">
+    <value>Insurance / Pension</value>
+  </data>
+  <data name="Poupanca" xml:space="preserve">
+    <value>Savings</value>
+  </data>
+  <data name="Cartoes de Credito" xml:space="preserve">
+    <value>Credit Cards</value>
+  </data>
+  <data name="Financiamentos" xml:space="preserve">
+    <value>Loans</value>
+  </data>
+  <data name="Despesas com Alimentacao" xml:space="preserve">
+    <value>Food Expenses</value>
+  </data>
+  <data name="Despesas com Necessidades Diarias" xml:space="preserve">
+    <value>Daily Necessities Expenses</value>
+  </data>
+  <data name="Vestuario" xml:space="preserve">
+    <value>Clothing</value>
+  </data>
+  <data name="Criancas" xml:space="preserve">
+    <value>Children</value>
+  </data>
+  <data name="Entretenimento/Educacao" xml:space="preserve">
+    <value>Entertainment / Education</value>
+  </data>
+  <data name="Cuidados Medicos" xml:space="preserve">
+    <value>Medical Care</value>
+  </data>
+  <data name="Passagens p/ Trabalho" xml:space="preserve">
+    <value>Commuting</value>
+  </data>
+  <data name="Saque Bancario" xml:space="preserve">
+    <value>Bank Withdrawal</value>
+  </data>
+  <data name="Aluguel" xml:space="preserve">
+    <value>Rent</value>
+  </data>
+
+  <data name="Fixas" xml:space="preserve">
+    <value>Fixed</value>
+  </data>
+  <data name="Variaveis" xml:space="preserve">
+    <value>Variable</value>
+  </data>
+
+  <data name="Salario 1" xml:space="preserve">
+    <value>Salary 1</value>
+  </data>
+  <data name="Salario 2" xml:space="preserve">
+    <value>Salary 2</value>
+  </data>
+  <data name="Salario 3" xml:space="preserve">
+    <value>Salary 3</value>
+  </data>
+  <data name="Outras Rendas" xml:space="preserve">
+    <value>Other Income</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>Others</value>
+  </data>
+  <data name="Resultado do Mes Anterior" xml:space="preserve">
+    <value>Previous Month Result</value>
+  </data>
+
 </root>

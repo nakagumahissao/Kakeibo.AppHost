@@ -12,6 +12,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
     <value>Correo electrónico de restablecimiento de contraseña enviado con éxito.</value>
   </data>
@@ -43,10 +44,10 @@
     <value>Contraseña actual incorrecta.</value>
   </data>
   <data name="Senha redefinida com sucesso! Agora você deve fazer login novamente." xml:space="preserve">
-    <value>¡Contraseña restablecida con éxito! Ahora debe iniciar sesión de nuevo.</value>
+    <value>¡Contraseña restablecida con éxito! Ahora debe iniciar sesión nuevamente.</value>
   </data>
   <data name="UserId, token e nova senha são obrigatórios." xml:space="preserve">
-    <value>Se requieren la ID de usuario, el token y la nueva contraseña.</value>
+    <value>UserId, token y nueva contraseña son obligatorios.</value>
   </data>
   <data name="Usuário não autenticado." xml:space="preserve">
     <value>Usuario no autenticado.</value>
@@ -56,5 +57,92 @@
   </data>
   <data name="Usuário não existe." xml:space="preserve">
     <value>El usuario no existe.</value>
+  </data>
+
+  <data name="Estacionamento" xml:space="preserve">
+    <value>Estacionamiento</value>
+  </data>
+  <data name="Energia Eletrica" xml:space="preserve">
+    <value>Energía eléctrica</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>Gas</value>
+  </data>
+  <data name="Agua" xml:space="preserve">
+    <value>Agua</value>
+  </data>
+  <data name="Celular" xml:space="preserve">
+    <value>Teléfono móvil</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>Internet</value>
+  </data>
+  <data name="Reserva p/ Gastos Pessoais" xml:space="preserve">
+    <value>Reserva para gastos personales</value>
+  </data>
+  <data name="Seguros/Nenkin" xml:space="preserve">
+    <value>Seguros / pensión</value>
+  </data>
+  <data name="Poupanca" xml:space="preserve">
+    <value>Ahorros</value>
+  </data>
+  <data name="Cartoes de Credito" xml:space="preserve">
+    <value>Tarjetas de crédito</value>
+  </data>
+  <data name="Financiamentos" xml:space="preserve">
+    <value>Financiamientos</value>
+  </data>
+  <data name="Despesas com Alimentacao" xml:space="preserve">
+    <value>Gastos en alimentación</value>
+  </data>
+  <data name="Despesas com Necessidades Diarias" xml:space="preserve">
+    <value>Gastos en necesidades diarias</value>
+  </data>
+  <data name="Vestuario" xml:space="preserve">
+    <value>Ropa</value>
+  </data>
+  <data name="Criancas" xml:space="preserve">
+    <value>Niños</value>
+  </data>
+  <data name="Entretenimento/Educacao" xml:space="preserve">
+    <value>Entretenimiento / educación</value>
+  </data>
+  <data name="Cuidados Medicos" xml:space="preserve">
+    <value>Atención médica</value>
+  </data>
+  <data name="Passagens p/ Trabalho" xml:space="preserve">
+    <value>Transporte al trabajo</value>
+  </data>
+  <data name="Saque Bancario" xml:space="preserve">
+    <value>Retiro bancario</value>
+  </data>
+  <data name="Aluguel" xml:space="preserve">
+    <value>Alquiler</value>
+  </data>
+
+  <data name="Fixas" xml:space="preserve">
+    <value>Fijas</value>
+  </data>
+  <data name="Variaveis" xml:space="preserve">
+    <value>Variables</value>
+  </data>
+
+  <data name="Salario 1" xml:space="preserve">
+    <value>Salario 1</value>
+  </data>
+  <data name="Salario 2" xml:space="preserve">
+    <value>Salario 2</value>
+  </data>
+  <data name="Salario 3" xml:space="preserve">
+    <value>Salario 3</value>
+  </data>
+  <data name="Outras Rendas" xml:space="preserve">
+    <value>Otros ingresos</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>Otros</value>
+  </data>
+  <data name="Resultado do Mes Anterior" xml:space="preserve">
+    <value>Resultado del mes anterior</value>
   </data>
 </root>

@@ -1,5 +1,7 @@
 ﻿using kakeibo.api.Data;
+using kakeibo.api.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace kakeibo.api
 {
@@ -7,9 +9,16 @@ namespace kakeibo.api
     {
         public static void MapTiposDeEntradasEndpoints(this WebApplication app)
         {
-            app.MapGet("/tiposentrada/{UserID}", async (string UserID, KakeiboDBContext db) =>
+            app.MapGet("/tiposentrada/{UserID}", async (string UserID, KakeiboDBContext db, IStringLocalizer<SharedResources> L) =>
             {
-                var all = await db.tiposDeEntradas.Where(w => w.UserID == UserID).ToListAsync();
+                var all = await db.tiposDeEntradas.Where(w => w.UserID == UserID)
+                    .Select(s => new TiposDeEntradas
+                    {
+                        TipoDeEntradaID = s.TipoDeEntradaID,
+                        TipoDeEntrada = L[s.TipoDeEntrada],
+                        UserID = s.UserID
+                    })
+                    .ToListAsync();
                 return Results.Ok(all);
             }).RequireAuthorization();
 

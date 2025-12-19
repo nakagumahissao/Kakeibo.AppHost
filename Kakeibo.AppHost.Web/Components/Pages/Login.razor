@@ -55,7 +55,8 @@
         loginModel = new LoginModel
         {
             Email = string.Empty,
-            Password = string.Empty
+            Password = string.Empty,
+            CultureName = string.Empty
         };
 
         editContext = new EditContext(loginModel);
@@ -75,6 +76,9 @@
                 "Submitting login for {Email}",
                 loginModel.Email
             );
+
+
+            loginModel.CultureName = System.Globalization.CultureInfo.CurrentCulture.Name;
 
             var client = HttpFactory.CreateClient("local");
             var response =

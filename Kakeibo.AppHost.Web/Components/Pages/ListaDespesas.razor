@@ -24,7 +24,7 @@ else
                 <th>@L["ID"]</th>
                 <th>@L["Tipo de Despesa"]</th>
                 <th>@L["Despesa"]</th>
-                <th>@L["Ações"]</th>
+                @* <th>@L["Ações"]</th> *@
             </tr>
         </thead>
         <tbody>
@@ -34,7 +34,7 @@ else
                     <td>@despesa.DespesaId</td>
                     <td>@despesa.TipoDespesaNome</td>
                     <td>@despesa.NomeDespesa</td>
-                    <td>
+                    @* <td>
                         <a href="/listadespesas/editar/@despesa.DespesaId"
                            class="btn btn-sm btn-primary">
                             @L["Editar"]
@@ -44,7 +44,7 @@ else
                            class="btn btn-sm btn-danger ms-2">
                             @L["Excluir"]
                         </a>
-                    </td>
+                    </td> *@
                 </tr>
             }
         </tbody>
