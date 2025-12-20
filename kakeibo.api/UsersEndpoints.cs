@@ -131,7 +131,7 @@ public static class UsersEndpoints
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email!),
-                new Claim("culture", culture) // ✅ CORRECT PLACE
+                new Claim("culture", culture)
             };
 
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));

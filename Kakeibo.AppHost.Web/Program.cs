@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Serilog;
 using StackExchange.Redis;
-using System.Globalization;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
