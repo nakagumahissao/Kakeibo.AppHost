@@ -9,6 +9,7 @@
 @inject NavigationManager NavManager
 @inject Kakeibo.AppHost.Web.Services.TokenService TokenService
 @inject IStringLocalizer<SharedResources> L
+@inject ILogger<MonthlySummaryReport> Log
 
 @rendermode InteractiveServer
 
@@ -100,6 +101,34 @@
     </div>
 }
 
+@if (despesasVariaveis != null && despesasVariaveis.Any())
+{
+    <div class="mt-4 d-flex justify-content-center">
+        <div style="width:60%;">
+            <h3 class="mb-3 text-center">@L["Listagem dos Totais das Despesas do Mês"]</h3>
+            <table class="table table-striped table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>@L["Nome da Despesa"]</th>
+                        <th class="text-end">@L["Valor"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in despesasVariaveis)
+                    {
+                        <tr>
+                            <td>@item.NomeDespesa</td>
+                            <td class="text-end">
+                                @item.TotalDestaCategoria.ToString("N2", CultureInfo.CurrentCulture)
+                            </td>
+                        </tr>
+                    }
+                </tbody>                
+            </table>
+        </div>
+    </div>
+}
+
 @code {
     /* ================= ROUTE PARAMS ================= */
     [Parameter] public int? Year { get; set; }
@@ -118,6 +147,7 @@
 
     private OwnedMoney? ownedMoney;
     private MonthlyExpensesTotals? monthlyExpenses;
+    private List<DespesasVariaveis>? despesasVariaveis;
 
     /* ================= LIFECYCLE ================= */
     protected override async Task OnParametersSetAsync()
@@ -184,6 +214,27 @@
         catch
         {
             monthlyExpenses = new MonthlyExpensesTotals { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, BankWithdrawals = 0, FoodCosts = 0, OtherExpenses = 0, MonthlyTotal = 0, SaldoParaMesSeguinte = 0 };
+        }
+
+        // Despesas Variaveis
+        try
+        {
+            var response = await client.GetAsync(
+                $"despesasvariaveis/{userId}/{currentMonth:00}/{currentYear}");
+
+            if (response.IsSuccessStatusCode)
+                despesasVariaveis = await response.Content.ReadFromJsonAsync<List<DespesasVariaveis>>();
+            else
+            {
+                despesasVariaveis = new List<DespesasVariaveis>();
+                despesasVariaveis.Add(new DespesasVariaveis { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, NomeDespesa = "", TotalDestaCategoria = 0M });
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.LogError(ex, "Error fetching Despesas Variaveis");
+            despesasVariaveis = new List<DespesasVariaveis>();
+            despesasVariaveis.Add(new DespesasVariaveis { Ano = currentYear.ToString(), Mes = currentMonth.ToString("00"), UserID = userId, NomeDespesa = "", TotalDestaCategoria = 0M });
         }
     }
 

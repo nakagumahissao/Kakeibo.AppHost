@@ -17,11 +17,11 @@ namespace kakeibo.api.Data
         public DbSet<Despesas> despesas { get; set; }
         public DbSet<Entradas> entradas { get; set; }
         public DbSet<PlanoAnual> planoAnuals { get; set; }
-        public DbSet<Resultados> resultados { get; set; }
         public DbSet<Saidas> saidas { get; set; }
         public DbSet<DailyExpensesTotals> dailyExpensesTotals { get; set; }
         public DbSet<MonthlyExpensesTotals> monthlyExpensesTotals { get; set; }
         public DbSet<OwnedMoney> ownedMoneys { get; set; }
+        public DbSet<DespesasVariaveis> despesasVariaveis { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,10 +40,6 @@ namespace kakeibo.api.Data
 
             modelBuilder.Entity<PlanoAnual>()
                 .Property(e => e.PlanoAnualID)
-                .HasColumnType("decimal(18,0)");
-
-            modelBuilder.Entity<Resultados>()
-                .Property(p => p.ResultadoID)
                 .HasColumnType("decimal(18,0)");
 
             modelBuilder.Entity<Saidas>()
@@ -70,6 +66,18 @@ namespace kakeibo.api.Data
             modelBuilder.Entity<OwnedMoney>()
                 .Property(r => r.OwnedMoneyID)
                 .HasColumnType("decimal(18,0)");
+
+            modelBuilder.Entity<DespesasVariaveis>(entity =>
+            {
+                // Define a Chave Primária Composta
+                entity.HasKey(e => new { e.UserID, e.Ano, e.Mes });
+
+                // Mapeia para a View (garante que o EF não tente criar uma tabela)
+                entity.ToView("vwDespesasVariaveis");
+
+                entity.Property(e => e.TotalDestaCategoria)
+                      .HasPrecision(19, 2);
+            });
         }
     }
 }

@@ -12,8 +12,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
-    <value>E-mail de réinitialisation de mot de passe envoyé avec succès.</value>
+    <value>E-mail de réinitialisation du mot de passe envoyé avec succès.</value>
   </data>
   <data name="E-mail não cadastrado." xml:space="preserve">
     <value>E-mail non enregistré.</value>
@@ -22,39 +23,127 @@
     <value>Erreur</value>
   </data>
   <data name="Falha ao enviar o e-mail de redefinição." xml:space="preserve">
-    <value>Échec de l'envoi de l'e-mail de réinitialisation.</value>
+    <value>Échec de l’envoi de l’e-mail de réinitialisation.</value>
   </data>
   <data name="Falha ao redefinir a senha." xml:space="preserve">
     <value>Échec de la réinitialisation du mot de passe.</value>
   </data>
   <data name="O e-mail é obrigatório." xml:space="preserve">
-    <value>L'e-mail est obligatoire.</value>
+    <value>L’e-mail est obligatoire.</value>
   </data>
   <data name="Role já existe" xml:space="preserve">
     <value>Le rôle existe déjà</value>
   </data>
   <data name="Role não existe" xml:space="preserve">
-    <value>Le rôle n'existe pas</value>
+    <value>Le rôle n’existe pas</value>
   </data>
   <data name="Senha alterada com sucesso!" xml:space="preserve">
-    <value>Mot de passe changé avec succès !</value>
+    <value>Mot de passe modifié avec succès !</value>
   </data>
   <data name="Senha atual incorreta." xml:space="preserve">
-    <value>Le mot de passe actuel est incorrect.</value>
+    <value>Mot de passe actuel incorrect.</value>
   </data>
   <data name="Senha redefinida com sucesso! Agora você deve fazer login novamente." xml:space="preserve">
-    <value>Mot de passe réinitialisé avec succès ! Vous devez vous reconnecter maintenant.</value>
+    <value>Mot de passe réinitialisé avec succès ! Vous devez maintenant vous reconnecter.</value>
   </data>
   <data name="UserId, token e nova senha são obrigatórios." xml:space="preserve">
-    <value>L'ID utilisateur, le jeton et le nouveau mot de passe sont obligatoires.</value>
+    <value>UserId, jeton et nouveau mot de passe sont obligatoires.</value>
   </data>
   <data name="Usuário não autenticado." xml:space="preserve">
     <value>Utilisateur non authentifié.</value>
   </data>
   <data name="Usuário não encontrado." xml:space="preserve">
-    <value>Utilisateur non trouvé.</value>
+    <value>Utilisateur introuvable.</value>
   </data>
   <data name="Usuário não existe." xml:space="preserve">
-    <value>L'utilisateur n'existe pas.</value>
+    <value>L’utilisateur n’existe pas.</value>
   </data>
+
+  <data name="Estacionamento" xml:space="preserve">
+    <value>Parking</value>
+  </data>
+  <data name="Energia Eletrica" xml:space="preserve">
+    <value>Électricité</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>Gaz</value>
+  </data>
+  <data name="Agua" xml:space="preserve">
+    <value>Eau</value>
+  </data>
+  <data name="Celular" xml:space="preserve">
+    <value>Téléphone portable</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>Internet</value>
+  </data>
+  <data name="Reserva p/ Gastos Pessoais" xml:space="preserve">
+    <value>Réserve pour dépenses personnelles</value>
+  </data>
+  <data name="Seguros/Nenkin" xml:space="preserve">
+    <value>Assurances / pension</value>
+  </data>
+  <data name="Poupanca" xml:space="preserve">
+    <value>Épargne</value>
+  </data>
+  <data name="Cartoes de Credito" xml:space="preserve">
+    <value>Cartes de crédit</value>
+  </data>
+  <data name="Financiamentos" xml:space="preserve">
+    <value>Financements</value>
+  </data>
+  <data name="Despesas com Alimentacao" xml:space="preserve">
+    <value>Dépenses alimentaires</value>
+  </data>
+  <data name="Despesas com Necessidades Diarias" xml:space="preserve">
+    <value>Dépenses quotidiennes</value>
+  </data>
+  <data name="Vestuario" xml:space="preserve">
+    <value>Vêtements</value>
+  </data>
+  <data name="Criancas" xml:space="preserve">
+    <value>Enfants</value>
+  </data>
+  <data name="Entretenimento/Educacao" xml:space="preserve">
+    <value>Divertissement / éducation</value>
+  </data>
+  <data name="Cuidados Medicos" xml:space="preserve">
+    <value>Soins médicaux</value>
+  </data>
+  <data name="Passagens p/ Trabalho" xml:space="preserve">
+    <value>Transport pour le travail</value>
+  </data>
+  <data name="Saque Bancario" xml:space="preserve">
+    <value>Retrait bancaire</value>
+  </data>
+  <data name="Aluguel" xml:space="preserve">
+    <value>Loyer</value>
+  </data>
+
+  <data name="Fixas" xml:space="preserve">
+    <value>Fixes</value>
+  </data>
+  <data name="Variaveis" xml:space="preserve">
+    <value>Variables</value>
+  </data>
+
+  <data name="Salario 1" xml:space="preserve">
+    <value>Salaire 1</value>
+  </data>
+  <data name="Salario 2" xml:space="preserve">
+    <value>Salaire 2</value>
+  </data>
+  <data name="Salario 3" xml:space="preserve">
+    <value>Salaire 3</value>
+  </data>
+  <data name="Outras Rendas" xml:space="preserve">
+    <value>Autres revenus</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>Autres</value>
+  </data>
+  <data name="Resultado do Mes Anterior" xml:space="preserve">
+    <value>Résultat du mois précédent</value>
+  </data>
+
 </root>

@@ -12,8 +12,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
-    <value>パスワードリセットメールが正常に送信されました。</value>
+    <value>パスワード再設定メールが正常に送信されました。</value>
   </data>
   <data name="E-mail não cadastrado." xml:space="preserve">
     <value>メールアドレスが登録されていません。</value>
@@ -22,39 +23,127 @@
     <value>エラー</value>
   </data>
   <data name="Falha ao enviar o e-mail de redefinição." xml:space="preserve">
-    <value>リセットメールの送信に失敗しました。</value>
+    <value>パスワード再設定メールの送信に失敗しました。</value>
   </data>
   <data name="Falha ao redefinir a senha." xml:space="preserve">
-    <value>パスワードのリセットに失敗しました。</value>
+    <value>パスワードの再設定に失敗しました。</value>
   </data>
   <data name="O e-mail é obrigatório." xml:space="preserve">
     <value>メールアドレスは必須です。</value>
   </data>
   <data name="Role já existe" xml:space="preserve">
-    <value>役割は既に存在します</value>
+    <value>ロールはすでに存在します</value>
   </data>
   <data name="Role não existe" xml:space="preserve">
-    <value>役割は存在しません</value>
+    <value>ロールは存在しません</value>
   </data>
   <data name="Senha alterada com sucesso!" xml:space="preserve">
     <value>パスワードが正常に変更されました！</value>
   </data>
   <data name="Senha atual incorreta." xml:space="preserve">
-    <value>現在のパスワードが間違っています。</value>
+    <value>現在のパスワードが正しくありません。</value>
   </data>
   <data name="Senha redefinida com sucesso! Agora você deve fazer login novamente." xml:space="preserve">
-    <value>パスワードが正常にリセットされました！再度ログインしてください。</value>
+    <value>パスワードが正常に再設定されました。再度ログインしてください。</value>
   </data>
   <data name="UserId, token e nova senha são obrigatórios." xml:space="preserve">
-    <value>ユーザーID、トークン、および新しいパスワードは必須です。</value>
+    <value>UserId、トークン、新しいパスワードは必須です。</value>
   </data>
   <data name="Usuário não autenticado." xml:space="preserve">
-    <value>ユーザーは認証されていません。</value>
+    <value>ユーザーが認証されていません。</value>
   </data>
   <data name="Usuário não encontrado." xml:space="preserve">
     <value>ユーザーが見つかりません。</value>
   </data>
   <data name="Usuário não existe." xml:space="preserve">
-    <value>ユーザーは存在しません。</value>
+    <value>ユーザーが存在しません。</value>
   </data>
+
+  <data name="Estacionamento" xml:space="preserve">
+    <value>駐車場</value>
+  </data>
+  <data name="Energia Eletrica" xml:space="preserve">
+    <value>電気代</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>ガス代</value>
+  </data>
+  <data name="Agua" xml:space="preserve">
+    <value>水道代</value>
+  </data>
+  <data name="Celular" xml:space="preserve">
+    <value>携帯電話</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>インターネット</value>
+  </data>
+  <data name="Reserva p/ Gastos Pessoais" xml:space="preserve">
+    <value>個人支出用の予備費</value>
+  </data>
+  <data name="Seguros/Nenkin" xml:space="preserve">
+    <value>保険／年金</value>
+  </data>
+  <data name="Poupanca" xml:space="preserve">
+    <value>貯蓄</value>
+  </data>
+  <data name="Cartoes de Credito" xml:space="preserve">
+    <value>クレジットカード</value>
+  </data>
+  <data name="Financiamentos" xml:space="preserve">
+    <value>ローン</value>
+  </data>
+  <data name="Despesas com Alimentacao" xml:space="preserve">
+    <value>食費</value>
+  </data>
+  <data name="Despesas com Necessidades Diarias" xml:space="preserve">
+    <value>日用品費</value>
+  </data>
+  <data name="Vestuario" xml:space="preserve">
+    <value>衣類</value>
+  </data>
+  <data name="Criancas" xml:space="preserve">
+    <value>子供関連費</value>
+  </data>
+  <data name="Entretenimento/Educacao" xml:space="preserve">
+    <value>娯楽／教育</value>
+  </data>
+  <data name="Cuidados Medicos" xml:space="preserve">
+    <value>医療費</value>
+  </data>
+  <data name="Passagens p/ Trabalho" xml:space="preserve">
+    <value>通勤交通費</value>
+  </data>
+  <data name="Saque Bancario" xml:space="preserve">
+    <value>銀行引き出し</value>
+  </data>
+  <data name="Aluguel" xml:space="preserve">
+    <value>家賃</value>
+  </data>
+
+  <data name="Fixas" xml:space="preserve">
+    <value>固定費</value>
+  </data>
+  <data name="Variaveis" xml:space="preserve">
+    <value>変動費</value>
+  </data>
+
+  <data name="Salario 1" xml:space="preserve">
+    <value>給与 1</value>
+  </data>
+  <data name="Salario 2" xml:space="preserve">
+    <value>給与 2</value>
+  </data>
+  <data name="Salario 3" xml:space="preserve">
+    <value>給与 3</value>
+  </data>
+  <data name="Outras Rendas" xml:space="preserve">
+    <value>その他の収入</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="Resultado do Mes Anterior" xml:space="preserve">
+    <value>前月の結果</value>
+  </data>
+
 </root>

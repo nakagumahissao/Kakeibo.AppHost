@@ -188,9 +188,7 @@
             }
 
             var targetUrl = $"/saidaspage/{Day}/{Month}/{Year}";
-            successMessage =
-                $"{L["Suas informações foram gravadas com sucesso."]} " +
-                $"<a href='{targetUrl}'>{L["Clique aqui para retornar."]}</a>";
+            NavManager.NavigateTo(targetUrl);
         }
         catch (Exception ex)
         {

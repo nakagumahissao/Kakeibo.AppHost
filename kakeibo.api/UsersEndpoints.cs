@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using kakeibo.api.Resources;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Security.Claims;
 using System.Text;
-using Serilog;
-using kakeibo.api.Resources;
 
 namespace kakeibo.api;
 
@@ -103,12 +103,7 @@ public static class UsersEndpoints
         // =========================
         // LOGIN
         // =========================
-        app.MapPost("/auth/login", async (
-            [FromBody] LoginRequest request,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signIn,
-            IConfiguration config
-        ) =>
+        app.MapPost("/auth/login", async ([FromBody] LoginRequest request, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signIn, IConfiguration config) =>
         {
             Log.Information("Login attempt for {Email}", request.Email);
 
@@ -119,8 +114,6 @@ public static class UsersEndpoints
                 return Results.Unauthorized();
             }
 
-            Log.Information("User {Email} found. Checking password.", request.Email);
-
             var result = await signIn.CheckPasswordSignInAsync(user, request.Password, false);
             if (!result.Succeeded)
             {
@@ -128,22 +121,22 @@ public static class UsersEndpoints
                 return Results.Unauthorized();
             }
 
-            Log.Information("Getting Roles...");
             var roles = await userManager.GetRolesAsync(user);
 
-            Log.Information("Getting Claims...");
+            var culture = string.IsNullOrWhiteSpace(request.CultureName)
+                ? "pt-BR"
+                : request.CultureName;
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email!)
+                new Claim(ClaimTypes.Email, user.Email!),
+                new Claim("culture", culture)
             };
+
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
-            Log.Information("Generating JWT...");
             var token = GenerateJwt(claims, config);
-
-            Log.Information("Token generated successfully for {Email}: {Token}", request.Email, token);
-            Log.Information("Login successful for {Email}", request.Email);
 
             return Results.Ok(new LoginResponse(
                 Token: token,
@@ -152,6 +145,7 @@ public static class UsersEndpoints
                 Roles: roles.ToList()
             ));
         });
+
 
         // =========================
         // CHANGE PASSWORD
@@ -416,7 +410,7 @@ public static class UsersEndpoints
     public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
     public record ApiResponse<T>(bool Success, T? Data, string[] Errors);
     public record RegisterRequest(string Email, string Password);
-    public record LoginRequest(string Email, string Password);
+    public record LoginRequest(string Email, string Password, string CultureName);
     public record PasswordResetRequest(string Email);
     public record ConfirmResetPasswordRequest(string UserId, string NewPassword, string Token);
 }
