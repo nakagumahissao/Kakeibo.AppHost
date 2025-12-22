@@ -187,7 +187,9 @@
                 return;
             }
 
-            var targetUrl = $"/saidaspage/{Day}/{Month}/{Year}";
+            var targetUrl = $"/saidaspage/{UserID}/{Day}/{Month}/{Year}";
+            Logger.LogInformation("Despesa salva com sucesso. Redirecionando para {TargetUrl}", targetUrl);
+
             NavManager.NavigateTo(targetUrl);
         }
         catch (Exception ex)
