@@ -32,7 +32,7 @@
                          @bind-Value="novaSaida.DespesaID">
                 <option value="0">@L["Selecione"]</option>
 
-                @foreach (var tipo in despesa?? Enumerable.Empty<Despesa>())
+                @foreach (var tipo in despesa ?? Enumerable.Empty<Despesa>())
                 {
                     <option value="@tipo.DespesaId">
                         @tipo.NomeDespesa
@@ -170,30 +170,24 @@
     {
         errorMessage = string.Empty;
 
-        try
+        var dt = (Day > 0 && Month > 0 && Year > 0)
+            ? new DateTime(Year, Month, Day)
+            : DateTime.Today;
+
+        novaSaida!.DataSaida = dt;
+
+        var client = HttpFactory.CreateClient("apis");
+        var response = await client.PostAsJsonAsync("saidas", novaSaida);
+
+        if (!response.IsSuccessStatusCode)
         {
-            var dt = (Day > 0 && Month > 0 && Year > 0)
-                ? new DateTime(Year, Month, Day)
-                : DateTime.Today;
-
-            novaSaida!.DataSaida = dt;
-
-            var client = HttpFactory.CreateClient("apis");
-            var response = await client.PostAsJsonAsync("saidas", novaSaida);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                errorMessage = $"{L["Erro ao salvar"]}: {response.StatusCode}";
-                return;
-            }
-
-            var targetUrl = $"/saidaspage/{Day}/{Month}/{Year}";
-            NavManager.NavigateTo(targetUrl);
+            errorMessage = $"{L["Erro ao salvar"]}: {response.StatusCode}";
+            return;
         }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "SalvarDespesa failed");
-            errorMessage = ex.ToString();
-        }
+
+        var targetUrl = $"/saidaspage/{UserID}/{Day}/{Month}/{Year}";
+        Logger.LogInformation("Despesa salva com sucesso. Redirecionando para {TargetUrl}", targetUrl);
+
+        NavManager.NavigateTo(targetUrl);
     }
 }
