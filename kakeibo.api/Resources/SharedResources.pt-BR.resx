@@ -12,7 +12,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
     <value>E-mail de redefinição de senha enviado com sucesso.</value>
   </data>
@@ -58,7 +57,6 @@
   <data name="Usuário não existe." xml:space="preserve">
     <value>Usuário não existe.</value>
   </data>
-
   <!-- Despesas -->
   <data name="Estacionamento" xml:space="preserve">
     <value>Estacionamento</value>
@@ -120,7 +118,6 @@
   <data name="Aluguel" xml:space="preserve">
     <value>Aluguel</value>
   </data>
-
   <!-- Tipos -->
   <data name="Fixas" xml:space="preserve">
     <value>Fixas</value>
@@ -128,7 +125,6 @@
   <data name="Variaveis" xml:space="preserve">
     <value>Variáveis</value>
   </data>
-
   <!-- Rendas -->
   <data name="Salario 1" xml:space="preserve">
     <value>Salário 1</value>
@@ -148,5 +144,19 @@
   <data name="Resultado do Mes Anterior" xml:space="preserve">
     <value>Resultado do Mês Anterior</value>
   </data>
-
+  <data name="Gasolina" xml:space="preserve">
+    <value>Gasolina</value>
+  </data>
+  <data name="Impostos" xml:space="preserve">
+    <value>Impostos</value>
+  </data>
+  <data name="Restaurantes" xml:space="preserve">
+    <value>Restaurantes</value>
+  </data>
+  <data name="Medicamentos" xml:space="preserve">
+    <value>Medicamentos</value>
+  </data>
+  <data name="Querosene" xml:space="preserve">
+    <value>Querosene</value>
+  </data>
 </root>
