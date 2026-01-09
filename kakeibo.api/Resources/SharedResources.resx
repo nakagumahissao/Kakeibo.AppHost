@@ -141,5 +141,19 @@
   <data name="Resultado do Mes Anterior" xml:space="preserve">
     <value>Resultado do Mes Anterior</value>
   </data>
-
+  <data name="Gasolina" xml:space="preserve">
+    <value>Gasoline</value>
+  </data>
+  <data name="Impostos" xml:space="preserve">
+    <value>Taxes</value>
+  </data>
+  <data name="Restaurantes" xml:space="preserve">
+    <value>Restaurants</value>
+  </data>
+  <data name="Medicamentos" xml:space="preserve">
+    <value>Medicines</value>
+  </data>
+  <data name="Querosene" xml:space="preserve">
+    <value>Kerosene</value>
+  </data>
 </root>

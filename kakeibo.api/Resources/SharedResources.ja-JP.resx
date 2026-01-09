@@ -12,7 +12,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
     <value>パスワード再設定メールが正常に送信されました。</value>
   </data>
@@ -58,7 +57,6 @@
   <data name="Usuário não existe." xml:space="preserve">
     <value>ユーザーが存在しません。</value>
   </data>
-
   <data name="Estacionamento" xml:space="preserve">
     <value>駐車場</value>
   </data>
@@ -119,14 +117,12 @@
   <data name="Aluguel" xml:space="preserve">
     <value>家賃</value>
   </data>
-
   <data name="Fixas" xml:space="preserve">
     <value>固定費</value>
   </data>
   <data name="Variaveis" xml:space="preserve">
     <value>変動費</value>
   </data>
-
   <data name="Salario 1" xml:space="preserve">
     <value>給与 1</value>
   </data>
@@ -145,5 +141,19 @@
   <data name="Resultado do Mes Anterior" xml:space="preserve">
     <value>前月の結果</value>
   </data>
-
+  <data name="Gasolina" xml:space="preserve">
+    <value>ガソリン</value>
+  </data>
+  <data name="Impostos" xml:space="preserve">
+    <value>税金</value>
+  </data>
+  <data name="Restaurantes" xml:space="preserve">
+    <value>レストラン</value>
+  </data>
+  <data name="Medicamentos" xml:space="preserve">
+    <value>医薬品</value>
+  </data>
+  <data name="Querosene" xml:space="preserve">
+    <value>灯油</value>
+  </data>
 </root>

@@ -12,7 +12,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="E-mail de redefinição de senha enviado com sucesso." xml:space="preserve">
     <value>密码重置电子邮件已成功发送。</value>
   </data>
@@ -58,7 +57,6 @@
   <data name="Usuário não existe." xml:space="preserve">
     <value>用户不存在。</value>
   </data>
-
   <data name="Estacionamento" xml:space="preserve">
     <value>停车费</value>
   </data>
@@ -119,14 +117,12 @@
   <data name="Aluguel" xml:space="preserve">
     <value>房租</value>
   </data>
-
   <data name="Fixas" xml:space="preserve">
     <value>固定</value>
   </data>
   <data name="Variaveis" xml:space="preserve">
     <value>可变</value>
   </data>
-
   <data name="Salario 1" xml:space="preserve">
     <value>工资 1</value>
   </data>
@@ -145,5 +141,19 @@
   <data name="Resultado do Mes Anterior" xml:space="preserve">
     <value>上月结余</value>
   </data>
-
+  <data name="Gasolina" xml:space="preserve">
+    <value>汽油</value>
+  </data>
+  <data name="Impostos" xml:space="preserve">
+    <value>税金</value>
+  </data>
+  <data name="Restaurantes" xml:space="preserve">
+    <value>餐馆</value>
+  </data>
+  <data name="Medicamentos" xml:space="preserve">
+    <value>药品</value>
+  </data>
+  <data name="Querosene" xml:space="preserve">
+    <value>煤油</value>
+  </data>
 </root>
