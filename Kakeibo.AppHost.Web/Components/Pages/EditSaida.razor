@@ -10,19 +10,9 @@
     @L["Editar Saída"]
 </h3>
 
-@if (saida == null && !updated)
+@if (saida == null)
 {
     <p>@L["Carregando registro..."]</p>
-}
-else if (updated)
-{
-    <div class="alert alert-success mt-3">
-        @L["Registro atualizado com sucesso ✔"]
-    </div>
-
-    <a class="btn btn-primary mt-3" href="/saidaspage/@Day/@Month/@Year">
-        ⬅ @L["Voltar para lista"]
-    </a>
 }
 else
 {
@@ -53,7 +43,8 @@ else
                 💾 @L["Salvar"]
             </button>
 
-            <a class="btn btn-secondary btn-sm" href="/saidaspage/@UserID/@Day/@Month/@Year">
+            <a class="btn btn-secondary btn-sm"
+               href="/saidaspage/@UserID/@Day/@Month/@Year">
                 ⬅ @L["Cancelar"]
             </a>
         </div>
@@ -67,8 +58,6 @@ else
     [Parameter] public int Year { get; set; }
 
     private Kakeibo.AppHost.Web.Models.Saidas? saida;
-    private bool updated = false;
-
     private string? UserID = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -95,8 +84,7 @@ else
 
         if (response.IsSuccessStatusCode)
         {
-            updated = true;
-            StateHasChanged();
+            Nav.NavigateTo($"/saidaspage/{UserID}/{Day}/{Month}/{Year}");
         }
     }
 }
